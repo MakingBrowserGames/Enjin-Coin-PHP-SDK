@@ -1,0 +1,9 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+	"identity_id":"123456",
+	"ethereum_address":"0x0000000000000000000000000000000000000000",
+	"player_name":"john"
+  },
+  "id": "1"
+}

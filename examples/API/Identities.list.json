@@ -1,0 +1,13 @@
+{
+  "jsonrpc": "2.0",
+  "method": "Identities.list",
+  "params": {
+	"auth":"xxxxxxxx",
+	"identity": {
+	  "ethereum_address":"0x0000000000000000000000000000000000000000"
+	},
+	"after_identity_id":"1234567",
+	"limit":"50"
+  },
+  "id": "1"
+}
