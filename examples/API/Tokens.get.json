@@ -1,0 +1,8 @@
+{
+  "jsonrpc": "2.0",
+  "method": "Tokens.get",
+  "params": {
+	"token_id":"12345"
+  },
+  "id": "1"
+}
