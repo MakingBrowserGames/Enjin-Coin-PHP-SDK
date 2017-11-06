@@ -1,0 +1,13 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+	"txr_id": 12345,
+	"identity": {"player_name":"joe"},
+	"recipient": {"player_name":"alice"},
+	"type": "send",
+	"icon": "https://enjincoin.io/images/bubble.png",
+	"title": "Mineplex: /transfer alice 3 ENJ",
+	"value": {"ENJ":"3000000000000000000"}
+  },
+  "id": "1"
+}
