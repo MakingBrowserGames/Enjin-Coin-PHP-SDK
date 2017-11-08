@@ -31,6 +31,9 @@ CREATE TABLE transaction_requests (
   KEY (`timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- -------------
+-- Events
+
 CREATE TABLE events (
   `id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
   `timestamp` int(10) UNSIGNED NOT NULL DEFAULT 0,
@@ -38,6 +41,8 @@ CREATE TABLE events (
   -- `identity_id` INT(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 -- -------------
 -- Identities
@@ -70,9 +75,9 @@ CREATE TABLE identity_values (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -------------
--- Items
+-- Tokens
 
-CREATE TABLE items (
+CREATE TABLE tokens (
   `id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
   `app_id` INT(10) unsigned NOT NULL,
   `token_id` INT(10) unsigned NOT NULL,

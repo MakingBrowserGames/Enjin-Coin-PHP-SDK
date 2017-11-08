@@ -1,11 +1,9 @@
 {
   "jsonrpc": "2.0",
-  "method": "Identities.get",
+  "method": "Events.get",
   "params": {
 	"auth": "xxxxxxxx",
-	"identity": {
-	  "identity_id": "123456"
-	}
+	"event_id": "123456789"
   },
   "id": "1"
 }
