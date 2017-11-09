@@ -2,8 +2,4 @@
 PHP SDK for Enjin Coin - https://enjincoin.io
 
 # Installation
-composer require zendframework/zend-db
-
-composer require zendframework/zend-json
-
-composer require zendframework/zend-json-server
+composer require zendframework/zend-db zendframework/zend-json zendframework/zend-json-server
