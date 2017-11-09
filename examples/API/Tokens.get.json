@@ -1,6 +1,6 @@
 {
   "jsonrpc": "2.0",
-  "method": "Tokens.get",
+  "method": "get",
   "params": {
 	"token_id":"12345"
   },

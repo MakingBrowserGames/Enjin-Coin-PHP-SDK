@@ -1,6 +1,6 @@
 {
   "jsonrpc": "2.0",
-  "method": "TransactionRequests.list",
+  "method": "list",
   "params": {
 	"auth": "xxxxxxxx",
 	"identity": {

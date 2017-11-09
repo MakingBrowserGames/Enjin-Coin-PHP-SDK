@@ -1,6 +1,6 @@
 {
   "jsonrpc": "2.0",
-  "method": "Identities.update",
+  "method": "update",
   "params": {
 	"auth": "xxxxxxxx",
 	"identity": {

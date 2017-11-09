@@ -1,6 +1,6 @@
 {
   "jsonrpc": "2.0",
-  "method": "Events.list",
+  "method": "list",
   "params": {
 	"auth": "xxxxxxxx",
 	"app_id": "1234",

@@ -1,6 +1,6 @@
 {
   "jsonrpc": "2.0",
-  "method": "TransactionRequests.get",
+  "method": "get",
   "params": {
 	"auth":"xxxxxxxx",
 	"txr_id":"123456"

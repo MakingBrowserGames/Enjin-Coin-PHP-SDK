@@ -1,6 +1,6 @@
 {
   "jsonrpc": "2.0",
-  "method": "TransactionRequests.cancel",
+  "method": "cancel",
   "params": {
 	"auth": "xxxxxxxx",
 	"txr_id": "123456"
