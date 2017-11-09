@@ -84,11 +84,11 @@
 			"from": {
 			  "ethereum_address": "0x0000000000000000000000000000000000000000"
 			},
-			"balance_pending": {
+			"pending": {
 			  "ENJ": "100",
 			  "123456": "53"
 			},
-			"balance_confirmed": {
+			"confirmed": {
 			  "234567": "10",
 			  "345678": "20"
 			}
@@ -107,12 +107,13 @@
 		  "player_name": "joe",
 		  "ethereum_address": "0x0000000000000000000000000000000000000000"
 		},
-		"balance_pending": {
+		"pending": {
 		  "123456": "53"
 		},
-		"balance_confirmed": {
+		"confirmed": {
 		  "345678": "20"
-		}
+		},
+		  "ENJ":"1000000000000000000"
 	  }
 	},
 	{
