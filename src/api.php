@@ -1,7 +1,7 @@
 <?php
 
 // Composer autoloading
-include __DIR__ . '/../vendor/autoload.php';
+include __DIR__ . '/vendor/autoload.php';
 
 // Load API class
 $class = 'Identities';
