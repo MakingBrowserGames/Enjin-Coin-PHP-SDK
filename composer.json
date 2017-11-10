@@ -1,0 +1,7 @@
+{
+    "require": {
+        "zendframework/zend-db": "^2.8",
+        "zendframework/zend-json": "^3.0",
+        "zendframework/zend-json-server": "^3.0"
+    }
+}

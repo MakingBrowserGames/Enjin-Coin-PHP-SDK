@@ -1,6 +1,8 @@
 -- -------------
 -- Enjin Coin SDK MySQL DB Schema
 
+CREATE DATABASE enjin_coin;
+
 CREATE TABLE db_info (
   `db_version` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `updated` int(10) UNSIGNED NOT NULL DEFAULT 0
@@ -47,38 +49,47 @@ CREATE TABLE events (
 -- -------------
 -- Identities
 
+DROP TABLE identities;
 CREATE TABLE identities (
-  `id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identity_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
   `ethereum_address` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `linking_code` VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`identity_id`),
+  UNIQUE KEY (`ethereum_address`),
+  UNIQUE KEY (`linking_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE identity_types;
 CREATE TABLE identity_types (
-  `id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`id`)
+  `type_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE identity_fields;
 CREATE TABLE identity_fields (
-  `id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+  `field_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
   `type_id` INT(10) unsigned NOT NULL DEFAULT 0,
   `key` VARCHAR(255) NULL DEFAULT NULL,
   `searchable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
   `displayable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
   `unique` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`field_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE identity_values;
 CREATE TABLE identity_values (
   `identity_id` INT(10) unsigned NOT NULL,
+  `field_id` INT(10) unsigned NOT NULL DEFAULT 0,
   `value` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`identity_id`)
+  PRIMARY KEY (`value`, `field_id`, `identity_id`)
+  KEY (`identity_id`),
+  KEY (`field_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -------------
 -- Tokens
 
 CREATE TABLE tokens (
-  `id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
   `app_id` INT(10) unsigned NOT NULL,
   `token_id` INT(10) unsigned NOT NULL,
   `decimals` TINYINT(2) unsigned NOT NULL,
