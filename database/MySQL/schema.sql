@@ -55,36 +55,37 @@ CREATE TABLE identities (
   `ethereum_address` VARCHAR(255) NULL DEFAULT NULL,
   `linking_code` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`identity_id`),
-  UNIQUE KEY (`ethereum_address`),
   UNIQUE KEY (`linking_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+/*
 DROP TABLE identity_types;
 CREATE TABLE identity_types (
   `type_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+*/
 DROP TABLE identity_fields;
 CREATE TABLE identity_fields (
   `field_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type_id` INT(10) unsigned NOT NULL DEFAULT 0,
+  /*`type_id` INT(10) unsigned NOT NULL DEFAULT 0,*/
   `key` VARCHAR(255) NULL DEFAULT NULL,
-  `searchable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-  `displayable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-  `unique` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+  `searchable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `displayable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+  `unique` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   PRIMARY KEY (`field_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE identity_values;
 CREATE TABLE identity_values (
   `identity_id` INT(10) unsigned NOT NULL,
-  `field_id` INT(10) unsigned NOT NULL DEFAULT 0,
-  `value` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`value`, `field_id`, `identity_id`)
+  `field_id` INT(10) unsigned NOT NULL,
+  `value` VARCHAR(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (`value`, `field_id`, `identity_id`),
   KEY (`identity_id`),
   KEY (`field_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE identity_values ADD CONSTRAINT `fk_identity_values` FOREIGN KEY (`identity_id`) REFERENCES `identities` (`identity_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- -------------
 -- Tokens

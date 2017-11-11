@@ -26,7 +26,7 @@ class Db
 	public static function query($select) {
 		return self::$adapter->query(
 		    self::$sql->buildSqlString($select),
-            (self::$adapter)::QUERY_MODE_EXECUTE
+            Zend\Db\Adapter\Adapter::QUERY_MODE_EXECUTE
         );
 	}
 }

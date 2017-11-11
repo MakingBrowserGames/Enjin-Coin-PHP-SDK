@@ -1,9 +1,14 @@
 <?php
 
-class Events
+class Events extends Api
 {
-    public function get()
+    public function get($event_id)
     {
-        return "get events test";
+        $select = $this->db->select()
+            ->from('apps')
+            ->where(['event_id' => $event_id]);
+
+        $results = Db::query($select);
+        return $results->toArray();
     }
 }
