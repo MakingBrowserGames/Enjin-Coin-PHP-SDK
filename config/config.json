@@ -1,0 +1,15 @@
+{
+  "platform": {
+	"name": "My Platform"
+  },
+  "db": {
+	"adapter": "mysqli",
+	"database": "enjin_coin",
+	"username": "developer",
+	"password": "dev-password"
+  },
+  "ethereum": {
+	"mode": "geth_ipc",
+	"path": "\\.\\pipe\\geth.ipc"
+  }
+}

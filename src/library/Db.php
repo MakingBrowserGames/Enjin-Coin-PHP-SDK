@@ -11,10 +11,10 @@ class Db
 	public static function getInstance() {
 		if(empty(self::$adapter)) {
 			self::$adapter = new Zend\Db\Adapter\Adapter([
-				'driver' => 'Mysqli',
-				'database' => 'enjin_coin',
-				'username' => 'developer',
-				'password' => 'dev-password'
+				'driver'	=> Config::get()->db->adapter,
+				'database'	=> Config::get()->db->database,
+				'username'	=> Config::get()->db->username,
+				'password'	=> Config::get()->db->password
 			]);
 
 			self::$sql = $sql = new Zend\Db\Sql\Sql(self::$adapter);
