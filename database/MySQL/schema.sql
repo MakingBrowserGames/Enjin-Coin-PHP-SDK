@@ -9,16 +9,16 @@ CREATE TABLE db_info (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE apps (
-  `id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+  `app_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`app_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE transaction_requests (
-  `id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+  `txr_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `timestamp` int(10) UNSIGNED NOT NULL DEFAULT 0,
-  `app_id` INT(10) unsigned NOT NULL,
-  `identity_id` INT(10) unsigned NOT NULL,
+  `app_id` INT(10) UNSIGNED NOT NULL,
+  `identity_id` INT(10) UNSIGNED NOT NULL,
   `type` ENUM('buy', 'sell', 'send', 'use', 'subscribe') NOT NULL DEFAULT 'send',
   `recipient_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `recipient_address` VARCHAR(42) NULL DEFAULT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE transaction_requests (
   `token_id` INT(10) UNSIGNED NOT NULL,
   `value` VARCHAR(255) NOT NULL DEFAULT '0',
   `accepted` TINYINT(1) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`txr_id`),
   KEY (`app_id`), -- Review keys and optimize later
   KEY (`identity_id`),
   KEY (`timestamp`)
@@ -37,12 +37,14 @@ CREATE TABLE transaction_requests (
 -- Events
 
 CREATE TABLE events (
-  `id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+  `event_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
   `timestamp` int(10) UNSIGNED NOT NULL DEFAULT 0,
-  `app_id` INT(10) unsigned NOT NULL,
-  -- `identity_id` INT(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `app_id` INT(10) UNSIGNED NOT NULL,
+  `identity_id` INT(10) UNSIGNED NOT NULL,
+  `event_type` SMALLINT(5) UNSIGNED NOT NULL DEFAULT 0,
+  `data` VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`event_id`),
+  PRIMARY KEY (`event_id`),) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -51,7 +53,7 @@ CREATE TABLE events (
 
 DROP TABLE identities;
 CREATE TABLE identities (
-  `identity_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identity_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `ethereum_address` VARCHAR(255) NULL DEFAULT NULL,
   `linking_code` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`identity_id`),
@@ -60,14 +62,14 @@ CREATE TABLE identities (
 /*
 DROP TABLE identity_types;
 CREATE TABLE identity_types (
-  `type_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
+  `type_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 */
 DROP TABLE identity_fields;
 CREATE TABLE identity_fields (
-  `field_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
-  /*`type_id` INT(10) unsigned NOT NULL DEFAULT 0,*/
+  `field_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  /*`type_id` INT(10) UNSIGNED NOT NULL DEFAULT 0,*/
   `key` VARCHAR(255) NULL DEFAULT NULL,
   `searchable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `displayable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
@@ -77,8 +79,8 @@ CREATE TABLE identity_fields (
 
 DROP TABLE identity_values;
 CREATE TABLE identity_values (
-  `identity_id` INT(10) unsigned NOT NULL,
-  `field_id` INT(10) unsigned NOT NULL,
+  `identity_id` INT(10) UNSIGNED NOT NULL,
+  `field_id` INT(10) UNSIGNED NOT NULL,
   `value` VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`value`, `field_id`, `identity_id`),
   KEY (`identity_id`),
@@ -91,9 +93,9 @@ ALTER TABLE identity_values ADD CONSTRAINT `fk_identity_values` FOREIGN KEY (`id
 -- Tokens
 
 CREATE TABLE tokens (
-  `app_id` INT(10) unsigned NOT NULL,
-  `token_id` INT(10) unsigned NOT NULL,
-  `decimals` TINYINT(2) unsigned NOT NULL,
+  `app_id` INT(10) UNSIGNED NOT NULL,
+  `token_id` INT(10) UNSIGNED NOT NULL,
+  `decimals` TINYINT(2) UNSIGNED NOT NULL,
   `name` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`token_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
