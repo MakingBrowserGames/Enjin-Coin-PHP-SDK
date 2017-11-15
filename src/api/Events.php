@@ -1,4 +1,5 @@
 <?php
+namespace EnjinCoin;
 
 class Events extends Api
 {

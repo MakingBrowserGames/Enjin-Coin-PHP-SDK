@@ -1,6 +1,5 @@
 <?php
-
-require_once 'Db.php';
+namespace EnjinCoin;
 
 class Api
 {

@@ -1,7 +1,15 @@
 {
-    "require": {
-        "zendframework/zend-db": "^2.8",
-        "zendframework/zend-json": "^3.0",
-        "zendframework/zend-json-server": "^3.0"
-    }
+  "require": {
+	"zendframework/zend-db": "^2.8",
+	"zendframework/zend-json": "^3.0",
+	"zendframework/zend-json-server": "^3.0"
+  },
+  "require-dev": {
+	"phpunit/phpunit": "^6.4"
+  },
+  "scripts": {
+	"test": [
+	  "phpunit tests --bootstrap vendor/autoload.php"
+	]
+  }
 }

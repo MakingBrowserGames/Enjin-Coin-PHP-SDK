@@ -1,4 +1,6 @@
 <?php
+namespace EnjinCoin;
+use Zend;
 
 class Config
 {
