@@ -1,5 +1,6 @@
 <?php
 namespace EnjinCoin;
+use EnjinCoin\Util\Db;
 
 class ApiBase
 {
@@ -7,6 +8,6 @@ class ApiBase
 
 	public function __construct()
 	{
-		$this->db = \EnjinCoin\Util\Db::getInstance();
+		$this->db = Db::getInstance();
 	}
 }

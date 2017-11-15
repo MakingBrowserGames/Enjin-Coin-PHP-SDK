@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace EnjinCoin\Test;
 use PHPUnit\Framework\TestCase;
+use EnjinCoin\Util\SafeMath;
 
 /**
  * @covers SafeMath
@@ -13,7 +14,7 @@ final class SafeMathTest extends TestCase
 	{
 		$this->assertEquals(
 			'30000000000000000001',
-			\EnjinCoin\Util\SafeMath::add('10000000000000000000', '20000000000000000001')
+			SafeMath::add('10000000000000000000', '20000000000000000001')
 		);
 	}
 
@@ -21,23 +22,23 @@ final class SafeMathTest extends TestCase
 	{
 		$this->assertEquals(
 			'10000000000000000001',
-			\EnjinCoin\Util\SafeMath::sub('20000000000000000001', '10000000000000000000')
+			SafeMath::sub('20000000000000000001', '10000000000000000000')
 		);
 	}
 
 	public function testDiv(): void
 	{
 		$this->assertEquals(
-			'1000000000000000000',
-			\EnjinCoin\Util\SafeMath::div('20000000000000000000', '20')
+			'952380952380952380',
+			SafeMath::div('20000000000000000000', '21')
 		);
 	}
 
 	public function testMul(): void
 	{
 		$this->assertEquals(
-			'1000000000000000000',
-			\EnjinCoin\Util\SafeMath::div('20000000000000000000', '20')
+			'420000000000000000000',
+			SafeMath::mul('20000000000000000000', '21')
 		);
 	}
 }

@@ -9,7 +9,7 @@ class SafeMath
 {
     public static function add(string $a, string $b)
     {
-        $c = number_format($a + $b, 0);
+        $c = floor($a + $b);
         if (!($c >= $a)) throw new Exception('adding values failed');
         return $c;
     }
@@ -17,16 +17,16 @@ class SafeMath
     public static function sub(string $a, string $b)
     {
         if (!($b <= $a)) throw new Exception('subtracting values failed');
-        return number_format($a - $b, 0);
+        return floor($a - $b);
     }
 
     public static function div(string $a, string $b) {
-        $c = number_format($a / $b, 0);
+        $c = floor($a / $b);
         return $c;
     }
 
     public static function mul(string $a, string $b) {
-        $c = number_format($a * $b, 0);
+        $c = floor($a * $b);
         if (!($a == 0 || $c / $a == $b)) throw new Exception('multiplying values failed');
         return $c;
     }

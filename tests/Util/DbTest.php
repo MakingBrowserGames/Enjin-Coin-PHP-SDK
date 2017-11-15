@@ -3,20 +3,18 @@ declare(strict_types=1);
 
 namespace EnjinCoin\Test;
 use PHPUnit\Framework\TestCase;
-use EnjinCoin\ApiBase;
+use EnjinCoin\Util\Db;
 
 /**
  * @covers Api
  */
-final class ApiBaseTest extends TestCase
+final class DbTest extends TestCase
 {
-	public function testHasDbInstance(): void
+	public function testCorrectDbClass(): void
 	{
-		$apibase = new ApiBase();
-
 		$this->assertInstanceOf(
 			\Zend\Db\Sql\Sql::class,
-			$apibase->db
+			Db::getInstance()
 		);
 	}
 }

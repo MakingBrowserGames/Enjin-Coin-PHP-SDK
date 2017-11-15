@@ -7,10 +7,10 @@ class Apps extends ApiBase
 {
     /**
      * Retrieve an App by its ID
-     * @param $app_id
+     * @param int $app_id
      * @return mixed
      */
-    public function get($app_id)
+    public function get(int $app_id)
     {
         $select = $this->db->select()
             ->from('apps')
@@ -25,7 +25,7 @@ class Apps extends ApiBase
      * @param string $name
      * @return array
      */
-    public function create($name)
+    public function create(string $name)
     {
         $name = trim($name);
         if(empty($name)) throw new Exception('Name must not be empty');
@@ -43,16 +43,31 @@ class Apps extends ApiBase
 
     /**
      * Update the App
+     * @param int $app_id
      * @param string $name
      * @return bool
      */
-    public function update($app_id, $name)
+    public function update(int $app_id, string $name)
     {
         $name = trim($name);
         if(empty($name)) throw new Exception('Name must not be empty');
 
         $sql = $this->db->update('apps');
         $sql->set(['name' => $name]);
+        $sql->where(['app_id' => $app_id]);
+        Db::query($sql);
+
+        return true;
+    }
+
+    /**
+     * Delete the App
+	 * @param int $app_id
+     * @return bool
+     */
+    public function delete(int $app_id)
+    {
+        $sql = $this->db->delete('apps');
         $sql->where(['app_id' => $app_id]);
         Db::query($sql);
 
