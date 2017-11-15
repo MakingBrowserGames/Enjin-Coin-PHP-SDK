@@ -1,7 +1,9 @@
 <?php
-namespace EnjinCoin;
+namespace EnjinCoin\Api;
+use EnjinCoin\ApiBase;
+use EnjinCoin\Util\Db;
 
-class Apps extends Api
+class Apps extends ApiBase
 {
     /**
      * Retrieve an App by its ID

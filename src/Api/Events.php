@@ -1,7 +1,10 @@
 <?php
-namespace EnjinCoin;
+namespace EnjinCoin\Api;
+use EnjinCoin;
+use EnjinCoin\Util\Db;
+use EnjinCoin\ApiBase;
 
-class Events extends Api
+class Events extends ApiBase
 {
 	const PRUNE_DAYS = 30;
 

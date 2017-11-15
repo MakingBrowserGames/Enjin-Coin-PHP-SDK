@@ -1,8 +1,10 @@
 <?php
-namespace EnjinCoin;
+namespace EnjinCoin\Api;
 use Zend;
+use EnjinCoin\ApiBase;
+use EnjinCoin\Util\Db;
 
-class Identities extends Api
+class Identities extends ApiBase
 {
     /**
      * Retrieve identities, filtered by various parameters

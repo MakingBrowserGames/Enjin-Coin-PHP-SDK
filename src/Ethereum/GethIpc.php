@@ -1,4 +1,7 @@
 <?php
+namespace EnjinCoin\Ethereum;
+use Zend;
+use EnjinCoin\Config;
 
 class GethIpc implements IEthereumConnection
 {

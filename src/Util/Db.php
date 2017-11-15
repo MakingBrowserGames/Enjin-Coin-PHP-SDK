@@ -1,6 +1,7 @@
 <?php
-namespace EnjinCoin;
+namespace EnjinCoin\Util;
 use Zend;
+use EnjinCoin\Config;
 
 /**
  * Db Singleton

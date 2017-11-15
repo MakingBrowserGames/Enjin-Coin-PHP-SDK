@@ -1,4 +1,5 @@
 <?php
+namespace EnjinCoin\Ethereum;
 
 interface IEthereumConnection
 {

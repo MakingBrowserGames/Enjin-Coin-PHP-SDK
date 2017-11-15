@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
-namespace EnjinCoin;
+
+namespace EnjinCoin\Test;
 use PHPUnit\Framework\TestCase;
+use EnjinCoin\Config;
 
 /**
  * @covers Config

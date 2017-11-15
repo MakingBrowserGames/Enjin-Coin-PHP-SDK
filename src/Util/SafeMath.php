@@ -1,5 +1,5 @@
 <?php
-namespace EnjinCoin;
+namespace EnjinCoin\Util;
 
 /**
  * Class SafeMath

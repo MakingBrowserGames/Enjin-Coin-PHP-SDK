@@ -7,6 +7,19 @@
   "require-dev": {
 	"phpunit/phpunit": "^6.4"
   },
+  "autoload": {
+	"psr-4": {
+	  "EnjinCoin\\": "src/",
+	  "EnjinCoin\\Api\\": "src/Api/",
+	  "EnjinCoin\\Ethereum\\": "src/Ethereum/",
+	  "EnjinCoin\\Util\\": "src/Util/"
+	}
+  },
+  "autoload-dev": {
+	"psr-4": {
+	  "EnjinCoin\\Test\\": "tests/"
+	}
+  },
   "scripts": {
 	"test": [
 	  "phpunit tests --bootstrap vendor/autoload.php"
