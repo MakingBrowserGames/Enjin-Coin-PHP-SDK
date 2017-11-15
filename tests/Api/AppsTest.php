@@ -65,6 +65,7 @@ final class AppsTest extends TestCase
 	public function tearDown(): void
 	{
 		$api = new Apps();
+		$api->delete($this->app_id);
 		$api->delete($this->app_id + 1);
 	}
 }
