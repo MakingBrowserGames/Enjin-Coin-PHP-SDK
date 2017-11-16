@@ -14,12 +14,16 @@ class Identities extends ApiBase
      * @param int $limit
      * @return mixed
      */
-    public function get($identity = [], $linked = true, $after_identity_id = null, $limit = 50)
+    public function get(array $identity = [], bool $linked = true, int $after_identity_id = null, int $limit = 50)
     {
         $select = $this->db->select()
             ->from('identities')
-            ->join('identity_values', 'identities.identity_id = identity_values.identity_id')
+            ->join('identity_values', 'identities.identity_id = identity_values.identity_id', Zend\Db\Sql\Select::SQL_STAR, Zend\Db\Sql\Select::JOIN_LEFT)
             ->join('identity_fields', 'identity_fields.field_id = identity_values.field_id', Zend\Db\Sql\Select::SQL_STAR, Zend\Db\Sql\Select::JOIN_LEFT);
+
+        if($linked) {
+            $select->where("ethereum_address != ''");
+        }
 
         foreach ($identity as $key => $value) {
             switch ($key) {
@@ -41,7 +45,24 @@ class Identities extends ApiBase
         $select->limit($limit);
 
         $results = Db::query($select);
-        return $results->toArray();
+        $idents = $results->toArray();
+
+        foreach($idents as &$ident) {
+            unset($ident['key']);
+            unset($ident['value']);
+
+            $select = $this->db->select()
+                ->from('identity_values')
+                ->join('identity_fields', 'identity_fields.field_id = identity_values.field_id', Zend\Db\Sql\Select::SQL_STAR, Zend\Db\Sql\Select::JOIN_INNER)
+                ->where(['identity_id' => $ident['identity_id']]);
+            $v_result = Db::query($select)->toArray();
+            foreach($v_result as $v) {
+                if(in_array($v['key'], ['identity_id', 'ethereum_address', 'linking_code'])) continue;
+                $ident[$v['key']] = $v['value'];
+            }
+        }
+
+        return $idents;
     }
 
     /**
@@ -114,7 +135,7 @@ class Identities extends ApiBase
             ]);
 
         $results = Db::query($select);
-        $existing_field = $results->toArray();
+        $existing_field = $results->current();
         if(!empty($existing_field)) return $existing_field;
 
         $insert = $this->db->insert('identity_fields');
@@ -135,7 +156,7 @@ class Identities extends ApiBase
             ]);
 
         $results = Db::query($select);
-        $field = $results->toArray();
+        $field = $results->current();
         return $field;
     }
 
@@ -172,10 +193,16 @@ class Identities extends ApiBase
             }
 
             if(!empty($update)) {
-                $sql = $this->db->update('identity_values');
-                $sql->where(['identity_id' => $i['identity_id']]);
-                $sql->set($update);
-                Db::query($sql);
+                foreach($update as $key => $value) {
+                    $field = $this->field($key);
+                    $sql = $this->db->update('identity_values');
+                    $sql->where([
+                        'identity_id' => $i['identity_id'],
+                        'field_id' => $field['field_id']
+                    ]);
+                    $sql->set(['value' => $value]);
+                    Db::query($sql);
+                }
             }
         }
 

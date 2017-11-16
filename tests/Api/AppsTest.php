@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace EnjinCoin\Test;
 use EnjinCoin\Api\Apps;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Runner\Exception;
 
 /**
  * @covers Api

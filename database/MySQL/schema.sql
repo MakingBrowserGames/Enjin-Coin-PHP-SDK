@@ -69,7 +69,7 @@ CREATE TABLE identity_types (
 DROP TABLE identity_fields;
 CREATE TABLE identity_fields (
   `field_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  /*`type_id` INT(10) UNSIGNED NOT NULL DEFAULT 0,*/
+  `app_id` INT(10) UNSIGNED NOT NULL,
   `key` VARCHAR(255) NULL DEFAULT NULL,
   `searchable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
   `displayable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
