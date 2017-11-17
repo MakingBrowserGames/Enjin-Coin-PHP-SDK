@@ -7,7 +7,7 @@ include __DIR__ . '/../vendor/autoload.php';
 $class = $_REQUEST['class'];
 
 $server = new Zend\Json\Server\Server();
-$server->setClass($class);
+$server->setClass('\EnjinCoin\Api\\' . $class);
 
 // SMD request
 if ('GET' === $_SERVER['REQUEST_METHOD']) {

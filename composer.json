@@ -1,8 +1,12 @@
 {
+  "name": "enjin/Enjin-Coin-PHP-SDK",
+  "description": "Enjin Coin Platform SDK",
+  "license": "Apache-2.0",
   "require": {
 	"zendframework/zend-db": "^2.8",
 	"zendframework/zend-json": "^3.0",
-	"zendframework/zend-json-server": "^3.0"
+	"zendframework/zend-json-server": "^3.0",
+    "amphp/socket": "^0.10.4"
   },
   "require-dev": {
 	"phpunit/phpunit": "^6.4"
