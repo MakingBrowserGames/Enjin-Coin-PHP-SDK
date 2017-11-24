@@ -4,37 +4,10 @@ namespace EnjinCoin\Api;
 use EnjinCoin;
 use EnjinCoin\Util\Db;
 use EnjinCoin\ApiBase;
+use PHPUnit\Runner\Exception;
 
 class Events extends ApiBase {
 	const PRUNE_DAYS = 30;
-
-	const UNKNOWN_EVENT = 0;
-	const TXR_PENDING = 1;
-	const TXR_CANCELED_USER = 2;
-	const TXR_CANCELLED_PLATFORM = 3;
-	const TXR_ACCEPTED = 4;
-	const TX_BROADCASTED = 5;
-	const TX_EXECUTED = 6;
-	const TX_CONFIRMED = 7;
-	const IDENTITY_CREATED = 8;
-	const IDENTITY_LINKED = 9;
-	const IDENTITY_UPDATED = 10;
-	const IDENTITY_DELETED = 11;
-
-	public $event_types = [
-		self::UNKNOWN_EVENT => 'unknown',
-		self::TXR_PENDING => 'txr_pending',
-		self::TXR_CANCELED_USER => 'txr_cancelled_user',
-		self::TXR_CANCELLED_PLATFORM => 'txr_cancelled_platform',
-		self::TXR_ACCEPTED => 'txr_accepted',
-		self::TX_BROADCASTED => 'tx_broadcasted',
-		self::TX_EXECUTED => 'tx_executed',
-		self::TX_CONFIRMED => 'tx_confirmed',
-		self::IDENTITY_CREATED => 'identity_created',
-		self::IDENTITY_LINKED => 'identity_linked',
-		self::IDENTITY_UPDATED => 'identity_updated',
-		self::IDENTITY_DELETED => 'identity_deleted',
-	];
 
 	/**
 	 * Get a list of events
@@ -73,6 +46,25 @@ class Events extends ApiBase {
 
 		$results = Db::query($select);
 		return $results->toArray();
+	}
+
+    public function create(int $app_id, array $identity, $event_type, $data) {
+		// Validate App ID
+    	if($app_id != 0) {
+			$apps = new Apps();
+			$app = $apps->get($app_id);
+			if (empty($app['app_id'])) throw new Exception('App ID does not exist');
+		}
+
+		// Validate Identity
+		$identities = new Identities();
+		$ident = $identities->get($identity);
+		if (empty($ident['identity_id'])) throw new Exception('Identity does not exist');
+
+		// Validate Event Type
+		if(!in_array($event_type, $this->event_types) throw new Exception('Invalid event type');
+
+		if()
 	}
 
 	/**
