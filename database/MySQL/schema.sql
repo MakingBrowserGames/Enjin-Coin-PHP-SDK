@@ -43,8 +43,8 @@ CREATE TABLE events (
   `identity_id` INT(10) UNSIGNED NOT NULL,
   `event_type` SMALLINT(5) UNSIGNED NOT NULL DEFAULT 0,
   `data` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`event_id`),
-  PRIMARY KEY (`event_id`),) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`event_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
