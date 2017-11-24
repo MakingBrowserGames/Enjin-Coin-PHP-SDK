@@ -2,16 +2,15 @@
 declare(strict_types=1);
 
 namespace EnjinCoin\Test;
+
 use PHPUnit\Framework\TestCase;
 use EnjinCoin\Config;
 
 /**
  * @covers Config
  */
-final class ConfigTest extends TestCase
-{
-	public function testHasCorrectConfigValues(): void
-	{
+final class ConfigTest extends TestCase {
+	public function testHasCorrectConfigValues(): void {
 		$config = Config::get();
 
 		$this->assertObjectHasAttribute('platform', $config);

@@ -2,16 +2,15 @@
 declare(strict_types=1);
 
 namespace EnjinCoin\Test;
+
 use PHPUnit\Framework\TestCase;
 use EnjinCoin\ApiBase;
 
 /**
  * @covers Api
  */
-final class ApiBaseTest extends TestCase
-{
-	public function testHasDbInstance(): void
-	{
+final class ApiBaseTest extends TestCase {
+	public function testHasDbInstance(): void {
 		$apibase = new ApiBase();
 
 		$this->assertInstanceOf(

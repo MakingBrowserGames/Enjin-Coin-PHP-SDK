@@ -1,9 +1,9 @@
 <?php
 namespace EnjinCoin;
+
 use \EnjinCoin\Ethereum\GethIpc;
 
-class Ethereum
-{
+class Ethereum {
 	public function test() {
 		$connection = new GethIpc();
 		$connection->connect();

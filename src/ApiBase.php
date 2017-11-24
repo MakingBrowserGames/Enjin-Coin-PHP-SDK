@@ -1,13 +1,12 @@
 <?php
 namespace EnjinCoin;
+
 use EnjinCoin\Util\Db;
 
-class ApiBase
-{
+class ApiBase {
 	public $db;
 
-	public function __construct()
-	{
+	public function __construct() {
 		$this->db = Db::getInstance();
 	}
 }
