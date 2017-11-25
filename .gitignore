@@ -4,3 +4,4 @@ composer.lock
 /src/composer.phar
 /src/vendor/
 /src/composer.lock
+/.idea/
