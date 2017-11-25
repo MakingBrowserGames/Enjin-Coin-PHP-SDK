@@ -1,19 +1,24 @@
 -- -------------
 -- Enjin Coin SDK MySQL DB Schema
 
-CREATE DATABASE enjin_coin;
+CREATE DATABASE IF NOT EXISTS enjin_coin;
 
+USE enjin_coin;
+
+DROP TABLE IF EXISTS db_info;
 CREATE TABLE db_info (
   `db_version` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `updated` int(10) UNSIGNED NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS apps;
 CREATE TABLE apps (
   `app_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`app_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS transaction_requests;
 CREATE TABLE transaction_requests (
   `txr_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `timestamp` int(10) UNSIGNED NOT NULL DEFAULT 0,
@@ -33,9 +38,12 @@ CREATE TABLE transaction_requests (
   KEY (`timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+
 -- -------------
 -- Events
 
+DROP TABLE IF EXISTS events;
 CREATE TABLE events (
   `event_id` INT(10) unsigned NOT NULL AUTO_INCREMENT,
   `timestamp` int(10) UNSIGNED NOT NULL DEFAULT 0,
@@ -51,7 +59,7 @@ CREATE TABLE events (
 -- -------------
 -- Identities
 
-DROP TABLE identities;
+DROP TABLE IF EXISTS identities;
 CREATE TABLE identities (
   `identity_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `ethereum_address` VARCHAR(255) NULL DEFAULT NULL,
@@ -59,6 +67,7 @@ CREATE TABLE identities (
   PRIMARY KEY (`identity_id`),
   UNIQUE KEY (`linking_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*
 DROP TABLE identity_types;
 CREATE TABLE identity_types (
@@ -66,7 +75,8 @@ CREATE TABLE identity_types (
   PRIMARY KEY (`type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 */
-DROP TABLE identity_fields;
+
+DROP TABLE IF EXISTS identity_fields;
 CREATE TABLE identity_fields (
   `field_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `app_id` INT(10) UNSIGNED NOT NULL,
@@ -77,7 +87,7 @@ CREATE TABLE identity_fields (
   PRIMARY KEY (`field_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE identity_values;
+DROP TABLE IF EXISTS identity_values;
 CREATE TABLE identity_values (
   `identity_id` INT(10) UNSIGNED NOT NULL,
   `field_id` INT(10) UNSIGNED NOT NULL,
@@ -89,9 +99,12 @@ CREATE TABLE identity_values (
 
 ALTER TABLE identity_values ADD CONSTRAINT `fk_identity_values` FOREIGN KEY (`identity_id`) REFERENCES `identities` (`identity_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+
+
 -- -------------
 -- Tokens
 
+DROP TABLE IF EXISTS tokens;
 CREATE TABLE tokens (
   `app_id` INT(10) UNSIGNED NOT NULL,
   `token_id` INT(10) UNSIGNED NOT NULL,
