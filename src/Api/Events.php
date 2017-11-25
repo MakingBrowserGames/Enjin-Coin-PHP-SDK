@@ -48,23 +48,23 @@ class Events extends ApiBase {
 		return $results->toArray();
 	}
 
-    public function create(int $app_id, array $identity, $event_type, $data) {
+	public function create(int $app_id, array $identity, $event_type, $data) {
 		// Validate App ID
-    	if($app_id != 0) {
+		if ($app_id != 0) {
 			$apps = new Apps();
 			$app = $apps->get($app_id);
 			if (empty($app['app_id'])) throw new Exception('App ID does not exist');
 		}
 
 		// Validate Identity
-		$identities = new Identities();
-		$ident = $identities->get($identity);
-		if (empty($ident['identity_id'])) throw new Exception('Identity does not exist');
+		if (!empty($identity)) {
+			$identities = new Identities();
+			$ident = $identities->get($identity);
+			if (empty($ident['identity_id'])) throw new Exception('Identity does not exist');
+		}
 
 		// Validate Event Type
-		if(!in_array($event_type, $this->event_types) throw new Exception('Invalid event type');
-
-		if()
+		//if (!in_array($event_type, EnjinCoin\EventTypes::$event_types)) throw new Exception('Invalid event type');
 	}
 
 	/**
