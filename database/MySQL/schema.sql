@@ -112,3 +112,15 @@ CREATE TABLE tokens (
   `name` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`token_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+-- -------------
+-- Prices
+
+DROP TABLE IF EXISTS prices;
+CREATE TABLE prices (
+  `timestamp` TIMESTAMP NOT NULL,
+  `value` VARCHAR(500) NOT NULL,
+  PRIMARY KEY (`timestamp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

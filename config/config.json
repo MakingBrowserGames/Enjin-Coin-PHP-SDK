@@ -1,15 +1,24 @@
 {
-  "platform": {
-	"name": "My Platform"
-  },
-  "db": {
-	"adapter": "mysqli",
-	"database": "enjin_coin",
-	"username": "developer",
-	"password": "dev-password"
-  },
-  "ethereum": {
-	"mode": "geth_ipc",
-	"path": "\\\\.\\pipe\\geth.ipc"
-  }
+	"platform": {
+		"name": "My Platform"
+	},
+	"db": {
+		"adapter": "mysqli",
+		"database": "enjin_coin",
+		"username": "root",
+		"password": "root"
+	},
+	"prices": {
+		"max_days": 1095,
+		"currencies": {
+			"ENJ": {
+				"push_notifications": false,
+				"exchanges": ["binance", "hitbtc"]
+			}
+		}
+	},
+	"ethereum": {
+		"mode": "geth_ipc",
+		"path": "\\\\.\\pipe\\geth.ipc"
+	}
 }
