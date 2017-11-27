@@ -22,7 +22,7 @@
 		"path": "\\\\.\\pipe\\geth.ipc"
 	},
 	"notifications": {
-		"method": "Pusher",
+		"method": "pusher",
 		"pusher": {
 			"app_id": "YOUR_APP_ID",
 			"app_key": "YOUR_APP_KEY",
