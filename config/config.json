@@ -20,5 +20,13 @@
 	"ethereum": {
 		"mode": "geth_ipc",
 		"path": "\\\\.\\pipe\\geth.ipc"
+	},
+	"notifications": {
+		"method": "Pusher",
+		"pusher": {
+			"app_id": "YOUR_APP_ID",
+			"app_key": "YOUR_APP_KEY",
+			"app_secret": "YOUR_APP_SECRET"
+		}
 	}
 }
