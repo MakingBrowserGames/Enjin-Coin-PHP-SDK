@@ -4,7 +4,9 @@ namespace EnjinCoin\Api;
 use EnjinCoin;
 use EnjinCoin\Util\Db;
 use EnjinCoin\ApiBase;
+use EnjinCoin\Notifications;
 use PHPUnit\Runner\Exception;
+use Zend;
 
 class Events extends ApiBase {
 	const PRUNE_DAYS = 30;
@@ -45,7 +47,12 @@ class Events extends ApiBase {
 			$select->where->greaterThan('event_id', $after_event_id);
 
 		$results = Db::query($select);
-		return $results->toArray();
+		$output = $results->toArray();
+		foreach($output as &$value) {
+			$value['data'] = Zend\Json\Decoder::decode($value['data']);
+		}
+
+		return $output;
 	}
 
 	public function create(int $app_id, array $identity, $event_type, $data) {
@@ -64,7 +71,28 @@ class Events extends ApiBase {
 		}
 
 		// Validate Event Type
-		//if (!in_array($event_type, EnjinCoin\EventTypes::$event_types)) throw new Exception('Invalid event type');
+		$event_types = new EnjinCoin\EventTypes;
+		$event = $event_types->callEvent(
+			$event_type,
+			$app_id,
+			!empty($ident) ? $ident['identity_id'] : 0,
+			$data
+		);
+		if(empty($event)) throw new Exception('Invalid event type');
+
+		// Insert the Event
+		$insert = $this->db->insert('events');
+		$insert->values([
+			'timestamp' => time(),
+			'app_id' => $app_id,
+			'identity_id' => !empty($ident) ? $ident['identity_id'] : 0,
+			'event_type' => $event_type,
+			'data' => Zend\Json\Encoder::encode($event),
+		], $insert::VALUES_MERGE);
+
+		// Notify
+		// todo: retrieve a notification channels map for each event
+		Notifications::notify(Notifications::CHANNEL_GAME_SERVER, $event_type, $event);
 	}
 
 	/**

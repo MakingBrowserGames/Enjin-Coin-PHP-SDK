@@ -14,7 +14,7 @@ class Prices extends ApiBase {
 	 */
 	public function getPrices(array $symbols) {
 		$allowed_symbols = Config::get()->prices->currencies;
-		foreach($symbols as $i => $symbol) {
+		foreach ($symbols as $i => $symbol) {
 			if (!array_key_exists($symbol, $allowed_symbols)) {
 				unset($symbols[$i]);
 			}
@@ -27,10 +27,14 @@ class Prices extends ApiBase {
 		$row = DB::query($select)->toArray();
 		$row = !empty($row[0]) ? $row[0] : [];
 
-		$return_prices = array('timestamp' => $row['timestamp'], 'prices' => array());
+		$return_prices = [
+			'timestamp' => $row['timestamp'],
+			'prices' => []
+		];
+
 		if (!empty($row) && !empty($symbols)) {
 			$value = json_decode($row['value'], true);
-			foreach($value as $symbol => $rates) {
+			foreach ($value as $symbol => $rates) {
 				if (in_array($symbol, $symbols)) {
 					$return_prices['prices'][$symbol] = $rates;
 				}

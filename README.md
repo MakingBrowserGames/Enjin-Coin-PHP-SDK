@@ -1,6 +1,24 @@
 # Enjin-Coin-PHP-SDK
 PHP SDK for Enjin Coin - https://enjincoin.io
 
+# Requirements
+
+* PHP 7.1+
+* MySQL 5.6+
+
+##### Required modules on Ubuntu:
+```
+apt-get install php7.1-curl php7.1-json php7.1-mysql
+```
+
+##### Required modules on Windows:
+Ensure that the following lines are uncommented in your php.ini file:
+```
+extension=php_curl.dll
+extension=php_mysqli.dll
+extension=php_sockets.dll
+```
+
 # Installation
 composer install
 
