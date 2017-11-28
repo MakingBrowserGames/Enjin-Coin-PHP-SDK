@@ -36,4 +36,8 @@ class Notifications {
 	public static function notify($channel, $event, $data) {
 		self::getAdapter()->notify($channel, $event, $data);
 	}
+
+	public static function getWalletChannel($ethereum_address) {
+		return self::CHANNEL_WALLET . '_' . $ethereum_address;
+	}
 }

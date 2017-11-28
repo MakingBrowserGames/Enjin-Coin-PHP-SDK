@@ -1,6 +1,8 @@
 <?php
 namespace EnjinCoin\Api;
 
+use EnjinCoin\Auth;
+use EnjinCoin\EventTypes;
 use Zend;
 use EnjinCoin\ApiBase;
 use EnjinCoin\Util\Db;
@@ -97,6 +99,14 @@ class Identities extends ApiBase {
 			$insert->values(['value' => $value], $insert::VALUES_MERGE);
 			Db::query($insert);
 		}
+
+		/*
+		 * Event
+		 */
+		$events = new Events;
+		$events->create(Auth::appId(), ['identity_id' => $identity_id], EventTypes::IDENTITY_CREATED, [
+
+		]);
 
 		return [
 			'identity_id' => $identity_id,
