@@ -41,7 +41,7 @@ class Prices extends ApiBase {
 	}
 
 	/**
-	 * Get the price history by symbol
+	 * Get price history by symbol
 	 *
 	 * @param string $symbol
 	 * @param string $interval
