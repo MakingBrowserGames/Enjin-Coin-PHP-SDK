@@ -187,14 +187,16 @@ class Identities extends ApiBase {
 	 */
 	public function update($identity, $update) {
 		$identity = $this->get($identity);
+        $success = false;
 
 		foreach ($identity as $i) {
 			if (!empty($update['ethereum_address'])) {
 				$sql = $this->db->update('identities');
 				$sql->where(['identity_id' => $i['identity_id']]);
-				$sql->set(['ethereum_address' => $i['ethereum_address']]);
+				$sql->set(['ethereum_address' => $update['ethereum_address']]);
 				Db::query($sql);
 				unset($update['ethereum_address']);
+                $success = true;
 			}
 
 			if (!empty($update)) {
@@ -207,11 +209,12 @@ class Identities extends ApiBase {
 					]);
 					$sql->set(['value' => $value]);
 					Db::query($sql);
+                    $success = true;
 				}
 			}
 		}
 
-		return true;
+		return $success;
 	}
 
 	/**
@@ -221,7 +224,7 @@ class Identities extends ApiBase {
 	 * @return bool
 	 */
 	public function link(string $linking_code, string $ethereum_address) {
-		$this->update(['linking_code' => $linking_code], $ethereum_address);
-		return true;
+		$success = $this->update(['linking_code' => $linking_code], ['ethereum_address' => $ethereum_address]);
+		return $success;
 	}
 }

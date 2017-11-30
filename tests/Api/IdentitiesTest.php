@@ -25,6 +25,7 @@ final class IdentitiesTest extends TestCase {
 			'player_name' => $this->player_name,
 		]);
 		$this->identity_id = $result['identity_id'];
+		$this->linking_code = $result['linking_code'];
 	}
 
 	public function testCreate(): void {
@@ -53,6 +54,16 @@ final class IdentitiesTest extends TestCase {
 		$result = $api->get(['identity_id' => $this->identity_id]);
 		$this->assertArrayHasKey('player_name', $result[0]);
 		$this->assertEquals($this->player_name . 'updated', $result[0]['player_name']);
+	}
+
+	public function testLink(): void {
+		$api = new Identities();
+		$result = $api->link($this->linking_code, '0x1234567890');
+		$this->assertEquals($result, true);
+
+		$result = $api->get(['identity_id' => $this->identity_id]);
+		$this->assertArrayHasKey('ethereum_address', $result[0]);
+		$this->assertEquals('0x1234567890', $result[0]['ethereum_address']);
 	}
 
 	public function testDelete(): void {
