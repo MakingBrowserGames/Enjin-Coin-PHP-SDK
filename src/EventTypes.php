@@ -42,8 +42,10 @@ class EventTypes {
 	];
 
 	public function callEvent($event_type, $app_id, $identity_id, $params) {
-		if (in_array($event_type, self::$event_types) && method_exists($this, $event_type)) {
-			$data = $this->$event_type($params);
+		$event_string = self::$event_types[$event_type];
+
+	    if (in_array($event_string, self::$event_types) && method_exists($this, $event_string)) {
+			$data = $this->$event_string($params);
 			return $this->createEvent([
 				'event_type' => $event_type,
 				'app_id' => $app_id,

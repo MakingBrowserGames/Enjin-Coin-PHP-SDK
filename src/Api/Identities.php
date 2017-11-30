@@ -16,7 +16,7 @@ class Identities extends ApiBase {
 	 * @param int $limit
 	 * @return mixed
 	 */
-	public function get(array $identity = [], bool $linked = true, int $after_identity_id = null, int $limit = 50) {
+	public function get(array $identity = [], bool $linked = false, int $after_identity_id = null, int $limit = 50) {
 		$select = $this->db->select()
 			->from('identities')
 			->join('identity_values', 'identities.identity_id = identity_values.identity_id', Zend\Db\Sql\Select::SQL_STAR, Zend\Db\Sql\Select::JOIN_LEFT)
@@ -71,7 +71,7 @@ class Identities extends ApiBase {
 	 * @param $identity
 	 * @return array
 	 */
-	public function create($identity) {
+	public function create(array $identity) {
 		/*
 		 * Insert Identity
 		 */
@@ -127,13 +127,13 @@ class Identities extends ApiBase {
 
 	/**
 	 * Insert or fetch an identity field type
-	 * @param $key
+	 * @param string $key
 	 * @param int $searchable
 	 * @param int $displayable
 	 * @param int $unique
 	 * @return mixed
 	 */
-	public function field($key, $searchable = 1, $displayable = 1, $unique = 1) {
+	public function field(string $key, int $searchable = 1, int $displayable = 1, int $unique = 1) {
 		$select = $this->db->select()
 			->from('identity_fields')
 			->where([
@@ -146,6 +146,7 @@ class Identities extends ApiBase {
 
 		$insert = $this->db->insert('identity_fields');
 		$insert->values([
+		    'app_id' => Auth::appId(),
 			'key' => $key,
 			'searchable' => $searchable,
 			'displayable' => $displayable,
