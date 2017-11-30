@@ -55,7 +55,7 @@ class Events extends ApiBase {
 		return $output;
 	}
 
-	public function create(int $app_id, array $identity, $event_type, $data) {
+	public function create(int $app_id, $event_type, $data) {
 		// Validate App ID
 		if ($app_id != 0) {
 			$apps = new Apps();
@@ -64,9 +64,9 @@ class Events extends ApiBase {
 		}
 
 		// Validate Identity
-		if (!empty($identity)) {
+		if (!empty($data['identity'])) {
 			$identities = new Identities();
-			$ident = $identities->get($identity);
+			$ident = $identities->get($data['identity']);
 			if (empty($ident['identity_id'])) throw new Exception('Identity does not exist');
 		}
 

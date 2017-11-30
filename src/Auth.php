@@ -5,6 +5,7 @@ use Zend;
 
 class Auth {
 	private static $auth_key = null;
+	private static $role = 'guest';
 	private static $app_id = 0;
 
 	public static function init($auth_key) {

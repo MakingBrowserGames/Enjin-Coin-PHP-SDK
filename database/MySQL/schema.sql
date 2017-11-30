@@ -55,6 +55,19 @@ CREATE TABLE events (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- -------------
+-- Authentication / Roles
+
+DROP TABLE IF EXISTS roles;
+CREATE TABLE roles (
+  `role_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `role_type` VARCHAR(255) NULL DEFAULT NULL,
+  `auth_key` VARCHAR(255) NULL DEFAULT NULL,
+  `expires` INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`role_id`),
+  UNIQUE KEY (`auth_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 -- -------------
 -- Identities

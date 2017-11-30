@@ -41,133 +41,138 @@ class EventTypes {
 		self::TOKEN_CREATED => 'token_created',
 	];
 
-	public function callEvent($event_type, $app_id, $identity_id, $arguments) {
+	public function callEvent($event_type, $app_id, $identity_id, $params) {
 		if (in_array($event_type, self::$event_types) && method_exists($this, $event_type)) {
-			$data = call_user_func_array(array($this, $event_type), $arguments);
-			return $this->createEvent($event_type, $app_id, $identity_id, $data);
+			$data = $this->$event_type($params);
+			return $this->createEvent([
+				'event_type' => $event_type,
+				'app_id' => $app_id,
+				'identity_id' => $identity_id,
+				'data' => $data
+			]);
 		}
 
 		return false;
 	}
 
-	public function txr_pending($txr_id, $identity, $recipient, $type, $icon, $title, $value) {
+	public function txr_pending($params) {
 		$identities = new Identities();
 
 		return [
-			'txr_id' => $txr_id,
-			'identity' => $identities->get($identity),
-			'recipient' => $identities->get($recipient),
-			'type' => $type,
-			'icon' => $icon,
-			'title' => $title,
-			'value' => $value,
+			'txr_id' => $params['txr_id'],
+			'identity' => $identities->get($params['identity']),
+			'recipient' => $identities->get($params['recipient']),
+			'type' => $params['type'],
+			'icon' => $params['icon'],
+			'title' => $params['title'],
+			'value' => $params['value'],
 			'state' => 'pending',
 		];
 	}
 
-	public function txr_canceled_user($txr_id, $identity, $recipient, $type, $icon, $title, $value) {
+	public function txr_canceled_user($params) {
 		$identities = new Identities();
 
 		return [
-			'txr_id' => $txr_id,
-			'identity' => $identities->get($identity),
-			'recipient' => $identities->get($recipient),
-			'type' => $type,
-			'icon' => $icon,
-			'title' => $title,
-			'value' => $value,
+			'txr_id' => $params['txr_id'],
+			'identity' => $identities->get($params['identity']),
+			'recipient' => $identities->get($params['recipient']),
+			'type' => $params['type'],
+			'icon' => $params['icon'],
+			'title' => $params['title'],
+			'value' => $params['value'],
 			'state' => 'canceled_user',
 		];
 	}
 
-	public function txr_canceled_platform($txr_id, $identity, $recipient, $type, $icon, $title, $value) {
+	public function txr_canceled_platform($params) {
 		$identities = new Identities();
 
 		return [
-			'txr_id' => $txr_id,
-			'identity' => $identities->get($identity),
-			'recipient' => $identities->get($recipient),
-			'type' => $type,
-			'icon' => $icon,
-			'title' => $title,
-			'value' => $value,
+			'txr_id' => $params['txr_id'],
+			'identity' => $identities->get($params['identity']),
+			'recipient' => $identities->get($params['recipient']),
+			'type' => $params['type'],
+			'icon' => $params['icon'],
+			'title' => $params['title'],
+			'value' => $params['value'],
 			'state' => 'canceled_user',
 		];
 	}
 
-	public function txr_accepted($txr_id, $identity, $recipient, $type, $icon, $title, $value) {
+	public function txr_accepted($params) {
 		$identities = new Identities();
 
 		return [
-			'txr_id' => $txr_id,
-			'identity' => $identities->get($identity),
-			'recipient' => $identities->get($recipient),
-			'type' => $type,
-			'icon' => $icon,
-			'title' => $title,
-			'value' => $value,
+			'txr_id' => $params['txr_id'],
+			'identity' => $identities->get($params['identity']),
+			'recipient' => $identities->get($params['recipient']),
+			'type' => $params['type'],
+			'icon' => $params['icon'],
+			'title' => $params['title'],
+			'value' => $params['value'],
 			'state' => 'accepted',
 		];
 	}
 
-	public function identity_created($identity) {
+	public function identity_created($params) {
 		$identities = new Identities();
-		return ['identity' => $identities->get($identity)];
+		return ['identity' => $identities->get($params['identity']), 'linking_code' => $params['linking_code']];
 	}
 
-	public function identity_linked($identity) {
+	public function identity_linked($params) {
 		$identities = new Identities();
-		return ['identity' => $identities->get($identity)];
+		return ['identity' => $identities->get($params['identity'])];
 	}
 
-	public function identity_updated($identity) {
+	public function identity_updated($params) {
 		$identities = new Identities();
-		return ['identity' => $identities->get($identity)];
+		return ['identity' => $identities->get($params['identity'])];
 	}
 
-	public function identity_deleted($identity) {
-		return ['identity' => $identity];
+	public function identity_deleted($params) {
+		return ['identity' => $params['identity']];
 	}
 
-	public function balance_updated($identity, $from, $pending, $confirmed) {
+	public function balance_updated($params) {
 		$identities = new Identities();
 
 		return [
-			'identity' => $identities->get($identity),
-			'from' => $identities->get($from),
-			'pending' => $pending,
-			'confirmed' => $confirmed,
+			'identity' => $identities->get($params['identity']),
+			'from' => $identities->get($params['from']),
+			'pending' => $params['pending'],
+			'confirmed' => $params['confirmed'],
 		];
 	}
 
-	public function balance_melted($identity, $from, $pending, $confirmed, $enj) {
+	public function balance_melted($params) {
 		$identities = new Identities();
 
 		return [
-			'identity' => $identities->get($identity),
-			'from' => $identities->get($from),
-			'pending' => $pending,
-			'confirmed' => $confirmed,
-			'ENJ' => $enj
+			'identity' => $identities->get($params['identity']),
+			'from' => $identities->get($params['from']),
+			'pending' => $params['pending'],
+			'confirmed' => $params['confirmed'],
+			'ENJ' => $params['enj']
 		];
 	}
 
-	public function token_updated($token_id) {
+	public function token_updated($params) {
 		$tokens = new Tokens();
-		return $tokens->get($token_id);
+		return $tokens->get($params['token_id']);
 	}
 
-	public function token_created($token_id) {
+	public function token_created($params) {
 		$tokens = new Tokens();
-		return $tokens->get($token_id);
+		return $tokens->get($params['token_id']);
 	}
 
-	private function createEvent($app_id, $identity_id, $event_type, $data) {
+	private function createEvent($params) {
 		return [
-			'app_id' => $app_id,
-			'identity_id' => $identity_id,
-			'event_type' => $event_type,
-			'data' => json_encode($data)
+			'app_id' => $params['app_id'],
+			'identity_id' => $params['identity_id'],
+			'event_type' => $params['event_type'],
+			'data' => json_encode($params['data'])
 		];
 	}
 }

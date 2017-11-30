@@ -5,8 +5,8 @@
 	"db": {
 		"adapter": "mysqli",
 		"database": "enjin_coin",
-		"username": "root",
-		"password": "root"
+		"username": "developer",
+		"password": "dev-password"
 	},
 	"prices": {
 		"max_days": 1095,
@@ -32,5 +32,18 @@
 			"app_key": "YOUR_APP_KEY",
 			"app_secret": "YOUR_APP_SECRET"
 		}
+	},
+	"permissions": {
+		"guest": {
+			"Identities": ["get"],
+			"Prices": ["getPrices"]
+		},
+		"linked_wallet": {
+			"Events": ["get"]
+		},
+		"game_server": {
+			"Identities": ["get", "create", "update"]
+		},
+		"admin": "*"
 	}
 }

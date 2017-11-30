@@ -104,9 +104,7 @@ class Identities extends ApiBase {
 		 * Event
 		 */
 		$events = new Events;
-		$events->create(Auth::appId(), ['identity_id' => $identity_id], EventTypes::IDENTITY_CREATED, [
-
-		]);
+		$events->create(Auth::appId(), EventTypes::IDENTITY_CREATED, ['identity' => ['identity_id' => $identity_id], 'linking_code' => $linking_code]);
 
 		return [
 			'identity_id' => $identity_id,
