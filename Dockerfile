@@ -9,8 +9,7 @@ RUN apt-get update -y && apt-get upgrade -yu && apt-get autoremove -y
 RUN apt-get install -y supervisor curl wget git unzip
 
 # Set up php-fpm 7.1
-RUN apt-get install -y php7.1-fpm php7.1-mysql php7.1-gd php7.1-dom php7.1-json php7.1-mbstring php7.1-curl php7.1-mcrypt
-RUN php -v
+RUN apt-get install -y php7.1 php7.1-mysql php7.1-gd php7.1-dom php7.1-json php7.1-mbstring php7.1-curl php7.1-mcrypt
 
 # The run directory (and log!) for php does not get created when PHP is installed..
 RUN mkdir -p /run/php /run/mysqld

@@ -1,3 +1,4 @@
 #!/bin/bash
 chown -R mysql:mysql /var/run/mysqld /var/lib/mysql
-exec /usr/bin/supervisord --nodaemon -c /etc/supervisor/supervisord.conf
+/usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+cd public_html && php -S localhost:80
