@@ -72,23 +72,6 @@ CREATE TABLE roles (
 -- -------------
 -- Identities
 
-DROP TABLE IF EXISTS identities;
-CREATE TABLE identities (
-  `identity_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `ethereum_address` VARCHAR(255) NULL DEFAULT NULL,
-  `identity_code` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`identity_id`),
-  UNIQUE KEY (`identity_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*
-DROP TABLE identity_types;
-CREATE TABLE identity_types (
-  `type_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`type_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-*/
-
 DROP TABLE IF EXISTS identity_fields;
 CREATE TABLE identity_fields (
   `field_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -108,6 +91,15 @@ CREATE TABLE identity_values (
   PRIMARY KEY (`value`, `field_id`, `identity_id`),
   KEY (`identity_id`),
   KEY (`field_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS identities;
+CREATE TABLE identities (
+  `identity_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ethereum_address` VARCHAR(255) NULL DEFAULT NULL,
+  `identity_code` VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`identity_id`),
+  UNIQUE KEY (`identity_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE identity_values ADD CONSTRAINT `fk_identity_values` FOREIGN KEY (`identity_id`) REFERENCES `identities` (`identity_id`) ON DELETE CASCADE ON UPDATE CASCADE;
