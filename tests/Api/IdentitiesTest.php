@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class IdentitiesTest extends TestCase {
 	protected $identity_id = 0;
-	protected $linking_code = '';
+	protected $identity_code = '';
 	protected $ethereum_address = '';
 	protected $player_name = '';
 
@@ -25,7 +25,7 @@ final class IdentitiesTest extends TestCase {
 			'player_name' => $this->player_name,
 		]);
 		$this->identity_id = $result['identity_id'];
-		$this->linking_code = $result['linking_code'];
+		$this->identity_code = $result['identity_code'];
 	}
 
 	public function testCreate(): void {
@@ -35,7 +35,7 @@ final class IdentitiesTest extends TestCase {
 		]);
 
 		$this->assertArrayHasKey('identity_id', $result);
-		$this->assertArrayHasKey('linking_code', $result);
+		$this->assertArrayHasKey('identity_code', $result);
 	}
 
 	public function testGet(): void {
@@ -58,7 +58,7 @@ final class IdentitiesTest extends TestCase {
 
 	public function testLink(): void {
 		$api = new Identities();
-		$result = $api->link($this->linking_code, '0x1234567890');
+		$result = $api->link($this->identity_code, '0x1234567890');
 		$this->assertEquals($result, true);
 
 		$result = $api->get(['identity_id' => $this->identity_id]);

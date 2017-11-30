@@ -76,9 +76,9 @@ DROP TABLE IF EXISTS identities;
 CREATE TABLE identities (
   `identity_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `ethereum_address` VARCHAR(255) NULL DEFAULT NULL,
-  `linking_code` VARCHAR(255) NULL DEFAULT NULL,
+  `identity_code` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`identity_id`),
-  UNIQUE KEY (`linking_code`)
+  UNIQUE KEY (`identity_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*
