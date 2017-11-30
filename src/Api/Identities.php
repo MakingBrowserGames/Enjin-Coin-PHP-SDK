@@ -41,7 +41,7 @@ class Identities extends ApiBase {
 		}
 
 		if ($after_identity_id)
-			$select->where(['after_identity_id' => $after_identity_id]);
+			$select->where->greaterThan('identities.identity_id', $after_identity_id);
 
 		$select->limit($limit);
 
