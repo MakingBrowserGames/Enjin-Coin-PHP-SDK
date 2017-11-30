@@ -30,7 +30,7 @@ class Identities extends ApiBase {
 			switch ($key) {
 				case 'identity_id':
 				case 'ethereum_address':
-				case 'linking_code':
+				case 'identity_code':
 					$select->where(['identities.' . $key => $value]);
 					break;
 				default:
@@ -58,7 +58,7 @@ class Identities extends ApiBase {
 				->where(['identity_id' => $ident['identity_id']]);
 			$v_result = Db::query($select)->toArray();
 			foreach ($v_result as $v) {
-				if (in_array($v['key'], ['identity_id', 'ethereum_address', 'linking_code'])) continue;
+				if (in_array($v['key'], ['identity_id', 'ethereum_address', 'identity_code'])) continue;
 				$ident[$v['key']] = $v['value'];
 			}
 		}
@@ -77,8 +77,8 @@ class Identities extends ApiBase {
 		 */
 		$insert = $this->db->insert('identities');
 
-		$linking_code = $this->generateLinkingCode();
-		$insert->values(['linking_code' => $linking_code], $insert::VALUES_MERGE);
+		$identity_code = $this->generateLinkingCode();
+		$insert->values(['identity_code' => $identity_code], $insert::VALUES_MERGE);
 
 		if (!empty($identity['ethereum_address'])) {
 			$insert->values(['ethereum_address' => $identity['ethereum_address']], $insert::VALUES_MERGE);
@@ -90,7 +90,7 @@ class Identities extends ApiBase {
 		 * Insert Identity Fields & Values
 		 */
 		foreach ($identity as $key => $value) {
-			if (in_array($key, ['identity_id', 'linking_code', 'ethereum_address'])) continue;
+			if (in_array($key, ['identity_id', 'identity_code', 'ethereum_address'])) continue;
 
 			$field = $this->field($key);
 			$insert = $this->db->insert('identity_values');
@@ -104,11 +104,11 @@ class Identities extends ApiBase {
 		 * Event
 		 */
 		$events = new Events;
-		$events->create(Auth::appId(), EventTypes::IDENTITY_CREATED, ['identity' => ['identity_id' => $identity_id], 'linking_code' => $linking_code]);
+		$events->create(Auth::appId(), EventTypes::IDENTITY_CREATED, ['identity' => ['identity_id' => $identity_id], 'identity_code' => $identity_code]);
 
 		return [
 			'identity_id' => $identity_id,
-			'linking_code' => $linking_code
+			'identity_code' => $identity_code
 		];
 	}
 
@@ -219,12 +219,12 @@ class Identities extends ApiBase {
 
 	/**
 	 * Link Smart Wallet to Identity using the Linking Code
-	 * @param string $linking_code
+	 * @param string $identity_code
 	 * @param string $ethereum_address
 	 * @return bool
 	 */
-	public function link(string $linking_code, string $ethereum_address) {
-		$success = $this->update(['linking_code' => $linking_code], ['ethereum_address' => $ethereum_address]);
+	public function link(string $identity_code, string $ethereum_address) {
+		$success = $this->update(['identity_code' => $identity_code], ['ethereum_address' => $ethereum_address]);
 		return $success;
 	}
 }

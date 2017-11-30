@@ -119,7 +119,7 @@ class EventTypes {
 
 	public function identity_created($params) {
 		$identities = new Identities();
-		return ['identity' => $identities->get($params['identity']), 'linking_code' => $params['linking_code']];
+		return ['identity' => $identities->get($params['identity']), 'identity_code' => $params['identity_code']];
 	}
 
 	public function identity_linked($params) {
