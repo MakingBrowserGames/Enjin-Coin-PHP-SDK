@@ -181,8 +181,8 @@ class Identities extends ApiBase {
 
 	/**
 	 * Update Identities based on filters
-	 * @param $identity
-	 * @param $update
+	 * @param array $identity
+	 * @param array $update
 	 * @return bool
 	 */
 	public function update($identity, $update) {
@@ -211,6 +211,17 @@ class Identities extends ApiBase {
 			}
 		}
 
+		return true;
+	}
+
+	/**
+	 * Link Smart Wallet to Identity using the Linking Code
+	 * @param string $linking_code
+	 * @param string $ethereum_address
+	 * @return bool
+	 */
+	public function link(string $linking_code, string $ethereum_address) {
+		$this->update(['linking_code' => $linking_code], $ethereum_address);
 		return true;
 	}
 }
