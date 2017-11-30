@@ -5,8 +5,8 @@
 	"db": {
 		"adapter": "mysqli",
 		"database": "enjin_coin",
-		"username": "developer",
-		"password": "dev-password"
+		"username": "root",
+		"password": "root"
 	},
 	"prices": {
 		"max_days": 1095,
