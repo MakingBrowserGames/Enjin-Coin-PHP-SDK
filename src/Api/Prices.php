@@ -4,24 +4,27 @@ namespace EnjinCoin\Api;
 use EnjinCoin\Config;
 use EnjinCoin\ApiBase;
 use EnjinCoin\Util\Db;
+use EnjinCoin\Prices as ModelPrices;
 
 class Prices extends ApiBase {
 	/**
 	 * Get latest prices by exchange
 	 *
-	 * @param array $symbols
+	 * @param bool|array $markets
 	 * @return array
 	 */
-	public function getPrices(array $symbols) {
-		$allowed_symbols = Config::get()->prices->currencies;
-		foreach ($symbols as $i => $symbol) {
-			if (!array_key_exists($symbol, $allowed_symbols)) {
-				unset($symbols[$i]);
+	public function getPrices($markets = false) {
+		if (is_array($markets)) {
+			$allowed_markets = Config::get()->prices->markets;
+			foreach ($markets as $i => $market) {
+				if (!array_key_exists($market, $allowed_markets)) {
+					unset($markets[$i]);
+				}
 			}
 		}
 
 		$select = $this->db->select()
-			->from('prices', 'value')
+			->from('prices')
 			->order('timestamp DESC')
 			->limit(1);
 		$row = DB::query($select)->toArray();
@@ -29,14 +32,13 @@ class Prices extends ApiBase {
 
 		$return_prices = [
 			'timestamp' => $row['timestamp'],
-			'prices' => []
+			'prices' => json_decode($row['value'], true)
 		];
 
-		if (!empty($row) && !empty($symbols)) {
-			$value = json_decode($row['value'], true);
-			foreach ($value as $symbol => $rates) {
-				if (in_array($symbol, $symbols)) {
-					$return_prices['prices'][$symbol] = $rates;
+		if (!empty($row) && !empty($markets)) {
+			foreach ($return_prices['prices'] as $market => $rates) {
+				if (!in_array($market, $markets)) {
+					unset($return_prices['prices'][$market]);
 				}
 			}
 		}
@@ -45,15 +47,85 @@ class Prices extends ApiBase {
 	}
 
 	/**
-	 * Get price history by symbol
+	 * Get price history by market
 	 *
-	 * @param string $symbol
+	 * @param $market
 	 * @param string $interval
-	 * @param string $start
-	 * @param string $end
+	 * @param bool $start
+	 * @param bool $end
 	 * @return array
 	 */
-	public function getHistory(string $symbol, string $interval, string $start, string $end) {
+	public function getHistory($market, $interval = 'd', $start = false, $end = false) {
+		$allowed_intervals = array('m', 'h', 'd', 'w', 'mo', 'y');
+		if (!in_array($interval, $allowed_intervals)) {
+			$interval = 'd';
+		}
 
+		if (!$start) {
+			$start = strtotime("1 month ago");
+		}
+
+		if (!$end) {
+			$end = time();
+		}
+
+		$select = $this->db->select()
+			->from('prices')
+			->where(['timestamp > ?' => $start])
+			->where(['timestamp < ?' => $end])
+			->order('timestamp ASC');
+		$rows = DB::query($select)->toArray();
+
+		$prices = array();
+		foreach($rows as $row) {
+			$values = json_decode($row['value'], true);
+			if ($interval == 'm') {
+				$base = floor($row['timestamp'] / 60) * 60;
+			} else if ($interval == 'h') {
+				$base = floor($row['timestamp'] / (60 * 60)) * 60 * 60;
+			} else if ($interval == 'd') {
+				$base = floor($row['timestamp'] / (60 * 60 * 24)) * 60 * 60 * 24;
+			} else if ($interval == 'w') {
+				$base = floor($row['timestamp'] / (60 * 60 * 24 * 7)) * 60 * 60 * 24 * 7;
+			} else if ($interval == 'mo') {
+				$base = floor($row['timestamp'] / (60 * 60 * 24 * 30)) * 60 * 60 * 24 * 30;
+			} else if ($interval == 'y') {
+				$base = floor($row['timestamp'] / (60 * 60 * 24 * 365)) * 60 * 60 * 24 * 365;
+			}
+
+			if (isset($values[$market])) {
+				$prices[$base] = $values[$market];
+			}
+		}
+
+		return $prices;
+	}
+
+	/**
+	 * Get markets by exchange
+	 *
+	 * @param $exchange
+	 * @return array
+	 */
+	public function getMarkets($exchange) {
+		$model = new ModelPrices(strtolower($exchange));
+		$markets = $model->fetchMarkets();
+
+		$symbols = array();
+		foreach($markets as $market) {
+			$symbols[] = $market['symbol'];
+		}
+
+		return $symbols;
+	}
+
+	/**
+	 * Get supported exchanges
+	 *
+	 * @return mixed
+	 */
+	public function getExchanges() {
+		$model = new ModelPrices();
+		return $model->getExchanges();
 	}
 }

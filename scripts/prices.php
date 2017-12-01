@@ -7,19 +7,36 @@ use EnjinCoin\Config;
 use EnjinCoin\Prices;
 
 function onRepeat($watcherID) {
-	$model_prices = new Prices;
 	$db = Db::getInstance();
-
 	$timestamp = floor(time() / 60) * 60;
 	$value = [];
 
 	$markets = Config::get()->prices->markets;
 	foreach($markets as $market_title => $options) {
-		$ticker = $model_prices->fetchTicker($options['exchange'], $market_title);
-		$value[$market_title] = $ticker['last'];
+		// make sure the exchange supports this market
+		$model_prices = new Prices(strtolower($options->exchange));
+		$exchange_markets = $model_prices->fetchMarkets();
+		$found = false;
+		foreach($exchange_markets as $market) {
+			$symbols[] = $market['symbol'];
+			if ($market['symbol'] == $market_title) {
+				$found = true;
+				break;
+			}
+		}
 
-		// pusher updates
-		if ($options['push_notifications']) {
+		if (!$found) {
+			continue;
+		}
+
+		// get the exchange pricing data for the market
+		$ticker = $model_prices->fetchTicker($market_title);
+		if (!empty($ticker['last'])) {
+			$value[$market_title] = number_format($ticker['last'], 8);
+		}
+
+		// update pusher channels
+		if ($options->push_notifications) {
 
 		}
 	}
@@ -41,6 +58,17 @@ function onRepeat($watcherID) {
 	}
 }
 
+function prune($watcherID) {
+	// clear rows older than the set amount of maximum days
+	$max_days = Config::get()->prices->max_days;
+	$exp_time = strtotime("{$max_days} days ago");
+	$db = Db::getInstance();
+	$delete = $db->delete('prices');
+	$delete->where(['timestamp < ?' => $exp_time]);
+	Db::query($delete);
+}
+
 Loop::run(function () {
 	Loop::repeat(15000, "onRepeat");
+	Loop::repeat(43200000, "prune");
 });

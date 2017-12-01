@@ -11,13 +11,17 @@
 	"prices": {
 		"max_days": 1095,
 		"markets": {
+			"ENJ/USD": {
+				"push_notifications": false,
+				"exchange": "hitbtc"
+			},
 			"ENJ/BTC": {
 				"push_notifications": false,
-				"exchange": "binance"
+				"exchange": "hitbtc"
 			},
 			"ENJ/ETH": {
 				"push_notifications": false,
-				"exchange": "binance"
+				"exchange": "hitbtc"
 			}
 		}
 	},
