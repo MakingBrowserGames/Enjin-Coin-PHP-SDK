@@ -100,11 +100,7 @@ class Identities extends ApiBase {
 			Db::query($insert);
 		}
 
-		/*
-		 * Event
-		 */
-		$events = new Events;
-		$events->create(Auth::appId(), EventTypes::IDENTITY_CREATED, ['identity' => ['identity_id' => $identity_id], 'identity_code' => $identity_code]);
+		(new Events)->create(Auth::appId(), EventTypes::IDENTITY_CREATED, ['identity' => ['identity_id' => $identity_id], 'identity_code' => $identity_code]);
 
 		return [
 			'identity_id' => $identity_id,
@@ -183,9 +179,10 @@ class Identities extends ApiBase {
 	 * Update Identities based on filters
 	 * @param array $identity
 	 * @param array $update
+	 * @param bool $emit_event
 	 * @return bool
 	 */
-	public function update($identity, $update) {
+	public function update($identity, $update, $emit_event = true) {
 		$identity = $this->get($identity);
         $success = false;
 
@@ -193,7 +190,10 @@ class Identities extends ApiBase {
 			if (!empty($update['ethereum_address'])) {
 				$sql = $this->db->update('identities');
 				$sql->where(['identity_id' => $i['identity_id']]);
-				$sql->set(['ethereum_address' => $update['ethereum_address']]);
+				$sql->set([
+					'ethereum_address' => $update['ethereum_address'],
+					'identity_code' => ''
+				]);
 				Db::query($sql);
 				unset($update['ethereum_address']);
                 $success = true;
@@ -214,6 +214,9 @@ class Identities extends ApiBase {
 			}
 		}
 
+		if($emit_event)
+			(new Events)->create(Auth::appId(), EventTypes::IDENTITY_UPDATED, ['identity' => ['identity_id' => $identity['identity_id']]]);
+
 		return $success;
 	}
 
@@ -224,7 +227,10 @@ class Identities extends ApiBase {
 	 * @return bool
 	 */
 	public function link(string $identity_code, string $ethereum_address) {
-		$success = $this->update(['identity_code' => $identity_code], ['ethereum_address' => $ethereum_address]);
+		$success = $this->update(['identity_code' => $identity_code], ['ethereum_address' => $ethereum_address], false);
+
+		(new Events)->create(Auth::appId(), EventTypes::IDENTITY_LINKED, ['identity' => ['ethereum_address' => $ethereum_address]]);
+
 		return $success;
 	}
 }
