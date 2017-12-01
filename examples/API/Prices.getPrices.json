@@ -1,0 +1,10 @@
+{
+	"jsonrpc": "2.0",
+	"method": "getPrices",
+	"params": {
+		"markets": [
+			"ENJ/USD"
+		]
+	},
+	"id": "1"
+}

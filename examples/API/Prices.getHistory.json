@@ -1,0 +1,9 @@
+{
+	"jsonrpc": "2.0",
+	"method": "getHistory",
+	"params": {
+		"market": "ENJ/USD",
+		"interval": "h"
+	},
+	"id": "1"
+}

@@ -1,0 +1,7 @@
+{
+	"jsonrpc": "2.0",
+	"method": "getExchanges",
+	"params": {
+	},
+	"id": "1"
+}
