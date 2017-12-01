@@ -82,6 +82,7 @@ class Events extends ApiBase {
 		if(empty($event)) throw new Exception('Invalid event type');
 
 		// Insert the Event
+		// @todo: shorten all "identity" fields to only include "identity_id" if event data grows too fast or becomes cumbersome
 		$insert = $this->db->insert('events');
 		$insert->values([
 			'timestamp' => time(),
@@ -90,6 +91,9 @@ class Events extends ApiBase {
 			'event_type' => $event_type,
 			'data' => Zend\Json\Encoder::encode($event),
 		], $insert::VALUES_MERGE);
+
+		$result = Db::query($insert);
+		$event['event_id'] = $result->getGeneratedValue();
 
 		// Notify
 		// todo: retrieve a notification channels map for each event
