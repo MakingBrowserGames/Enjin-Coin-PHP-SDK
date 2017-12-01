@@ -99,7 +99,7 @@ CREATE TABLE identities (
   `ethereum_address` VARCHAR(255) NULL DEFAULT NULL,
   `identity_code` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`identity_id`),
-  UNIQUE KEY (`identity_code`)
+  KEY (`identity_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE identity_values ADD CONSTRAINT `fk_identity_values` FOREIGN KEY (`identity_id`) REFERENCES `identities` (`identity_id`) ON DELETE CASCADE ON UPDATE CASCADE;

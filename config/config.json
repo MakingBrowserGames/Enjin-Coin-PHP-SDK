@@ -32,9 +32,11 @@
 	"notifications": {
 		"method": "pusher",
 		"pusher": {
-			"app_id": "YOUR_APP_ID",
 			"app_key": "YOUR_APP_KEY",
-			"app_secret": "YOUR_APP_SECRET"
+			"app_secret": "YOUR_APP_SECRET",
+			"app_id": "YOUR_APP_ID",
+			"encrypted": false,
+			"cluster": "us2"
 		}
 	},
 	"permissions": {

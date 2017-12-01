@@ -2,6 +2,7 @@
 namespace EnjinCoin\Notifications;
 
 use EnjinCoin\Config;
+use EnjinCoin\EventTypes;
 use Pusher;
 
 class PusherAdapter implements INotifications {
@@ -13,15 +14,16 @@ class PusherAdapter implements INotifications {
 			Config::get()->notifications->pusher->app_secret,
 			Config::get()->notifications->pusher->app_id,
 			array(
-				'encrypted' => true
+				'encrypted' => Config::get()->notifications->pusher->encrypted,
+                'cluster' => Config::get()->notifications->pusher->cluster,
 			)
 		);
 	}
 
 	public function notify($channel, $event, $data) {
-		$this->pusher->trigger(
+		return $this->pusher->trigger(
 			$channel,
-			$event,
+			EventTypes::$event_types[$event],
 			$data
 		);
 	}
