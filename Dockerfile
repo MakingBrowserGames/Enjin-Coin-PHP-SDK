@@ -44,5 +44,5 @@ RUN mv /www/docker/entrypoint.sh /
 # Remove the copied docker files because they shouldn't be in /www
 RUN rm -rf /www/docker
 
-EXPOSE 80
+EXPOSE 8080
 ENTRYPOINT ["/entrypoint.sh"]
