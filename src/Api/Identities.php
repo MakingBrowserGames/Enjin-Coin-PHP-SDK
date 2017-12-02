@@ -3,6 +3,7 @@ namespace EnjinCoin\Api;
 
 use EnjinCoin\Auth;
 use EnjinCoin\EventTypes;
+use PHPUnit\Runner\Exception;
 use Zend;
 use EnjinCoin\ApiBase;
 use EnjinCoin\Util\Db;
@@ -16,11 +17,13 @@ class Identities extends ApiBase {
 	 * @param int $limit
 	 * @return mixed
 	 */
-	public function get(array $identity = [], bool $linked = false, int $after_identity_id = null, int $limit = 50) {
+	public function get(array $identity = [], bool $linked = false, int $after_identity_id = null, int $limit = 50, $extra_fields = false) {
 		$select = $this->db->select()
 			->from('identities')
-			->join('identity_values', 'identities.identity_id = identity_values.identity_id', Zend\Db\Sql\Select::SQL_STAR, Zend\Db\Sql\Select::JOIN_LEFT)
-			->join('identity_fields', 'identity_fields.field_id = identity_values.field_id', Zend\Db\Sql\Select::SQL_STAR, Zend\Db\Sql\Select::JOIN_LEFT);
+			->join('identity_values', 'identities.identity_id = identity_values.identity_id', ['value'], Zend\Db\Sql\Select::JOIN_LEFT)
+			->join('identity_fields', 'identity_fields.field_id = identity_values.field_id', ['key'], Zend\Db\Sql\Select::JOIN_LEFT);
+
+		if(!$extra_fields) $select->columns(['identity_id', 'ethereum_address']);
 
 		if ($linked) {
 			$select->where("ethereum_address != ''");
@@ -72,9 +75,6 @@ class Identities extends ApiBase {
 	 * @return array
 	 */
 	public function create(array $identity) {
-		/*
-		 * Insert Identity
-		 */
 		$insert = $this->db->insert('identities');
 
 		$identity_code = $this->generateLinkingCode();
@@ -86,9 +86,7 @@ class Identities extends ApiBase {
 		$results = Db::query($insert);
 		$identity_id = $results->getGeneratedValue();
 
-		/*
-		 * Insert Identity Fields & Values
-		 */
+        // Insert Identity Fields & Values
 		foreach ($identity as $key => $value) {
 			if (in_array($key, ['identity_id', 'identity_code', 'ethereum_address'])) continue;
 
@@ -169,9 +167,16 @@ class Identities extends ApiBase {
 	 * @return bool
 	 */
 	public function delete($identity) {
-		$delete = $this->db->delete('identities');
-		$delete->where($identity);
-		Db::query($delete);
+        $identities = $this->get($identity);
+
+        foreach($identities as $identity) {
+            $delete = $this->db->delete('identities');
+            $delete->where($identity);
+            Db::query($delete);
+
+            (new Events)->create(Auth::appId(), EventTypes::IDENTITY_DELETED, ['identity' => ['identity_id' => $identity['identity_id']]]);
+        }
+
 		return true;
 	}
 
@@ -183,8 +188,18 @@ class Identities extends ApiBase {
 	 * @return bool
 	 */
 	public function update($identity, $update, $emit_event = true) {
-		$identity = $this->get($identity);
+	    $identity = $this->get($identity);
         $success = false;
+
+        // Check if any identity is already linked to this Ethereum address
+        if (!empty($update['ethereum_address'])) {
+            $existing_address = $this->get(['ethereum_address' => $update['ethereum_address']]);
+            foreach($existing_address as $value) {
+                foreach ($identity as $i) {
+                    if ($value['identity_id'] != $i['identity_id']) throw new Exception('This Ethereum address is already linked');
+                }
+            }
+        }
 
 		foreach ($identity as $i) {
 			if (!empty($update['ethereum_address'])) {
@@ -222,11 +237,13 @@ class Identities extends ApiBase {
 
 	/**
 	 * Link Smart Wallet to Identity using the Linking Code
+     * todo: sign identity code using eth private key
 	 * @param string $identity_code
 	 * @param string $ethereum_address
+	 * @param string $signature
 	 * @return bool
 	 */
-	public function link(string $identity_code, string $ethereum_address) {
+	public function link(string $identity_code, string $ethereum_address, string $signature = '') {
 		$success = $this->update(['identity_code' => $identity_code], ['ethereum_address' => $ethereum_address], false);
 
 		(new Events)->create(Auth::appId(), EventTypes::IDENTITY_LINKED, ['identity' => ['ethereum_address' => $ethereum_address]]);

@@ -174,7 +174,7 @@ class EventTypes {
 			'app_id' => $params['app_id'],
 			'identity_id' => $params['identity_id'],
 			'event_type' => $params['event_type'],
-			'data' => json_encode($params['data'])
+			'data' => $params['data']
 		];
 	}
 }

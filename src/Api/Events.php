@@ -67,6 +67,7 @@ class Events extends ApiBase {
 		if (!empty($data['identity'])) {
 			$identities = new Identities();
 			$ident = $identities->get($data['identity']);
+			$ident = reset($ident);
 			if(!empty($ident)) $ident = reset($ident);
 			if (empty($ident['identity_id'])) throw new Exception('Identity does not exist');
 		}
@@ -84,8 +85,9 @@ class Events extends ApiBase {
 		// Insert the Event
 		// @todo: shorten all "identity" fields to only include "identity_id" if event data grows too fast or becomes cumbersome
 		$insert = $this->db->insert('events');
+		$timestamp = time();
 		$insert->values([
-			'timestamp' => time(),
+			'timestamp' => $timestamp,
 			'app_id' => $app_id,
 			'identity_id' => !empty($ident) ? $ident['identity_id'] : 0,
 			'event_type' => $event_type,
@@ -93,7 +95,9 @@ class Events extends ApiBase {
 		], $insert::VALUES_MERGE);
 
 		$result = Db::query($insert);
+
 		$event['event_id'] = $result->getGeneratedValue();
+		$event['timestamp'] = $timestamp;
 
 		// Notify
 		// todo: retrieve a notification channels map for each event

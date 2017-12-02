@@ -26,8 +26,8 @@
 		}
 	},
 	"ethereum": {
-		"mode": "geth_ipc",
-		"path": "\\\\.\\pipe\\geth.ipc"
+		"mode": "geth_ws",
+		"path": "ws://localhost:8546"
 	},
 	"notifications": {
 		"method": "pusher",
