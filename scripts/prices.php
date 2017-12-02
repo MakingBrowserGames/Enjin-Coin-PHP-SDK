@@ -5,6 +5,7 @@ use Amp\Loop;
 use EnjinCoin\Util\Db;
 use EnjinCoin\Config;
 use EnjinCoin\Prices;
+use EnjinCoin\Notifications;
 
 function onRepeat($watcherID) {
 	$db = Db::getInstance();
@@ -31,30 +32,42 @@ function onRepeat($watcherID) {
 
 		// get the exchange pricing data for the market
 		$ticker = $model_prices->fetchTicker($market_title);
+
 		if (!empty($ticker['last'])) {
-			$value[$market_title] = number_format($ticker['last'], 8);
-		}
+			$new_price = number_format($ticker['last'], 8);
+			$value[$market_title] = $new_price;
 
-		// update pusher channels
-		if ($options->push_notifications) {
+			// send pusher updates
+			if ($options->push_notifications) {
+				$model = new Prices;
+				$last_prices = $model->getLastPrices();
 
+				if (!isset($last_prices['value'][$market_title]) || (isset($last_prices['value'][$market_title]) && $last_prices['value'][$market_title] != $new_price)) {
+					Notifications::notify(Notifications::CHANNEL_WALLETS, Notifications::TYPE_PRICE, array(
+						'market' => $market_title,
+						'price' => $new_price,
+					));
+				}
+			}
 		}
 	}
 
-	try {
-		// try inserting first
-		$insert = $db->insert('prices');
-		$insert->values(array(
-			'timestamp' => $timestamp,
-			'value' => json_encode($value),
-		), $insert::VALUES_MERGE);
-		Db::query($insert);
-	} catch (Exception $e) {
-		// update if row (minute) already exists
-		$update = $db->update('prices');
-		$update->where(['timestamp' => $timestamp]);
-		$update->set(['value' => json_encode($value)]);
-		Db::query($update);
+	if (!empty($value)) {
+		try {
+			// try inserting first
+			$insert = $db->insert('prices');
+			$insert->values(array(
+				'timestamp' => $timestamp,
+				'value' => json_encode($value),
+			), $insert::VALUES_MERGE);
+			Db::query($insert);
+		} catch (Exception $e) {
+			// update if row (minute) already exists
+			$update = $db->update('prices');
+			$update->where(['timestamp' => $timestamp]);
+			$update->set(['value' => json_encode($value)]);
+			Db::query($update);
+		}
 	}
 }
 

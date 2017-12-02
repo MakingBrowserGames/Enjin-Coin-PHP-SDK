@@ -2,6 +2,7 @@
 namespace EnjinCoin;
 
 use PHPUnit\Runner\Exception;
+use EnjinCoin\Util\Db;
 
 class Prices {
 	public function __construct($exchange = 'hitbtc') {
@@ -46,5 +47,27 @@ class Prices {
 	 */
 	public function fetchMarkets() {
 		return $this->model->fetch_markets();
+	}
+
+	/**
+	 * Get the latest prices
+	 *
+	 * @return array
+	 */
+	public function getLastPrices() {
+		$db = Db::getInstance();
+		$select = $db->select()
+			->from('prices')
+			->order('timestamp DESC')
+			->limit(1);
+		$rows = Db::query($select)->toArray();
+
+		if (!empty($rows[0])) {
+			$row = $rows[0];
+			$row['value'] = json_decode($row['value'], true);
+			return $row;
+		}
+
+		return array();
 	}
 }

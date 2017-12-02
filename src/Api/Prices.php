@@ -23,16 +23,12 @@ class Prices extends ApiBase {
 			}
 		}
 
-		$select = $this->db->select()
-			->from('prices')
-			->order('timestamp DESC')
-			->limit(1);
-		$row = DB::query($select)->toArray();
-		$row = !empty($row[0]) ? $row[0] : [];
+		$model = new ModelPrices;
+		$row = $model->getLastPrices();
 
 		$return_prices = [
 			'timestamp' => $row['timestamp'],
-			'prices' => json_decode($row['value'], true)
+			'prices' => $row['value'],
 		];
 
 		if (!empty($row) && !empty($markets)) {

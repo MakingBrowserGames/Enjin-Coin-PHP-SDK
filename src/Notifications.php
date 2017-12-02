@@ -7,18 +7,23 @@ class Notifications {
 	private static $adapter = null;
 
 	const TYPE_EVENT = 'Event';
+	const TYPE_PRICE = 'Price';
+
 	const CHANNEL_GAME_SERVER = 'game_server';
 	const CHANNEL_GAME_CLIENT = 'game_client';
+	const CHANNEL_WALLETS = 'wallets'; // global wallet channel
 	const CHANNEL_WALLET = 'wallet';
 
 	public static $channels = [
-		'game_server',
-		'game_client',
-		'wallet',
+		self::CHANNEL_GAME_SERVER,
+		self::CHANNEL_GAME_CLIENT,
+		self::CHANNEL_WALLETS,
+		self::CHANNEL_WALLET,
 	];
 
 	public static $notification_types = [
-		self::TYPE_EVENT
+		self::TYPE_EVENT,
+		self::TYPE_PRICE,
 	];
 
 	private static function getAdapter() {
