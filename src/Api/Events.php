@@ -67,7 +67,6 @@ class Events extends ApiBase {
 		if (!empty($data['identity'])) {
 			$identities = new Identities();
 			$ident = $identities->get($data['identity']);
-			$ident = reset($ident);
 			if(!empty($ident)) $ident = reset($ident);
 			if (empty($ident['identity_id'])) throw new Exception('Identity does not exist');
 		}
