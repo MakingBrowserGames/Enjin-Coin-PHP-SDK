@@ -2,18 +2,26 @@
 namespace EnjinCoin;
 
 use EnjinCoin\Ethereum\GethIpc;
-use EnjinCoin\Ethereum\Websockets;
+use EnjinCoin\Ethereum\GethWebsocket;
+use PHPUnit\Runner\Exception;
 
 class Ethereum {
-	public function test() {
-		$connection = new Websockets();
-		$connection->connect();
+	public function __construct() {
+		$this->connection = new GethWebsocket();
+		$connect = $this->connection->connect();
+		if (!$connect) {
+			//throw new Exception('Could not connect to Ethereum.');
+		}
+	}
 
-		/*
-		$connection->connect();
-		$result = $connection->msg('eth_protocolVersion');
+	public function test() {
+		$result = $this->connection->msg('eth_protocolVersion');
 		die(var_export($result, true));
-		*/
+	}
+
+	public function msg($method, $params = []) {
+		$result = $this->connection->msg($method, $params);
+		return $result;
 	}
 
 	public static function validateAddress(string $address) {

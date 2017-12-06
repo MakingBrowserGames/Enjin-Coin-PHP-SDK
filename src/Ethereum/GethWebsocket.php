@@ -4,7 +4,6 @@ namespace EnjinCoin\Ethereum;
 use EnjinCoin\Config;
 use Zend;
 use WebSocket\Client;
-require __DIR__ . '/../vendor/autoload.php';
 
 class GethWebsocket implements IEthereumConnection {
     protected $client = null;
@@ -30,6 +29,7 @@ class GethWebsocket implements IEthereumConnection {
             'params' => $params,
             'id' => mt_rand(1, 999999999)
         ]);
+
         $this->client->send($msg);
         return $this->client->receive();
 	}
