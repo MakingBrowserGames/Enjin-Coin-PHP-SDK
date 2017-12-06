@@ -9,14 +9,14 @@ class Notifications {
 	const TYPE_EVENT = 'Event';
 	const TYPE_PRICE = 'Price';
 
-	const CHANNEL_GAME_SERVER = 'game_server';
-	const CHANNEL_GAME_CLIENT = 'game_client';
-	const CHANNEL_WALLETS = 'wallets'; // global wallet channel
-	const CHANNEL_WALLET = 'wallet';
+	public const CHANNEL_WALLETS = 'wallets'; // global wallet channel
+	private const CHANNEL_SDK_SERVER = 'server';
+	private const CHANNEL_SDK_CLIENT = 'client';
+	private const CHANNEL_WALLET = 'wallet';
 
 	public static $channels = [
-		self::CHANNEL_GAME_SERVER,
-		self::CHANNEL_GAME_CLIENT,
+		self::CHANNEL_SDK_SERVER,
+		self::CHANNEL_SDK_CLIENT,
 		self::CHANNEL_WALLETS,
 		self::CHANNEL_WALLET,
 	];
@@ -42,7 +42,19 @@ class Notifications {
 		self::getAdapter()->notify($channel, $event, $data);
 	}
 
-	public static function getWalletChannel($ethereum_address) {
-		return self::CHANNEL_WALLET . '_' . $ethereum_address;
+	public static function getWalletChannel(string $auth_key) {
+		return hash('sha512', password_hash($auth_key . self::CHANNEL_WALLET, PASSWORD_BCRYPT));
+	}
+
+	public static function getSdkServerChannel(string $auth_key) {
+		return hash('sha512', password_hash($auth_key . self::CHANNEL_SDK_SERVER, PASSWORD_BCRYPT));
+	}
+
+	public static function getSdkClientChannel(string $auth_key) {
+		return hash('sha512', password_hash($auth_key . self::CHANNEL_SDK_CLIENT, PASSWORD_BCRYPT));
+	}
+
+	public static function getClientInfo() {
+		return self::getAdapter()->getClientInfo();
 	}
 }

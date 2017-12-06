@@ -2,6 +2,7 @@
 namespace EnjinCoin\Api;
 
 use EnjinCoin\Auth;
+use EnjinCoin\Config;
 use EnjinCoin\EventTypes;
 use PHPUnit\Runner\Exception;
 use Zend;
@@ -9,6 +10,11 @@ use EnjinCoin\ApiBase;
 use EnjinCoin\Util\Db;
 
 class Identities extends ApiBase {
+	const ROLE_GUEST = 'guest';
+	const ROLE_WALLET = 'wallet';
+	const ROLE_SERVER = 'server';
+	const ROLE_CLIENT = 'client';
+
 	/**
 	 * Retrieve identities, filtered by various parameters
 	 * @param array $identity
@@ -249,5 +255,34 @@ class Identities extends ApiBase {
 		(new Events)->create(Auth::appId(), EventTypes::IDENTITY_LINKED, ['identity' => ['ethereum_address' => $ethereum_address]]);
 
 		return $success;
+	}
+
+	/**
+	 * Get all role names defined in the config
+	 * @return array
+	 */
+	public function getRoles() {
+		$roles = array_keys(Config::get()->permissions);
+
+		if(!in_array(Identities::ROLE_GUEST, $roles))
+			$roles[] = Identities::ROLE_GUEST;
+
+		return $roles;
+	}
+
+	/**
+	 * Return the role for an auth_key
+	 * @param string $auth_key
+	 * @return string
+	 */
+	public function getRole(string $auth_key) {
+		$identities = $this->get(['auth_key' => $auth_key]);
+		if(!empty($identities)) $identity = reset($identities);
+		else return Identities::ROLE_GUEST;
+
+		if(!empty($identity['role']) && in_array($identity['role'], $this->getRoles())) {
+			return $identity['role'];
+		}
+		return Identities::ROLE_GUEST;
 	}
 }
