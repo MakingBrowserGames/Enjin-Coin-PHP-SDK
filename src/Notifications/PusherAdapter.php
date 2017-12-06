@@ -27,4 +27,11 @@ class PusherAdapter implements INotifications {
 			$data
 		);
 	}
+
+	public function getClientInfo() {
+		return [
+			'app_key' => Config::get()->notifications->pusher->app_key,
+			'cluster' => Config::get()->notifications->pusher->cluster
+		];
+	}
 }
