@@ -6,7 +6,7 @@ use EnjinCoin\Ethereum as Eth;
 use PHPUnit\Runner\Exception;
 
 class Ethereum extends ApiBase {
-	public function getBalances(array $addresses) {
+	public function getBalances(array $addresses, string $tag = 'latest') {
 		$data = [];
 		foreach($addresses as $addr) {
 			// validate address
@@ -15,15 +15,15 @@ class Ethereum extends ApiBase {
 			}
 
 			$model = new Eth;
-			$data[$addr] = $model->msg('eth_getBalance', array($addr, "latest"));
+			$data[$addr] = $model->msg('eth_getBalance', array($addr, $tag));
 		}
 
 		return $data;
 	}
 
-	public function estimateGas() {
+	public function estimateGas(array $eth_call) {
 		$model = new Eth;
-		return $model->msg('eth_estimateGas');
+		return $model->msg('eth_estimateGas', array($eth_call));
 	}
 
 	public function getTransactionCount(string $address) {
