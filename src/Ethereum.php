@@ -9,9 +9,6 @@ class Ethereum {
 	public function __construct() {
 		$this->connection = new GethWebsocket();
 		$connect = $this->connection->connect();
-		if (!$connect) {
-			//throw new Exception('Could not connect to Ethereum.');
-		}
 	}
 
 	public function test() {
@@ -19,9 +16,9 @@ class Ethereum {
 		die(var_export($result, true));
 	}
 
-	public function msg($method, $params = []) {
-		$result = $this->connection->msg($method, $params);
-		return $result;
+	public function msg($method, $params = [], $full_response = false) {
+		$response = $this->connection->msg($method, $params);
+		return $full_response ? $response : $response['result'];
 	}
 
 	public static function validateAddress(string $address) {

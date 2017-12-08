@@ -31,6 +31,6 @@ class GethWebsocket implements IEthereumConnection {
         ]);
 
         $this->client->send($msg);
-        return $this->client->receive();
+        return json_decode($this->client->receive(), true);
 	}
 }
