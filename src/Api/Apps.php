@@ -13,10 +13,26 @@ class Apps extends ApiBase {
 	public function get(int $app_id) {
 		$select = $this->db->select()
 			->from('apps')
+			->columns(['app_id', 'name'])
 			->where(['app_id' => $app_id]);
 
 		$results = Db::query($select);
 		return $results->toArray();
+	}
+
+	/**
+	 * Retrieve an App by its auth key
+	 * @param int $app_auth_key
+	 * @return mixed
+	 */
+	public function getByKey(int $app_auth_key) {
+		$select = $this->db->select()
+			->from('apps')
+			->columns(['app_id', 'name'])
+			->where(['app_auth_key' => $app_auth_key]);
+
+		$results = Db::query($select);
+		return $results->current()->toArray();
 	}
 
 	/**
@@ -28,14 +44,18 @@ class Apps extends ApiBase {
 		$name = trim($name);
 		if (empty($name)) throw new Exception('Name must not be empty');
 
+		$app_auth_key = $this->generateAuthKey($name);
+
 		$insert = $this->db->insert('apps');
-		$insert->values(['name' => $name], $insert::VALUES_MERGE);
+		$insert->values(['name' => $name, 'app_auth_key' => $app_auth_key], $insert::VALUES_MERGE);
+
 		$results = Db::query($insert);
 		$app_id = $results->getGeneratedValue();
 
 		return [
 			'app_id' => $app_id,
 			'name' => $name,
+			'app_auth_key' => $app_auth_key,
 		];
 	}
 
@@ -68,5 +88,9 @@ class Apps extends ApiBase {
 		Db::query($sql);
 
 		return true;
+	}
+
+	private function generateAuthKey(string $seed = '') {
+		return 'a' . hash('sha512', time() . $seed . random_int(PHP_INT_MIN, PHP_INT_MAX));
 	}
 }

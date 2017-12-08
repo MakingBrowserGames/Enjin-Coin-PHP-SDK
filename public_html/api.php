@@ -21,4 +21,8 @@ if ('GET' === $_SERVER['REQUEST_METHOD']) {
 	return;
 }
 
+// Authenticate
+// @todo: restrict method access to config permissions
+if(!empty($_SERVER['X-Auth-Key'])) \EnjinCoin\Auth::init($_SERVER['X-Auth-Key']);
+
 $server->handle();

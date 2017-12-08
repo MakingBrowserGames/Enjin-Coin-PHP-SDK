@@ -2,6 +2,7 @@
 namespace EnjinCoin\Api;
 
 use EnjinCoin;
+use EnjinCoin\Auth;
 use EnjinCoin\Util\Db;
 use EnjinCoin\ApiBase;
 use EnjinCoin\Notifications;
@@ -100,7 +101,7 @@ class Events extends ApiBase {
 
 		// Notify
 		// todo: retrieve a notification channels map for each event
-		Notifications::notify(Notifications::CHANNEL_GAME_SERVER, $event_type, $event);
+		Notifications::notify(Notifications::getSdkServerChannel(Auth::authKey()), $event_type, $event);
 	}
 
 	/**

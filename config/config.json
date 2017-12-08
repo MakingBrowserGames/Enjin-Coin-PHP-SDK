@@ -44,10 +44,12 @@
 			"Identities": ["get", "link"],
 			"Prices": ["getPrices"]
 		},
-		"linked_wallet": {
-			"Events": ["get"]
+		"wallet": {
+			"Identities": ["get"],
+			"Events": ["get"],
+			"Prices": ["getPrices"]
 		},
-		"game_server": {
+		"server": {
 			"Identities": ["get", "create", "update"]
 		},
 		"admin": "*"
