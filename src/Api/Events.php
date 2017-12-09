@@ -100,7 +100,7 @@ class Events extends ApiBase {
 		$event['timestamp'] = $timestamp;
 
 		// Notify
-		// todo: retrieve a notification channels map for each event
+		// @todo: get the correct app's auth key
 		Notifications::notify(Notifications::getSdkServerChannel(Auth::authKey()), $event_type, $event);
 	}
 
