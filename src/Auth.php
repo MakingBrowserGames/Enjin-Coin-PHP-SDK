@@ -11,7 +11,7 @@ class Auth {
 	const ROLE_SERVER = 'server';
 	const ROLE_CLIENT = 'client';
 
-	private static $auth_key = null;
+	private static $auth_key = '';
 	private static $role = self::ROLE_GUEST;
 	private static $app_id = 0;
 	private static $identity = 0;

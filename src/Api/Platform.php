@@ -8,15 +8,15 @@ use EnjinCoin\Config;
 use EnjinCoin\Notifications;
 
 class Platform extends ApiBase {
-	public function auth(string $auth_key) {
+	public function auth() {
 		return [
 			'notifications' => [
 				'method' => Config::get()->notifications->method,
 				'client_info' => Notifications::getClientInfo(),
 				'channels' => [
-					'server' => Notifications::getSdkServerChannel($auth_key),
-					'client' => Notifications::getSdkClientChannel($auth_key),
-					'wallet' => Notifications::getWalletChannel($auth_key),
+					'server' => Notifications::getSdkServerChannel(Auth::authKey()),
+					'client' => Notifications::getSdkClientChannel(Auth::authKey()),
+					'wallet' => Notifications::getWalletChannel(Auth::authKey()),
 				],
 				'role' => Auth::role()
 			]
