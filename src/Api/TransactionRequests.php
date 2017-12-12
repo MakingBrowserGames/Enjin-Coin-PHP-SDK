@@ -88,10 +88,14 @@ class TransactionRequests extends ApiBase {
 		], $insert::VALUES_MERGE);
 
 		$results = Db::query($insert);
-		$app_id = $results->getGeneratedValue();
+		$txr_id = $results->getGeneratedValue();
 
 		// Create event and notification @todo
-		(new Events)->create(Auth::appId(), EventTypes::TXR_PENDING, ['txr_id' => $txr_id]);
+		(new Events)->create(Auth::appId(), EventTypes::TXR_PENDING, [
+			'txr_id' => $txr_id,
+			'identity' => $identity,
+			'recipient' => $recipient,
+		]);
 
 		return true;
 	}
