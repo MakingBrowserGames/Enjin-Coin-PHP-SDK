@@ -26,7 +26,11 @@ class TransactionRequests extends ApiBase {
 
 	public function get(int $txr_id) {
 		$select = $this->db->select()
-			->from('transaction_requests');
+			->from('transaction_requests')
+			->where(['txr_id' => $txr_id]);
+
+		$results = Db::query($select);
+		return $results->current()->toArray();
 	}
 
 	/**
@@ -83,7 +87,11 @@ class TransactionRequests extends ApiBase {
 			'value' => $value,
 		], $insert::VALUES_MERGE);
 
+		$results = Db::query($insert);
+		$app_id = $results->getGeneratedValue();
+
 		// Create event and notification @todo
+		(new Events)->create(Auth::appId(), EventTypes::TXR_PENDING, ['txr_id' => $txr_id]);
 
 		return true;
 	}
