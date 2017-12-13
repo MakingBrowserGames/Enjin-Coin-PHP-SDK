@@ -22,6 +22,7 @@ CREATE TABLE apps (
 DROP TABLE IF EXISTS transaction_requests;
 CREATE TABLE transaction_requests (
   `txr_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `tx_id` VARCHAR(255) NULL DEFAULT NULL,
   `timestamp` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `app_id` INT(10) UNSIGNED NOT NULL,
   `identity_id` INT(10) UNSIGNED NOT NULL,
@@ -32,9 +33,11 @@ CREATE TABLE transaction_requests (
   `title` VARCHAR(255) NULL DEFAULT NULL,
   `token_id` INT(10) UNSIGNED NOT NULL,
   `value` VARCHAR(255) NOT NULL DEFAULT '0',
+  `state` ENUM('pending', 'broadcasted', 'executed', 'confirmed', 'canceled_user', 'canceled_platform', 'failed') NOT NULL DEFAULT 'pending',
   `accepted` TINYINT(1) UNSIGNED NOT NULL,
   PRIMARY KEY (`txr_id`),
   KEY (`app_id`), -- Review keys and optimize later
+  KEY (`tx_id`),
   KEY (`identity_id`),
   KEY (`timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

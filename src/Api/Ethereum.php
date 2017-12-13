@@ -41,7 +41,9 @@ class Ethereum extends ApiBase {
 		return $model->msg('eth_getTransactionByHash', array($hash));
 	}
 
-	public function sendRawTransaction(string $address, string $raw_transaction, array $transaction) {
+	public function sendRawTransaction(string $data) {
+		$model = new Eth;
+		return $model->msg('eth_sendRawTransaction', array($data));
 		/*
 		// validate address
 		if (!Eth::validateAddress($transaction['from']) || !Eth::validateAddress($transaction['to'])) {

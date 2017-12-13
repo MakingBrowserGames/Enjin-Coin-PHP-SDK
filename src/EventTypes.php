@@ -108,8 +108,9 @@ class EventTypes {
 		];
 	}
 
-	public function tx_broadcasted($params) {
+	public function txr_broadcasted($params) {
 		return [
+			'txr_id' => $params['txr_id'],
 			'tx_id' => $params['tx_id'],
 			'confirmations' => 0,
 		];
