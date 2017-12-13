@@ -27,6 +27,5 @@ class Ethereum {
 
 	public static function validateValue(string $value) {
 		return true; // @todo
-		//return preg_match("/^(0x)?[0-9a-fA-F]{40}$/", $address) !== 0;
 	}
 }

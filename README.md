@@ -8,7 +8,7 @@ PHP SDK for Enjin Coin - https://enjincoin.io
 
 ##### Required modules on Ubuntu:
 ```
-apt-get install php7.1-curl php7.1-json php7.1-mysql php7.1-dom php7.1-mbstring
+apt-get install php7.1-curl php7.1-json php7.1-mysql php7.1-dom php7.1-mbstring php7.1-bcmath
 ```
 
 ##### Required modules on Windows:

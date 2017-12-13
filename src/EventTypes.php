@@ -78,11 +78,6 @@ class EventTypes {
 		return [
 			'txr_id' => $params['txr_id'],
 			'identity' => $identities->get($params['identity']),
-			'recipient' => $identities->get($params['recipient']),
-			'type' => $params['type'],
-			'icon' => $params['icon'],
-			'title' => $params['title'],
-			'value' => $params['value'],
 			'state' => 'canceled_user',
 		];
 	}
@@ -93,12 +88,7 @@ class EventTypes {
 		return [
 			'txr_id' => $params['txr_id'],
 			'identity' => $identities->get($params['identity']),
-			'recipient' => $identities->get($params['recipient']),
-			'type' => $params['type'],
-			'icon' => $params['icon'],
-			'title' => $params['title'],
-			'value' => $params['value'],
-			'state' => 'canceled_user',
+			'state' => 'canceled_platform',
 		];
 	}
 
@@ -107,6 +97,7 @@ class EventTypes {
 
 		return [
 			'txr_id' => $params['txr_id'],
+			'tx_id' => $params['tx_id'],
 			'identity' => $identities->get($params['identity']),
 			'recipient' => $identities->get($params['recipient']),
 			'type' => $params['type'],
@@ -114,6 +105,27 @@ class EventTypes {
 			'title' => $params['title'],
 			'value' => $params['value'],
 			'state' => 'accepted',
+		];
+	}
+
+	public function tx_broadcasted($params) {
+		return [
+			'tx_id' => $params['tx_id'],
+			'confirmations' => 0,
+		];
+	}
+
+	public function tx_executed($params) {
+		return [
+			'tx_id' => $params['tx_id'],
+			'confirmations' => $params['confirmations'],
+		];
+	}
+
+	public function tx_confirmed($params) {
+		return [
+			'tx_id' => $params['tx_id'],
+			'confirmations' => $params['confirmations'],
 		];
 	}
 

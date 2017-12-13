@@ -4,6 +4,7 @@ namespace EnjinCoin\Util;
 /**
  * Class SafeMath
  * Casts strings for processing 256-bit integers in PHP
+ * @package EnjinCoin\Util
  */
 class SafeMath {
 	public static function add(string $a, string $b) {

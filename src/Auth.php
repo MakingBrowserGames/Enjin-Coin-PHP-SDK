@@ -14,7 +14,7 @@ class Auth {
 	private static $auth_key = '';
 	private static $role = self::ROLE_GUEST;
 	private static $app_id = 0;
-	private static $identity = 0;
+	private static $identity = null;
 
 	public static function init($auth_key) {
 		if(empty($auth_key)) return false;
@@ -49,5 +49,9 @@ class Auth {
 
 	public static function role() {
 		return self::$role;
+	}
+
+	public static function identity() {
+		return self::$identity;
 	}
 }

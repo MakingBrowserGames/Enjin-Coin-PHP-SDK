@@ -41,7 +41,8 @@ class Ethereum extends ApiBase {
 		return $model->msg('eth_getTransactionByHash', array($hash));
 	}
 
-	public function sendTransaction(array $transaction) {
+	public function sendRawTransaction(string $address, string $raw_transaction, array $transaction) {
+		/*
 		// validate address
 		if (!Eth::validateAddress($transaction['from']) || !Eth::validateAddress($transaction['to'])) {
 			throw new Exception('Invalid address.');
@@ -49,5 +50,10 @@ class Ethereum extends ApiBase {
 
 		$model = new Eth;
 		return $model->msg('eth_sendTransaction', array($transaction));
+		*/
+	}
+
+	public function verifySig(string $address, string $hash, string $message) {
+
 	}
 }
