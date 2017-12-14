@@ -45,7 +45,7 @@ final class AppsTest extends TestCase {
 	public function testUpdate(): void {
 		$api = new Apps();
 		$result = $api->update($this->app_id, $this->name . 'updated');
-		$this->assertEquals($result, true);
+		$this->assertEquals(true, $result);
 
 		$result = $api->get($this->app_id);
 		$this->assertArrayHasKey('name', $result);
@@ -55,7 +55,7 @@ final class AppsTest extends TestCase {
 	public function testDelete(): void {
 		$api = new Apps();
 		$result = $api->delete($this->app_id);
-		$this->assertEquals($result, true);
+		$this->assertEquals(true, $result);
 
 		$result = $api->get($this->app_id);
 		$this->assertEmpty($result);

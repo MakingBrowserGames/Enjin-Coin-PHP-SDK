@@ -49,7 +49,7 @@ final class IdentitiesTest extends TestCase {
 	public function testUpdate(): void {
 		$api = new Identities();
 		$result = $api->update(['identity_id' => $this->identity_id], ['player_name' => $this->player_name . 'updated']);
-		$this->assertEquals($result, true);
+		$this->assertEquals(true, $result);
 
 		$result = $api->get(['identity_id' => $this->identity_id]);
 		$this->assertArrayHasKey('player_name', $result[0]);
@@ -61,7 +61,7 @@ final class IdentitiesTest extends TestCase {
 
 		$api = new Identities();
 		$result = $api->link($this->identity_code, $new_eth_address);
-		$this->assertEquals($result, true);
+		$this->assertEquals(true, $result);
 
 		$result = $api->get(['identity_id' => $this->identity_id]);
 		$this->assertArrayHasKey('ethereum_address', $result[0]);
@@ -71,7 +71,7 @@ final class IdentitiesTest extends TestCase {
 	public function testDelete(): void {
 		$api = new Identities();
 		$result = $api->delete(['identity_id' => $this->identity_id]);
-		$this->assertEquals($result, true);
+		$this->assertEquals(true, $result);
 
 		$result = $api->get(['identity_id' => $this->identity_id], false);
 		$this->assertEmpty($result);
