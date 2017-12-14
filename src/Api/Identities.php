@@ -2,12 +2,12 @@
 namespace EnjinCoin\Api;
 
 use EnjinCoin\Auth;
-use EnjinCoin\Config;
 use EnjinCoin\EventTypes;
 use PHPUnit\Runner\Exception;
 use Zend;
 use EnjinCoin\ApiBase;
 use EnjinCoin\Util\Db;
+use RandomLib;
 
 class Identities extends ApiBase {
 	/**
@@ -247,7 +247,7 @@ class Identities extends ApiBase {
 	 * @return bool
 	 */
 	public function link(string $identity_code, string $ethereum_address, string $signature = '') {
-		$auth_key = $this->generateAuthKey($identity_code . $ethereum_address);
+		$auth_key = $this->generateAuthKey();
 
 		$success = $this->update(['identity_code' => $identity_code], ['ethereum_address' => $ethereum_address, 'auth_key' => $auth_key, 'identity_code' => ''], false);
 
@@ -256,7 +256,9 @@ class Identities extends ApiBase {
 		return $success;
 	}
 
-	private function generateAuthKey(string $seed = '') {
-		return 'i' . hash('sha512', time() . $seed . random_int(PHP_INT_MIN, PHP_INT_MAX));
+	private function generateAuthKey() {
+		$factory = new RandomLib\Factory;
+		$generator = $factory->getMediumStrengthGenerator();
+		return 'i' . $generator->generateString(36);
 	}
 }
