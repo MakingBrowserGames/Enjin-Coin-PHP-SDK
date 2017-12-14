@@ -25,7 +25,7 @@ class Auth {
 			$apps = new Apps();
 			$app = $apps->getByKey($auth_key);
 			if (empty($app['app_id'])) return false;
-			self::$app_id = $app['app_id'];
+			self::$app_id = (int)$app['app_id'];
 			self::$role = self::ROLE_SERVER;
 		}
 		else {

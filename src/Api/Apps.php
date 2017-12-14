@@ -17,7 +17,7 @@ class Apps extends ApiBase {
 			->where(['app_id' => $app_id]);
 
 		$results = Db::query($select);
-		return $results->toArray();
+		return $results->current();
 	}
 
 	/**
@@ -25,14 +25,14 @@ class Apps extends ApiBase {
 	 * @param int $app_auth_key
 	 * @return mixed
 	 */
-	public function getByKey(int $app_auth_key) {
+	public function getByKey(string $app_auth_key) {
 		$select = $this->db->select()
 			->from('apps')
 			->columns(['app_id', 'name'])
 			->where(['app_auth_key' => $app_auth_key]);
 
 		$results = Db::query($select);
-		return $results->current()->toArray();
+		return $results->current();
 	}
 
 	/**

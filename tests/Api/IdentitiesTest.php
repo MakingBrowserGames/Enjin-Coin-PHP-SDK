@@ -57,13 +57,15 @@ final class IdentitiesTest extends TestCase {
 	}
 
 	public function testLink(): void {
+		$new_eth_address = '0x1234567890123456789000' . rand(100000000, 999999999) . rand(100000000, 999999999);
+
 		$api = new Identities();
-		$result = $api->link($this->identity_code, '0x1234567890');
+		$result = $api->link($this->identity_code, $new_eth_address);
 		$this->assertEquals($result, true);
 
 		$result = $api->get(['identity_id' => $this->identity_id]);
 		$this->assertArrayHasKey('ethereum_address', $result[0]);
-		$this->assertEquals('0x1234567890', $result[0]['ethereum_address']);
+		$this->assertEquals($new_eth_address, $result[0]['ethereum_address']);
 	}
 
 	public function testDelete(): void {

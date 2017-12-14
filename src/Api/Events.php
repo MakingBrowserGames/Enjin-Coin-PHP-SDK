@@ -114,9 +114,4 @@ class Events extends ApiBase {
 		Db::query($delete);
 		return true;
 	}
-
-	public function test() {
-		$eth = new EnjinCoin\Ethereum;
-		$eth->test();
-	}
 }

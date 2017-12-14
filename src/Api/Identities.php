@@ -172,10 +172,12 @@ class Identities extends ApiBase {
 
         foreach($identities as $identity) {
             $delete = $this->db->delete('identities');
-            $delete->where($identity);
-            Db::query($delete);
+            $delete->where(['identity_id' => $identity['identity_id']]);
 
+            // Event must be called before deletion
             (new Events)->create(Auth::appId(), EventTypes::IDENTITY_DELETED, ['identity' => ['identity_id' => $identity['identity_id']]]);
+
+            Db::query($delete);
         }
 
 		return true;
@@ -228,10 +230,10 @@ class Identities extends ApiBase {
                     $success = true;
 				}
 			}
-		}
 
-		if($emit_event)
-			(new Events)->create(Auth::appId(), EventTypes::IDENTITY_UPDATED, ['identity' => ['identity_id' => $identity['identity_id']]]);
+			if($emit_event)
+				(new Events)->create(Auth::appId(), EventTypes::IDENTITY_UPDATED, ['identity' => ['identity_id' => $i['identity_id']]]);
+		}
 
 		return $success;
 	}

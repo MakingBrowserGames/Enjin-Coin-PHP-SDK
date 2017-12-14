@@ -38,7 +38,7 @@ class TransactionRequests extends ApiBase {
 			->where(['txr_id' => $txr_id]);
 
 		$results = Db::query($select);
-		return $results->current()->toArray();
+		return $results->current();
 	}
 
 	/**

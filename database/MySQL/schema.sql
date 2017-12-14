@@ -10,6 +10,7 @@ CREATE TABLE db_info (
   `db_version` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `updated` int(10) UNSIGNED NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO db_info SET db_version=1, updated=UNIX_TIMESTAMP();
 
 DROP TABLE IF EXISTS apps;
 CREATE TABLE apps (

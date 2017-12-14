@@ -58,4 +58,9 @@ class Ethereum extends ApiBase {
 	public function verifySig(string $address, string $hash, string $message) {
 
 	}
+
+	public function test() {
+		$eth = new \EnjinCoin\Ethereum;
+		return $eth->test();
+	}
 }

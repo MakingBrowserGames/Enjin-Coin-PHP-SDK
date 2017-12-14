@@ -28,7 +28,7 @@ class Platform extends ApiBase {
 	 * @return array
 	 */
 	public function getRoles() {
-		$roles = array_keys(Config::get()->permissions);
+		$roles = array_keys((array)Config::get()->permissions);
 
 		if(!in_array(Auth::ROLE_GUEST, $roles))
 			$roles[] = Auth::ROLE_GUEST;

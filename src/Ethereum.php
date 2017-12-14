@@ -12,8 +12,7 @@ class Ethereum {
 	}
 
 	public function test() {
-		$result = $this->connection->msg('eth_protocolVersion');
-		die(var_export($result, true));
+		return $this->msg('eth_protocolVersion');
 	}
 
 	public function msg($method, $params = [], $full_response = false) {
