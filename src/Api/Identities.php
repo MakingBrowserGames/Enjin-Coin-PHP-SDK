@@ -24,7 +24,7 @@ class Identities extends ApiBase {
 			->join('identity_values', 'identities.identity_id = identity_values.identity_id', ['value'], Zend\Db\Sql\Select::JOIN_LEFT)
 			->join('identity_fields', 'identity_fields.field_id = identity_values.field_id', ['key'], Zend\Db\Sql\Select::JOIN_LEFT);
 
-		if(!$extra_fields) $select->columns(['identity_id', 'ethereum_address']);
+		if (!$extra_fields) $select->columns(['identity_id', 'ethereum_address']);
 
 		if ($linked) {
 			$select->where("ethereum_address != ''");
@@ -87,7 +87,7 @@ class Identities extends ApiBase {
 		$results = Db::query($insert);
 		$identity_id = $results->getGeneratedValue();
 
-        // Insert Identity Fields & Values
+		// Insert Identity Fields & Values
 		foreach ($identity as $key => $value) {
 			if (in_array($key, ['identity_id', 'identity_code', 'ethereum_address'])) continue;
 
@@ -141,7 +141,7 @@ class Identities extends ApiBase {
 
 		$insert = $this->db->insert('identity_fields');
 		$insert->values([
-		    'app_id' => Auth::appId(),
+			'app_id' => Auth::appId(),
 			'key' => $key,
 			'searchable' => $searchable,
 			'displayable' => $displayable,
@@ -168,17 +168,17 @@ class Identities extends ApiBase {
 	 * @return bool
 	 */
 	public function delete($identity) {
-        $identities = $this->get($identity);
+		$identities = $this->get($identity);
 
-        foreach($identities as $identity) {
-            $delete = $this->db->delete('identities');
-            $delete->where(['identity_id' => $identity['identity_id']]);
+		foreach ($identities as $identity) {
+			$delete = $this->db->delete('identities');
+			$delete->where(['identity_id' => $identity['identity_id']]);
 
-            // Event must be called before deletion
-            (new Events)->create(Auth::appId(), EventTypes::IDENTITY_DELETED, ['identity' => ['identity_id' => $identity['identity_id']]]);
+			// Event must be called before deletion
+			(new Events)->create(Auth::appId(), EventTypes::IDENTITY_DELETED, ['identity' => ['identity_id' => $identity['identity_id']]]);
 
-            Db::query($delete);
-        }
+			Db::query($delete);
+		}
 
 		return true;
 	}
@@ -191,18 +191,18 @@ class Identities extends ApiBase {
 	 * @return bool
 	 */
 	public function update($identity, $update, $emit_event = true) {
-	    $identity = $this->get($identity);
-        $success = false;
+		$identity = $this->get($identity);
+		$success = false;
 
-        // Check if any identity is already linked to this Ethereum address
-        if (!empty($update['ethereum_address'])) {
-            $existing_address = $this->get(['ethereum_address' => $update['ethereum_address']]);
-            foreach($existing_address as $value) {
-                foreach ($identity as $i) {
-                    if ($value['identity_id'] != $i['identity_id']) throw new Exception('This Ethereum address is already linked');
-                }
-            }
-        }
+		// Check if any identity is already linked to this Ethereum address
+		if (!empty($update['ethereum_address'])) {
+			$existing_address = $this->get(['ethereum_address' => $update['ethereum_address']]);
+			foreach ($existing_address as $value) {
+				foreach ($identity as $i) {
+					if ($value['identity_id'] != $i['identity_id']) throw new Exception('This Ethereum address is already linked');
+				}
+			}
+		}
 
 		foreach ($identity as $i) {
 			if (!empty($update['ethereum_address'])) {
@@ -214,7 +214,7 @@ class Identities extends ApiBase {
 				]);
 				Db::query($sql);
 				unset($update['ethereum_address']);
-                $success = true;
+				$success = true;
 			}
 
 			if (!empty($update)) {
@@ -227,11 +227,11 @@ class Identities extends ApiBase {
 					]);
 					$sql->set(['value' => $value]);
 					Db::query($sql);
-                    $success = true;
+					$success = true;
 				}
 			}
 
-			if($emit_event)
+			if ($emit_event)
 				(new Events)->create(Auth::appId(), EventTypes::IDENTITY_UPDATED, ['identity' => ['identity_id' => $i['identity_id']]]);
 		}
 
@@ -240,7 +240,7 @@ class Identities extends ApiBase {
 
 	/**
 	 * Link Smart Wallet to Identity using the Linking Code
-     * todo: sign identity code using eth private key
+	 * todo: sign identity code using eth private key
 	 * @param string $identity_code
 	 * @param string $ethereum_address
 	 * @param string $signature

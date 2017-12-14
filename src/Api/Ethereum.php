@@ -8,7 +8,7 @@ use PHPUnit\Runner\Exception;
 class Ethereum extends ApiBase {
 	public function getBalances(array $addresses, string $tag = 'latest') {
 		$data = [];
-		foreach($addresses as $addr) {
+		foreach ($addresses as $addr) {
 			// validate address
 			if (!Eth::validateAddress($addr)) {
 				continue;

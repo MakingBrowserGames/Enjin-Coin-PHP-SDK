@@ -74,7 +74,7 @@ class Prices extends ApiBase {
 		$rows = DB::query($select)->toArray();
 
 		$prices = array();
-		foreach($rows as $row) {
+		foreach ($rows as $row) {
 			$values = json_decode($row['value'], true);
 			if ($interval == 'm') {
 				$base = floor($row['timestamp'] / 60) * 60;
@@ -109,7 +109,7 @@ class Prices extends ApiBase {
 		$markets = $model->fetchMarkets();
 
 		$symbols = array();
-		foreach($markets as $market) {
+		foreach ($markets as $market) {
 			$symbols[] = $market['symbol'];
 		}
 
@@ -133,7 +133,7 @@ class Prices extends ApiBase {
 	 * @return int
 	 */
 	public function getTotalSupply($symbol) {
-		switch($symbol) {
+		switch ($symbol) {
 			case 'ENJ':
 				return 1000000000;
 			case 'BTC':
@@ -152,7 +152,7 @@ class Prices extends ApiBase {
 	 * @return int
 	 */
 	public function getCirculatingSupply($symbol) {
-		switch($symbol) {
+		switch ($symbol) {
 			case 'ENJ':
 				return 756192535;
 			default:

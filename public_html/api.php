@@ -24,6 +24,6 @@ if ('GET' === $_SERVER['REQUEST_METHOD']) {
 // Authenticate, or continue as a guest
 // @todo: restrict method access to config permissions
 $authenticated = !empty($_SERVER['X-Auth-Key']) ? \EnjinCoin\Auth::init($_SERVER['X-Auth-Key']) : true;
-if(!$authenticated) throw new Exception('Authentication failed!');
+if (!$authenticated) throw new Exception('Authentication failed!');
 
 $server->handle();

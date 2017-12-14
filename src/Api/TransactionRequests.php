@@ -149,7 +149,7 @@ class TransactionRequests extends ApiBase {
 	public function broadcast(int $txr_id, array $data) {
 		$txr = $this->get($txr_id);
 
-		if(!empty($txr)) {
+		if (!empty($txr)) {
 			// @todo: RLP decoding and validation of all transaction data
 			/*
 			// Validate address

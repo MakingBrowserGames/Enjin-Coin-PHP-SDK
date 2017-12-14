@@ -17,18 +17,17 @@ class Auth {
 	private static $identity = null;
 
 	public static function init($auth_key) {
-		if(empty($auth_key)) return false;
+		if (empty($auth_key)) return false;
 
 		self::$auth_key = $auth_key;
 
-		if(substr($auth_key, 0, 1) == 'a') {
+		if (substr($auth_key, 0, 1) == 'a') {
 			$apps = new Apps();
 			$app = $apps->getByKey($auth_key);
 			if (empty($app['app_id'])) return false;
-			self::$app_id = (int)$app['app_id'];
+			self::$app_id = (int) $app['app_id'];
 			self::$role = self::ROLE_SERVER;
-		}
-		else {
+		} else {
 			$identities = new Identities();
 			$identity = $identities->get(['auth_key' => $auth_key]);
 			if (empty($identity)) return false;

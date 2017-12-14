@@ -13,12 +13,12 @@ function onRepeat($watcherID) {
 	$value = [];
 
 	$markets = Config::get()->prices->markets;
-	foreach($markets as $market_title => $options) {
+	foreach ($markets as $market_title => $options) {
 		// make sure the exchange supports this market
 		$model_prices = new Prices(strtolower($options->exchange));
 		$exchange_markets = $model_prices->fetchMarkets();
 		$found = false;
-		foreach($exchange_markets as $market) {
+		foreach ($exchange_markets as $market) {
 			$symbols[] = $market['symbol'];
 			if ($market['symbol'] == $market_title) {
 				$found = true;

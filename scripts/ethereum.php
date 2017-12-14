@@ -10,14 +10,14 @@ use WebSocket\Client;
 $client = new Client(Config::get()->ethereum->path, ['timeout' => 15]);
 $client->send('{"id": 1, "method": "eth_subscribe", "params": ["newHeads", {"includeTransactions": true}]}');
 
-while(true) {
-    try {
-        echo $client->receive();
-        echo("\n");
-    } catch (Exception $e) {
-        echo($e->getMessage());
-        echo("\n");
-    }
+while (true) {
+	try {
+		echo $client->receive();
+		echo("\n");
+	} catch (Exception $e) {
+		echo($e->getMessage());
+		echo("\n");
+	}
 }
 
 /*
