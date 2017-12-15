@@ -38,6 +38,7 @@ class Apps extends ApiBase {
 
 	/**
 	 * Create a new App
+	 * todo: should store hashed app_auth_key for security
 	 * @param string $name
 	 * @return array
 	 */
@@ -94,6 +95,6 @@ class Apps extends ApiBase {
 	private function generateAuthKey() {
 		$factory = new RandomLib\Factory;
 		$generator = $factory->getMediumStrengthGenerator();
-		return 'a' . $generator->generateString(36);
+		return 'a' . $generator->generateString(39);
 	}
 }

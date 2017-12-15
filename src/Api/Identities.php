@@ -241,6 +241,7 @@ class Identities extends ApiBase {
 	/**
 	 * Link Smart Wallet to Identity using the Linking Code
 	 * todo: sign identity code using eth private key
+	 * todo: should store hashed auth_key for security
 	 * @param string $identity_code
 	 * @param string $ethereum_address
 	 * @param string $signature
@@ -248,7 +249,6 @@ class Identities extends ApiBase {
 	 */
 	public function link(string $identity_code, string $ethereum_address, string $signature = '') {
 		$auth_key = $this->generateAuthKey();
-
 		$success = $this->update(['identity_code' => $identity_code], ['ethereum_address' => $ethereum_address, 'auth_key' => $auth_key, 'identity_code' => ''], false);
 
 		(new Events)->create(Auth::appId(), EventTypes::IDENTITY_LINKED, ['identity' => ['ethereum_address' => $ethereum_address]]);
@@ -259,6 +259,6 @@ class Identities extends ApiBase {
 	private function generateAuthKey() {
 		$factory = new RandomLib\Factory;
 		$generator = $factory->getMediumStrengthGenerator();
-		return 'i' . $generator->generateString(36);
+		return 'i' . $generator->generateString(39);
 	}
 }

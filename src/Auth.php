@@ -19,6 +19,10 @@ class Auth {
 	public static function init($auth_key) {
 		if (empty($auth_key)) return false;
 
+		// @todo: Identities/Apps should store hashed auth_key for security, and then validate here
+		// Main concerns are bcrypt hash time slowing down each API request, perhaps a temp token can be used
+		//$auth_hash = password_hash($auth_key, PASSWORD_BCRYPT);
+
 		self::$auth_key = $auth_key;
 
 		if (substr($auth_key, 0, 1) == 'a') {
