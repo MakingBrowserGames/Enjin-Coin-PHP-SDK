@@ -1,42 +1,63 @@
 <?php
 require "../vendor/autoload.php";
 
-use Amp\Loop;
-use EnjinCoin\Util\Db;
 use EnjinCoin\Config;
-use EnjinCoin\Prices;
-use WebSocket\Client;
+use EnjinCoin\Util\Constants;
+use EnjinCoin\Ethereum as Eth;
+use Zend\Json;
 
-$client = new Client(Config::get()->ethereum->path, ['timeout' => 3]);
+$subscriptions = [];
 
-//$json = '{"jsonrpc":"2.0", "id": 1, "method": "eth_subscribe", "params": ["newHeads", {"includeTransactions": true}]}';
-//$json = '{"id": 1, "method": "eth_subscribe", "params": ["logs", {"address": "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c"}]}';
-//$json = '{"id": 1, "method": "eth_newPendingTransactionFilter", "params": []}';
-//$json = '{"jsonrpc":"2.0","method":"eth_newPendingTransactionFilter","params":[],"id":73}';
-$json = '{"jsonrpc":"2.0","method":"eth_newBlockFilter","params":[],"id":73}';
+\Ratchet\Client\connect(Config::get()->ethereum->path)->then(function ($conn) {
+	$conn->on('message', function ($msg) use ($conn) {
+		//echo "Received: {$msg}\n";
+		$response = Json\Decoder::decode($msg, Json\Json::TYPE_ARRAY);
 
-$client->send($json);
-$result = $client->receive();
-echo($result);
-$data = json_decode($result, true);
-$id = $data['result'];
+		/*
+		 * Assign the appropriate subscription IDs to their types
+		 */
+		if(!empty($response['error'])) {
+			echo("\nError: " . var_export($response, true) . "\n");
+		}
+		else if (!empty($response['id'])) {
+			echo("\nsubscribing to " . var_export($response, true) . "\n");
+			switch ($response['id']) {
+				case 1:
+					Eth::subscribe($response['result'], 'logs');
+					break;
+				case 2:
+					Eth::subscribe($response['result'], 'newPendingTransactions');
+					break;
+				case 3:
+					Eth::subscribe($response['result'], 'newHeads');
+					break;
+				case 4:
+					Eth::subscribe($response['result'], 'syncing');
+					break;
+				default:
+					// do nothing
+					break;
+			}
+		}
 
-while (true) {
-	try {
-		$json = '{"jsonrpc":"2.0","method":"eth_getFilterChanges","params":["' . $id . '"],"id":73}';
-		sleep(1);
-		$client->send($json);
-		echo $client->receive();
-		echo("\n");
-	} catch (Exception $e) {
-		//echo($e->getMessage());
-		echo("\n");
-	}
-}
+		/*
+		 * Handle notifications
+		 */
+		else if (!empty($response['params']['subscription']) && isset(Eth::$subscriptions[$response['params']['subscription']])) {
+			$method = Eth::$subscriptions[$response['params']['subscription']];
+			if(method_exists('EnjinCoin\Ethereum', $method)) {
+				Eth::$method($response['params']['result']);
+			}
+		}
+	});
 
-/*
-Loop::run(function () {
-    Loop::repeat(15000, "onRepeat");
-    Loop::repeat(43200000, "prune");
+	/*
+	 * Create subscriptions
+	 */
+	$conn->send('{"id": 1, "jsonrpc": "2.0", "method": "eth_subscribe", "params": ["logs", {"address": "' . Constants::tokenAddress . '"}]}');
+	$conn->send('{"id": 2, "jsonrpc": "2.0", "method": "eth_subscribe", "params": ["newPendingTransactions"]}');
+	$conn->send('{"id": 3, "jsonrpc": "2.0", "method": "eth_subscribe", "params": ["newHeads", {"includeTransactions": true}]}');
+	//$conn->send('{"id": 4, "jsonrpc": "2.0", "method": "eth_subscribe", "params": ["syncing"]}');
+}, function ($e) {
+	echo "Could not connect: {$e->getMessage()}\n";
 });
-*/

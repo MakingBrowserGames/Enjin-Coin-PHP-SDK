@@ -1,7 +1,6 @@
 <?php
 namespace EnjinCoin\Api;
 
-use EnjinCoin\Util\Numbers;
 use Zend;
 use EnjinCoin\Auth;
 use EnjinCoin\Ethereum;
@@ -122,10 +121,12 @@ class TransactionRequests extends ApiBase {
 
 		// Check permissions for cancellation type
 		$event_type = null;
-		if (Auth::role() == Auth::ROLE_SERVER)
+		if (Auth::role() <= Auth::ROLE_APP)
 			$event_type = EventTypes::TXR_CANCELED_PLATFORM;
-		else if (Auth::role() == Auth::ROLE_CLIENT)
+		else if (Auth::role() <= Auth::ROLE_WALLET)
 			$event_type = EventTypes::TXR_CANCELED_USER;
+		else
+			throw new Exception('Authentication required');
 
 		$identity = Auth::identity();
 		$identity_id = $identity['identity_id'];

@@ -53,5 +53,11 @@
 			"Identities": ["get", "create", "update"]
 		},
 		"admin": "*"
+	},
+	"event_channels": {
+		"max_identities": 50000,
+		"app_identities": 2000,
+		"app_channels": 500,
+		"channel_identities": 500
 	}
 }
