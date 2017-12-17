@@ -49,10 +49,10 @@
 			"Events": ["get"],
 			"Prices": ["getPrices"]
 		},
-		"server": {
+		"app": {
 			"Identities": ["get", "create", "update"]
 		},
-		"admin": "*"
+		"platform": "*"
 	},
 	"event_channels": {
 		"max_identities": 50000,
