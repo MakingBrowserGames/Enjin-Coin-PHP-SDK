@@ -1,7 +1,6 @@
 <?php
 namespace EnjinCoin\Api;
 
-use EnjinCoin\Util\Numbers;
 use Zend;
 use EnjinCoin\Auth;
 use EnjinCoin\Ethereum;
@@ -17,6 +16,13 @@ class TransactionRequests extends ApiBase {
 	const TYPE_USE = 'use';
 	//const TYPE_SUBSCRIBE = 'subscribe';
 
+	const STATE_PENDING = 'pending';
+	const STATE_BROADCASTED = 'broadcasted';
+	const STATE_EXECUTED = 'executed';
+	const STATE_CONFIRMED = 'confirmed';
+	const STATE_CANCELED_USER = 'canceled_user';
+	const STATE_CANCELED_PLATFORM = 'canceled_platform';
+
 	public static $txr_types = [
 		self::TYPE_BUY,
 		self::TYPE_SELL,
@@ -31,7 +37,7 @@ class TransactionRequests extends ApiBase {
 			->where(['txr_id' => $txr_id]);
 
 		$results = Db::query($select);
-		return $results->current()->toArray();
+		return $results->current();
 	}
 
 	/**
@@ -85,6 +91,7 @@ class TransactionRequests extends ApiBase {
 			'title' => $title,
 			'token_id' => $token_id,
 			'value' => $value,
+			'state' => self::STATE_PENDING
 		], $insert::VALUES_MERGE);
 
 		$results = Db::query($insert);
@@ -114,10 +121,12 @@ class TransactionRequests extends ApiBase {
 
 		// Check permissions for cancellation type
 		$event_type = null;
-		if (Auth::role() == Auth::ROLE_SERVER)
+		if (Auth::role() <= Auth::ROLE_APP)
 			$event_type = EventTypes::TXR_CANCELED_PLATFORM;
-		else if (Auth::role() == Auth::ROLE_CLIENT)
+		else if (Auth::role() <= Auth::ROLE_WALLET)
 			$event_type = EventTypes::TXR_CANCELED_USER;
+		else
+			throw new Exception('Authentication required');
 
 		$identity = Auth::identity();
 		$identity_id = $identity['identity_id'];
@@ -127,35 +136,50 @@ class TransactionRequests extends ApiBase {
 			|| ($event_type == EventTypes::TXR_CANCELED_USER && $txr['identity_id'] != $identity_id))
 			throw new Exception('You do not have permission to cancel this transaction request');
 
-
-		$delete = $this->db->delete('transaction_requests');
-		$delete->where(['txr_id' => $txr_id]);
-		Db::query($delete);
+		// Update the new transaction request state
+		$sql = $this->db->update('transaction_requests')
+			->where(['txr_id' => $txr_id])
+			->set(['state' => $event_type == EventTypes::TXR_CANCELED_USER ? self::STATE_CANCELED_USER : self::STATE_CANCELED_PLATFORM]);
+		Db::query($sql);
 
 		(new Events)->create(Auth::appId(), $event_type, ['txr_id' => $txr_id]);
 
 		return true;
 	}
 
-	public function broadcast(int $txr_id, array $transaction) {
+	public function broadcast(int $txr_id, array $data) {
 		$txr = $this->get($txr_id);
 
-		// Validate address
-		if (!Eth::validateAddress($transaction['from']) || !Eth::validateAddress($transaction['to'])) {
-			throw new Exception('Invalid address');
+		if (!empty($txr)) {
+			// @todo: RLP decoding and validation of all transaction data
+			/*
+			// Validate address
+			if (!Eth::validateAddress($transaction['from']) || !Eth::validateAddress($transaction['to'])) {
+				throw new Exception('Invalid address');
+			}
+
+			// Validate Transaction Request with the Transaction
+			if($transaction['from'] != $txr['from'])
+				throw new Exception('Invalid transaction from');
+			if($transaction['to'] != $txr['to'])
+				throw new Exception('Invalid transaction to');
+			if(Numbers::decodeHex($transaction['value']) != $txr['value'])
+				throw new Exception('Invalid transaction value');
+			*/
+
+			$model = new Eth;
+			$tx_id = $model->msg('eth_sendRawTransaction', array($data));
+
+			// Update the new transaction request state
+			$sql = $this->db->update('transaction_requests')
+				->where(['txr_id' => $txr_id])
+				->set(['state' => self::STATE_BROADCASTED]);
+			Db::query($sql);
+
+			(new Events)->create(Auth::appId(), EventTypes::TX_BROADCASTED, ['txr_id' => $txr_id, 'tx_id' => $tx_id]);
+
+			return $tx_id;
 		}
-
-		// Validate Transaction Request with the Transaction
-		if($transaction['from'] != $txr['from'])
-			throw new Exception('Invalid transaction from');
-		if($transaction['to'] != $txr['to'])
-			throw new Exception('Invalid transaction to');
-		if(Numbers::decodeHex($transaction['value']) != $txr['value'])
-			throw new Exception('Invalid transaction value');
-
-		$model = new Eth;
-		$response = $model->msg('eth_sendTransaction', array($transaction));
-
-		(new Events)->create(Auth::appId(), EventTypes::TX_BROADCASTED, ['txr_id' => $txr_id]);
+		return false;
 	}
 }

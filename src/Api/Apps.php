@@ -3,6 +3,7 @@ namespace EnjinCoin\Api;
 
 use EnjinCoin\ApiBase;
 use EnjinCoin\Util\Db;
+use RandomLib;
 
 class Apps extends ApiBase {
 	/**
@@ -17,7 +18,7 @@ class Apps extends ApiBase {
 			->where(['app_id' => $app_id]);
 
 		$results = Db::query($select);
-		return $results->toArray();
+		return $results->current();
 	}
 
 	/**
@@ -25,18 +26,19 @@ class Apps extends ApiBase {
 	 * @param int $app_auth_key
 	 * @return mixed
 	 */
-	public function getByKey(int $app_auth_key) {
+	public function getByKey(string $app_auth_key) {
 		$select = $this->db->select()
 			->from('apps')
 			->columns(['app_id', 'name'])
 			->where(['app_auth_key' => $app_auth_key]);
 
 		$results = Db::query($select);
-		return $results->current()->toArray();
+		return $results->current();
 	}
 
 	/**
 	 * Create a new App
+	 * todo: should store hashed app_auth_key for security
 	 * @param string $name
 	 * @return array
 	 */
@@ -44,7 +46,7 @@ class Apps extends ApiBase {
 		$name = trim($name);
 		if (empty($name)) throw new Exception('Name must not be empty');
 
-		$app_auth_key = $this->generateAuthKey($name);
+		$app_auth_key = $this->generateAuthKey();
 
 		$insert = $this->db->insert('apps');
 		$insert->values(['name' => $name, 'app_auth_key' => $app_auth_key], $insert::VALUES_MERGE);
@@ -90,7 +92,9 @@ class Apps extends ApiBase {
 		return true;
 	}
 
-	private function generateAuthKey(string $seed = '') {
-		return 'a' . hash('sha512', time() . $seed . random_int(PHP_INT_MIN, PHP_INT_MAX));
+	private function generateAuthKey() {
+		$factory = new RandomLib\Factory;
+		$generator = $factory->getMediumStrengthGenerator();
+		return 'a' . $generator->generateString(39);
 	}
 }

@@ -8,7 +8,7 @@ use PHPUnit\Runner\Exception;
 class Ethereum extends ApiBase {
 	public function getBalances(array $addresses, string $tag = 'latest') {
 		$data = [];
-		foreach($addresses as $addr) {
+		foreach ($addresses as $addr) {
 			// validate address
 			if (!Eth::validateAddress($addr)) {
 				continue;
@@ -41,7 +41,9 @@ class Ethereum extends ApiBase {
 		return $model->msg('eth_getTransactionByHash', array($hash));
 	}
 
-	public function sendRawTransaction(string $address, string $raw_transaction, array $transaction) {
+	public function sendRawTransaction(string $data) {
+		$model = new Eth;
+		return $model->msg('eth_sendRawTransaction', array($data));
 		/*
 		// validate address
 		if (!Eth::validateAddress($transaction['from']) || !Eth::validateAddress($transaction['to'])) {
@@ -55,5 +57,10 @@ class Ethereum extends ApiBase {
 
 	public function verifySig(string $address, string $hash, string $message) {
 
+	}
+
+	public function test() {
+		$eth = new \EnjinCoin\Ethereum;
+		return $eth->test();
 	}
 }

@@ -15,7 +15,7 @@ class PusherAdapter implements INotifications {
 			Config::get()->notifications->pusher->app_id,
 			array(
 				'encrypted' => Config::get()->notifications->pusher->encrypted,
-                'cluster' => Config::get()->notifications->pusher->cluster,
+				'cluster' => Config::get()->notifications->pusher->cluster,
 			)
 		);
 	}

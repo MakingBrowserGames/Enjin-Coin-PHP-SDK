@@ -49,7 +49,7 @@ final class IdentitiesTest extends TestCase {
 	public function testUpdate(): void {
 		$api = new Identities();
 		$result = $api->update(['identity_id' => $this->identity_id], ['player_name' => $this->player_name . 'updated']);
-		$this->assertEquals($result, true);
+		$this->assertEquals(true, $result);
 
 		$result = $api->get(['identity_id' => $this->identity_id]);
 		$this->assertArrayHasKey('player_name', $result[0]);
@@ -57,19 +57,21 @@ final class IdentitiesTest extends TestCase {
 	}
 
 	public function testLink(): void {
+		$new_eth_address = '0x1234567890123456789000' . rand(100000000, 999999999) . rand(100000000, 999999999);
+
 		$api = new Identities();
-		$result = $api->link($this->identity_code, '0x1234567890');
-		$this->assertEquals($result, true);
+		$result = $api->link($this->identity_code, $new_eth_address);
+		$this->assertEquals(true, $result);
 
 		$result = $api->get(['identity_id' => $this->identity_id]);
 		$this->assertArrayHasKey('ethereum_address', $result[0]);
-		$this->assertEquals('0x1234567890', $result[0]['ethereum_address']);
+		$this->assertEquals($new_eth_address, $result[0]['ethereum_address']);
 	}
 
 	public function testDelete(): void {
 		$api = new Identities();
 		$result = $api->delete(['identity_id' => $this->identity_id]);
-		$this->assertEquals($result, true);
+		$this->assertEquals(true, $result);
 
 		$result = $api->get(['identity_id' => $this->identity_id], false);
 		$this->assertEmpty($result);

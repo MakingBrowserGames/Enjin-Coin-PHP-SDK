@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 final class AppsTest extends TestCase {
 	protected $app_id = 0;
 	protected $name = '';
+	protected $app_auth_key = '';
 
 	protected function setUp(): void {
 		$this->name = 'TestApp_' . rand(1, 999999999);
@@ -19,39 +20,42 @@ final class AppsTest extends TestCase {
 		$api = new Apps();
 		$result = $api->create($this->name);
 		$this->app_id = $result['app_id'];
-	}
-
-	public function testCreate(): void {
-		$api = new Apps();
-		$result = $api->create($this->name . 'create-test');
-
-		$this->assertArrayHasKey('app_id', $result);
-		$this->assertArrayHasKey('name', $result);
-		$this->assertEquals($this->name . 'create-test', $result['name']);
+		$this->app_auth_key = $result['app_auth_key'];
 	}
 
 	public function testGet(): void {
 		$api = new Apps();
 		$result = $api->get($this->app_id);
 
-		$this->assertArrayHasKey('name', $result[0]);
-		$this->assertEquals($this->name, $result[0]['name']);
+		$this->assertArrayHasKey('app_id', $result);
+		$this->assertArrayHasKey('name', $result);
+		$this->assertEquals($this->app_id, $result['app_id']);
+		$this->assertEquals($this->name, $result['name']);
+		$this->assertNotEmpty($this->app_auth_key);
+	}
+
+	public function testGetByKey(): void {
+		$api = new Apps();
+		$result = $api->getByKey($this->app_auth_key);
+
+		$this->assertArrayHasKey('name', $result);
+		$this->assertEquals($this->name, $result['name']);
 	}
 
 	public function testUpdate(): void {
 		$api = new Apps();
 		$result = $api->update($this->app_id, $this->name . 'updated');
-		$this->assertEquals($result, true);
+		$this->assertEquals(true, $result);
 
 		$result = $api->get($this->app_id);
-		$this->assertArrayHasKey('name', $result[0]);
-		$this->assertEquals($this->name . 'updated', $result[0]['name']);
+		$this->assertArrayHasKey('name', $result);
+		$this->assertEquals($this->name . 'updated', $result['name']);
 	}
 
 	public function testDelete(): void {
 		$api = new Apps();
 		$result = $api->delete($this->app_id);
-		$this->assertEquals($result, true);
+		$this->assertEquals(true, $result);
 
 		$result = $api->get($this->app_id);
 		$this->assertEmpty($result);

@@ -49,7 +49,7 @@ class Events extends ApiBase {
 
 		$results = Db::query($select);
 		$output = $results->toArray();
-		foreach($output as &$value) {
+		foreach ($output as &$value) {
 			$value['data'] = Zend\Json\Decoder::decode($value['data']);
 		}
 
@@ -68,7 +68,7 @@ class Events extends ApiBase {
 		if (!empty($data['identity'])) {
 			$identities = new Identities();
 			$ident = $identities->get($data['identity']);
-			if(!empty($ident)) $ident = reset($ident);
+			if (!empty($ident)) $ident = reset($ident);
 			if (empty($ident['identity_id'])) throw new Exception('Identity does not exist');
 		}
 
@@ -80,7 +80,7 @@ class Events extends ApiBase {
 			!empty($ident) ? $ident['identity_id'] : 0,
 			$data
 		);
-		if(empty($event)) throw new Exception('Invalid event type');
+		if (empty($event)) throw new Exception('Invalid event type');
 
 		// Insert the Event
 		// @todo: shorten all "identity" fields to only include "identity_id" if event data grows too fast or becomes cumbersome
@@ -113,10 +113,5 @@ class Events extends ApiBase {
 		$delete->where('timestamp < unix_timestamp() - (86400 * ' . self::PRUNE_DAYS . ')');
 		Db::query($delete);
 		return true;
-	}
-
-	public function test() {
-		$eth = new EnjinCoin\Ethereum;
-		$eth->test();
 	}
 }

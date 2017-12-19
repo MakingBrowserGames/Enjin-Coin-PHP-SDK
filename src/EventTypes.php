@@ -44,7 +44,7 @@ class EventTypes {
 	public function callEvent($event_type, $app_id, $identity_id, $params) {
 		$event_string = self::$event_types[$event_type];
 
-	    if (in_array($event_string, self::$event_types) && method_exists($this, $event_string)) {
+		if (in_array($event_string, self::$event_types) && method_exists($this, $event_string)) {
 			$data = $this->$event_string($params);
 			return $this->createEvent([
 				'event_type' => $event_type,
@@ -110,6 +110,7 @@ class EventTypes {
 
 	public function tx_broadcasted($params) {
 		return [
+			'txr_id' => $params['txr_id'],
 			'tx_id' => $params['tx_id'],
 			'confirmations' => 0,
 		];
