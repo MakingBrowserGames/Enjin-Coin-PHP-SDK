@@ -2,6 +2,7 @@
 namespace EnjinCoin\Api;
 
 use EnjinCoin\ApiBase;
+use EnjinCoin\Auth;
 use EnjinCoin\Util\Db;
 
 class Tokens extends ApiBase {
@@ -10,6 +11,10 @@ class Tokens extends ApiBase {
 			->from('tokens')
 			->order('token_id asc')
 			->limit($limit);
+
+        if (empty($app_id) && empty($token_id) && Auth::appId() > 0) {
+            $app_id = Auth::appId();
+        }
 
 		if (!empty($token_id))
 			$select->where(['token_id' => $token_id]);
