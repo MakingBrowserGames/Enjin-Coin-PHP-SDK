@@ -51,6 +51,27 @@ final class PlatformTest extends TestCase {
 		//$this->assertEquals(Auth::ROLE_SERVER, $result);
 	}
 
+	//TBD - more work
+	public function testGetRole_IdentitiesAuthKeyAlreadyAvailable() {
+		$identities_auth_key = 'auth_key_' . rand(1, 999999999);
+		$identitiesApi = new Identities();
+		$result = $identitiesApi->create([
+			'auth_key' => $identities_auth_key
+		]);
+		echo "Create Identity\n";
+		print_r($result);
+
+		$result = $identitiesApi->update(['identity_id' => $result['identity_id']], ['auth_key' => $identities_auth_key]);
+		$this->assertEquals(true, $result);
+		
+		
+		$api = new Platform();
+		echo "1\n";
+		$result = $api->getRole($this->app_auth_key);
+		$this->assertEquals(Auth::ROLE_GUEST, $result);
+		//$this->assertEquals(Auth::ROLE_SERVER, $result);
+	}
+	
 	public function tearDown(): void {
 		$api = new Apps();
 		$api->delete(Auth::appId());

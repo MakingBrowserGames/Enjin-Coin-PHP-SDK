@@ -30,8 +30,9 @@ class Platform extends ApiBase {
 	public function getRoles() {
 		$roles = array_keys((array) Config::get()->permissions);
 
-		if (!in_array(Auth::ROLE_GUEST, $roles))
+		if (!in_array(Auth::ROLE_GUEST, $roles)) {
 			$roles[] = Auth::ROLE_GUEST;
+		}
 
 		return $roles;
 	}
@@ -44,8 +45,12 @@ class Platform extends ApiBase {
 	public function getRole(string $auth_key) {
 		$identities = new Identities();
 		$result = $identities->get(['auth_key' => $auth_key]);
-		if (!empty($result)) $identity = reset($result);
-		else return Auth::ROLE_GUEST;
+
+		if (!empty($result)) {
+			$identity = reset($result);
+		} else  {
+			return Auth::ROLE_GUEST;
+		}
 
 		if (!empty($identity['role']) && in_array($identity['role'], $this->getRoles())) {
 			return $identity['role'];
