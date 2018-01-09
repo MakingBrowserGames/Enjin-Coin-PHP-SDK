@@ -65,7 +65,6 @@ final class PlatformTest extends TestCase {
 		
 		
 		$api = new Platform();
-		echo "1\n";
 		$result = $api->getRole($this->app_auth_key);
 		$this->assertEquals(Auth::ROLE_GUEST, $result);
 		//$this->assertEquals(Auth::ROLE_SERVER, $result);
