@@ -46,6 +46,20 @@ final class IdentitiesTest extends TestCase {
 		$this->assertEquals($this->player_name, $result[0]['player_name']);
 	}
 
+	public function testGet_LinkedIsTrue(): void {
+		$api = new Identities();
+		$result = $api->get(['identity_id' => $this->identity_id], true);
+
+		$this->assertArrayHasKey('player_name', $result[0]);
+		$this->assertEquals($this->player_name, $result[0]['player_name']);
+	}
+	public function testGet_AfterIdentityIdIsSet(): void {
+		$api = new Identities();
+		$result = $api->get(['identity_id' => $this->identity_id], true, 1);
+
+		$this->assertArrayHasKey('player_name', $result[0]);
+		$this->assertEquals($this->player_name, $result[0]['player_name']);
+	}
 	public function testUpdate(): void {
 		$api = new Identities();
 		$result = $api->update(['identity_id' => $this->identity_id], ['player_name' => $this->player_name . 'updated']);
