@@ -58,9 +58,8 @@ final class PlatformTest extends TestCase {
 		$result = $identitiesApi->create([
 			'auth_key' => $identities_auth_key
 		]);
-		echo "Create Identity\n";
-		print_r($result);
 
+		//Update identity - try set the auth key
 		$result = $identitiesApi->update(['identity_id' => $result['identity_id']], ['auth_key' => $identities_auth_key]);
 		$this->assertEquals(true, $result);
 		
