@@ -21,12 +21,12 @@ class Db {
 			]);
 
 			self::$sql = $sql = new Zend\Db\Sql\Sql(self::$adapter);
-		}
-
+		} 
 		return self::$sql;
 	}
 
 	public static function query($select) {
+		
 		return self::$adapter->query(
 			self::$sql->buildSqlString($select),
 			Zend\Db\Adapter\Adapter::QUERY_MODE_EXECUTE

@@ -10,9 +10,15 @@ use EnjinCoin\Config;
  * @covers EnjinCoin\Config
  */	
 final class ConfigTest extends TestCase {
-	public function testHasCorrectConfigValues(): void {
+	
+	
+	
+	public function testGet_HasCorrectConfigValues(): void {
+		//First time we load config - the config object is null
 		$config = Config::get();
-
+		//Second time around the config object is loaded
+		$config = Config::get();
+		
 		$this->assertObjectHasAttribute('platform', $config);
 		$this->assertObjectHasAttribute('name', $config->platform);
 
@@ -26,4 +32,5 @@ final class ConfigTest extends TestCase {
 		$this->assertObjectHasAttribute('mode', $config->ethereum);
 		$this->assertObjectHasAttribute('path', $config->ethereum);
 	}
+
 }
