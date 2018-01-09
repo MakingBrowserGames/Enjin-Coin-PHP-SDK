@@ -7,8 +7,8 @@ use PHPUnit\Framework\TestCase;
 use EnjinCoin\Config;
 
 /**
- * @covers Config
- */
+ * @covers EnjinCoin\Config
+ */	
 final class ConfigTest extends TestCase {
 	public function testHasCorrectConfigValues(): void {
 		$config = Config::get();

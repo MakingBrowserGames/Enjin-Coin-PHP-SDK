@@ -10,8 +10,8 @@ use EnjinCoin\Api\Platform;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Platform
- */
+ * @covers EnjinCoin\Api\Platform
+ */	
 final class PlatformTest extends TestCase {
 	protected $app_auth_key = '';
 

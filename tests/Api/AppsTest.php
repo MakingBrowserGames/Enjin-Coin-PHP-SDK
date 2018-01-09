@@ -7,8 +7,8 @@ use EnjinCoin\Api\Apps;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers Api
- */
+ * @covers EnjinCoin\Api\Apps
+ */	
 final class AppsTest extends TestCase {
 	protected $app_id = 0;
 	protected $name = '';

@@ -5,9 +5,6 @@ namespace EnjinCoin\Test;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers Config
- */
 final class ExtensionTest extends TestCase {
 
 	public function testHasCorrectExtensionsLoaded(): void {

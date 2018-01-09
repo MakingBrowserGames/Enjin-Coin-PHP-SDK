@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use EnjinCoin\Util\SafeMath;
 
 /**
- * @covers SafeMath
+ * @covers EnjinCoin\Util\SafeMath
  */
 final class SafeMathTest extends TestCase {
 	public function testAdd(): void {

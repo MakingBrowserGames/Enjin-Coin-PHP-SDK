@@ -7,8 +7,8 @@ use PHPUnit\Framework\TestCase;
 use EnjinCoin\ApiBase;
 
 /**
- * @covers Api
- */
+ * @covers EnjinCoin\ApiBase
+ */	
 final class ApiBaseTest extends TestCase {
 	public function testHasDbInstance(): void {
 		$apibase = new ApiBase();
