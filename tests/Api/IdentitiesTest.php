@@ -7,7 +7,7 @@ use EnjinCoin\Api\Identities;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers EnjinCoin\Api\Identities
+ * @covers \EnjinCoin\Api\Identities
  */	
 final class IdentitiesTest extends TestCase {
 	protected $identity_id = 0;
