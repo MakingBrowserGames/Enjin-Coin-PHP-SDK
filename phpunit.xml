@@ -5,4 +5,20 @@
 			<directory>./tests</directory>
 		</testsuite>
 	</testsuites>
+	
+<!-- filter and logging required for code coverage -->
+<!-- See https://phpunit.de/manual/current/en/appendixes.configuration.html
+and  https://phpunit.de/manual/current/en/code-coverage-analysis.html#code-coverage-analysis.whitelisting-files  -->
+<filter>
+  <whitelist processUncoveredFilesFromWhitelist="true">
+    <directory suffix=".php">./src</directory>
+  </whitelist>
+</filter>	
+	
+<logging>
+  <log type="coverage-html" target="./reports" lowUpperBound="35" highLowerBound="70"/>
+  <log type="coverage-clover" target="./reports/coverage.xml"/>
+</logging>	
+	
+	
 </phpunit>

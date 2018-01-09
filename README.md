@@ -25,6 +25,11 @@ extension=php_sockets.dll
 extension=php_mbstring.dll
 ```
 
+# Install xdebug - required for code coverage
+Follow the instructions on this page to install xdebug
+https://xdebug.org/wizard.php
+
+
 # Installation
 composer install
 

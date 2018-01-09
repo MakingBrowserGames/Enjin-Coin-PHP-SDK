@@ -71,7 +71,7 @@ class Rlp {
 			$length = safeParseInt(('hex'), 16);
 			return $llength + $length;
 		}
-	};
+	}
 
 	function _decode($input) {
 		$length = null;

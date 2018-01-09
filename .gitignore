@@ -5,3 +5,4 @@ composer.lock
 /src/vendor/
 /src/composer.lock
 /.idea/
+/reports
