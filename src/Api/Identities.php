@@ -24,7 +24,9 @@ class Identities extends ApiBase {
 			->join('identity_values', 'identities.identity_id = identity_values.identity_id', ['value'], Zend\Db\Sql\Select::JOIN_LEFT)
 			->join('identity_fields', 'identity_fields.field_id = identity_values.field_id', ['key'], Zend\Db\Sql\Select::JOIN_LEFT);
 
-		if (!$extra_fields) $select->columns(['identity_id', 'ethereum_address']);
+		if (!$extra_fields) {
+			$select->columns(['identity_id', 'ethereum_address']);
+		}
 
 		if ($linked) {
 			$select->where("ethereum_address != ''");
@@ -44,8 +46,9 @@ class Identities extends ApiBase {
 			}
 		}
 
-		if ($after_identity_id)
+		if ($after_identity_id) {
 			$select->where->greaterThan('identities.identity_id', $after_identity_id);
+		}
 
 		$select->limit($limit);
 
@@ -89,7 +92,9 @@ class Identities extends ApiBase {
 
 		// Insert Identity Fields & Values
 		foreach ($identity as $key => $value) {
-			if (in_array($key, ['identity_id', 'identity_code', 'ethereum_address'])) continue;
+			if (in_array($key, ['identity_id', 'identity_code', 'ethereum_address'])) { 
+				continue;				
+			}
 
 			$field = $this->field($key);
 			$insert = $this->db->insert('identity_values');
@@ -137,7 +142,10 @@ class Identities extends ApiBase {
 
 		$results = Db::query($select);
 		$existing_field = $results->current();
-		if (!empty($existing_field)) return $existing_field;
+
+		if (!empty($existing_field)) {
+			return $existing_field;
+		}
 
 		$insert = $this->db->insert('identity_fields');
 		$insert->values([
@@ -197,9 +205,12 @@ class Identities extends ApiBase {
 		// Check if any identity is already linked to this Ethereum address
 		if (!empty($update['ethereum_address'])) {
 			$existing_address = $this->get(['ethereum_address' => $update['ethereum_address']]);
+
 			foreach ($existing_address as $value) {
 				foreach ($identity as $i) {
-					if ($value['identity_id'] != $i['identity_id']) throw new Exception('This Ethereum address is already linked');
+					if ($value['identity_id'] != $i['identity_id']) {
+						throw new Exception('This Ethereum address is already linked');
+					}
 				}
 			}
 		}

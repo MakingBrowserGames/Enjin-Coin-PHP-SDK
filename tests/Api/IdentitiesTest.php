@@ -15,7 +15,9 @@ final class IdentitiesTest extends TestCase {
 	protected $ethereum_address = '';
 	protected $player_name = '';
 
+	//Setup method called before every method 
 	protected function setUp(): void {
+
 		$this->ethereum_address = '0x0000000000000000000000000000000' . rand(100000000, 999999999);
 		$this->player_name = 'testplayer' . rand(100000000, 999999999);
 
@@ -37,7 +39,17 @@ final class IdentitiesTest extends TestCase {
 		$this->assertArrayHasKey('identity_id', $result);
 		$this->assertArrayHasKey('identity_code', $result);
 	}
+	
+	//Pass in a random player_name key so that it doesnt already exist in the db
+	public function testCreate_RandomKey(): void {
+		$api = new Identities();
+		$result = $api->create([
+			'player_name'. rand(100000000, 999999999) => 'testcreate' . rand(100000000, 999999999)
+		]);
 
+		$this->assertArrayHasKey('identity_id', $result);
+		$this->assertArrayHasKey('identity_code', $result);
+	}
 	public function testGet(): void {
 		$api = new Identities();
 		$result = $api->get(['identity_id' => $this->identity_id]);
@@ -60,6 +72,13 @@ final class IdentitiesTest extends TestCase {
 		$this->assertArrayHasKey('player_name', $result[0]);
 		$this->assertEquals($this->player_name, $result[0]['player_name']);
 	}
+	public function testGet_RandomField(): void {
+		$api = new Identities();
+		$result = $api->get(['random_field' => $this->identity_id]);
+
+		$this->assertEmpty($result);
+	}
+	
 	public function testUpdate(): void {
 		$api = new Identities();
 		$result = $api->update(['identity_id' => $this->identity_id], ['player_name' => $this->player_name . 'updated']);
@@ -70,6 +89,19 @@ final class IdentitiesTest extends TestCase {
 		$this->assertEquals($this->player_name . 'updated', $result[0]['player_name']);
 	}
 
+	//Pass in the already set ethereum_address so that all branches of the code are hit
+	public function testUpdate_EthereumAddressSetIsSameAsDB(): void {
+		$api = new Identities();
+		
+		//Pass in the ethereum_address that was set in the setup method
+		$result = $api->update(['identity_id' => $this->identity_id], ['player_name' => $this->player_name . 'updated', 'ethereum_address' => $this->ethereum_address]);
+		$this->assertEquals(true, $result);
+
+		$result = $api->get(['identity_id' => $this->identity_id]);
+		$this->assertArrayHasKey('player_name', $result[0]);
+		$this->assertEquals($this->player_name . 'updated', $result[0]['player_name']);
+	}
+	
 	public function testLink(): void {
 		$new_eth_address = '0x1234567890123456789000' . rand(100000000, 999999999) . rand(100000000, 999999999);
 
