@@ -10,10 +10,6 @@ use PHPUnit\Runner\Exception;
  * @covers EnjinCoin\Api\Prices
  */	
 final class PricesTest extends TestCase {
-	protected $identity_id = 0;
-	protected $identity_code = '';
-	protected $ethereum_address = '';
-	protected $player_name = '';
 
 	public function testGetTotalSupply_ENJ(): void {
 		$symbol = 'ENJ';

@@ -16,14 +16,17 @@ class Tokens extends ApiBase {
             $app_id = Auth::appId();
         }
 
-		if (!empty($token_id))
+		if (!empty($token_id)) {
 			$select->where(['token_id' => $token_id]);
+		}
 
-		if (!empty($app_id))
+		if (!empty($app_id)) {
 			$select->where(['app_id' => $app_id]);
+		}
 
-		if (!empty($after_token_id))
+		if (!empty($after_token_id)) {
 			$select->where->greaterThan('token_id', $after_token_id);
+		}
 
 		$results = Db::query($select);
 		$output = $results->toArray();
