@@ -53,20 +53,30 @@ final class PlatformTest extends TestCase {
 
 	//TBD - more work
 	public function testGetRole_IdentitiesAuthKeyAlreadyAvailable() {
-		$identities_auth_key = 'auth_key_' . rand(1, 999999999);
+		//Create the initial identity so that we can use it to associate an auth key
+		$this->ethereum_address = '0x0000000000000000000000000000000' . rand(100000000, 999999999);
+		$this->player_name = 'testplayer' . rand(100000000, 999999999);
 		$identitiesApi = new Identities();
 		$result = $identitiesApi->create([
-			'auth_key' => $identities_auth_key
+			'ethereum_address' => $this->ethereum_address,
+			'player_name' => $this->player_name,
 		]);
+		$this->identity_code = $result['identity_code'];
+		$this->identity_id = $result['identity_id'];
 
-		//Update identity - try set the auth key
-		$result = $identitiesApi->update(['identity_id' => $result['identity_id']], ['auth_key' => $identities_auth_key]);
+		//Link the identity so that an auth key is set on the record
+		$new_eth_address = '0x1234567890123456789000' . rand(100000000, 999999999) . rand(100000000, 999999999);
+		$result = $identitiesApi->link($this->identity_code, $new_eth_address);
 		$this->assertEquals(true, $result);
-		
-		
+
+		$result = $identitiesApi->get(['identity_id' => $this->identity_id]);
+		/*$this->assertArrayHasKey('auth_key', $result[0]);
+
+		$this->app_auth_key = $result['auth_key'];
+
 		$api = new Platform();
 		$result = $api->getRole($this->app_auth_key);
-		$this->assertEquals(Auth::ROLE_GUEST, $result);
+		$this->assertEquals(Auth::ROLE_GUEST, $result);*/
 		//$this->assertEquals(Auth::ROLE_SERVER, $result);
 	}
 	
