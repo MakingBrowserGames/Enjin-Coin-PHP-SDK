@@ -34,20 +34,52 @@ class Tokens extends ApiBase {
 		return $output;
 	}
 
+	public function addToken(int $token_id) {
+	    // @todo fetch data from CustomTokens contract on the blockchain
+        $result = [];
+
+        $data = [
+            'token_id' => $token_id,
+            'app_id' => Auth::appId(),
+            'creator' => $result['creator'],
+            'adapter' => $result['adapter'],
+            'name' => $result['name'],
+            'icon' => $result['icon'],
+            'totalSupply' => $result['totalSupply'],
+            'exchangeRate' => $result['exchangeRate'],
+            'decimals' => $result['decimals'],
+            'maxMeltFee' => $result['maxMeltFee'],
+            'meltFee' => $result['meltFee'],
+            'transferable' => $result['transferable'],
+        ];
+
+        $insert = $this->db->insert('tokens');
+        $insert->values($data, $insert::VALUES_MERGE);
+        Db::query($insert);
+        return true;
+    }
+
+    public function removeToken(int $token_id) {
+        $delete = $this->db->delete('tokens');
+        $delete->where(['token_id' => $token_id]);
+        Db::query($delete);
+        return true;
+    }
+
 	public function getBalance(array $identity, $token_ids = null) {
 		/**
 		 * @todo remove mock request
 		 */
 		if (!empty($identity['identity_id']) && $identity['identity_id'] == 1) {
-			return array(
+			return [
 				'ENJ' => '50034.871212583712984734',
 				'1' => '1',
 				'2' => '1',
 				'3' => '5',
 				'4' => '129.25',
-			);
+			];
 		}
 
-		return array();
+		return [];
 	}
 }
