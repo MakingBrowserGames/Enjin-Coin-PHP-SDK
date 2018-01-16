@@ -5,6 +5,7 @@ namespace EnjinCoin\Test;
 
 use EnjinCoin\Api\Tokens;
 use EnjinCoin\Api\Apps;
+use EnjinCoin\Auth;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\Exception;
 /**
@@ -17,6 +18,7 @@ final class TokensTest extends TestCase {
 * Once we can create a token - go over all tests and ensure that they pass - these stubs shall do for now
 */
 
+	protected $token_id = 0;
 	protected $app_id = '';
 	protected $app_name = '';
 	protected $app_auth_key = '';
@@ -25,16 +27,21 @@ final class TokensTest extends TestCase {
 	//Setup method called before every method 
 	protected function setUp(): void {
 
+		//Add a token before each test
+		$this->token_id = rand(100000000, 999999999);		
+		$api = new Tokens();
+		$result = $api->addToken($this->token_id);
+		$this->assertTrue($result);
+		
 		$this->app_name = 'testApp' . rand(100000000, 999999999);
 
-		$api = new Apps();
-		$result = $api->create($this->app_name);
+		$appsApi = new Apps();
+		$result = $appsApi->create($this->app_name);
 		
 		$this->app_id = $result['app_id'];
 		$this->app_name = $result['name'];
 		$this->app_auth_key = $result['app_auth_key'];
 	}
-
 
 	public function testGet_AppIdSet(): void {
 		$api = new Tokens();
@@ -42,11 +49,21 @@ final class TokensTest extends TestCase {
 
 		$this->assertEmpty($result);
 	}
+	
+	public function testGet_AuthHasOccuredNoTokens(): void {
+		$result = Auth::init($this->app_auth_key);
+		$this->assertTrue($result);
+		
+		$api = new Tokens();
+		$result = $api->get();
+		$this->assertEmpty($result);
+	}
+
 	public function testGet_AppIdNotSet(): void {
 		$api = new Tokens();
 		$result = $api->get();
 
-		$this->assertEmpty($result);
+		$this->assertNotEmpty($result);
 	}
 	
 	public function testGet_AfterTokenIdSet(): void {
@@ -76,6 +93,24 @@ final class TokensTest extends TestCase {
 
 		$this->assertEmpty($result);
 	}
+	
+	public function testAddToken(): void {
+		$this->token_id = rand(100000000, 999999999);		
+		$api = new Tokens();
+		$result = $api->addToken($this->token_id);
+		$this->assertTrue($result);
+	}
+	
+	public function testRemoveToken(): void {
+		$this->token_id = rand(100000000, 999999999);		
+		$api = new Tokens();
+		$result = $api->addToken($this->token_id);
+		$this->assertTrue($result);
+		
+		$result = $api->removeToken($this->token_id);
+		$this->assertTrue($result);
+	}	
+	
 	public function testGetBalance_IdentityArrayEmpty(): void {
 		$api = new Tokens();
 		$result = $api->getBalance([]);
