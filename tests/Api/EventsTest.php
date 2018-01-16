@@ -44,6 +44,7 @@ final class EventsTest extends TestCase {
 			'ethereum_address' => $ethereum_address,
 			'player_name' => $player_name,
 		]);
+
 		$this->identity_id   = $result['identity_id'];
 		$this->identity_code = $result['identity_code'];
 		$this->identity = [

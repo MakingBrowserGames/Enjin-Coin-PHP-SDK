@@ -8,6 +8,7 @@ use EnjinCoin\EventTypes;
 use EnjinCoin\ApiBase;
 use EnjinCoin\Util\Db;
 use EnjinCoin\Ethereum as Eth;
+use PHPUnit\Runner\Exception;
 
 class TransactionRequests extends ApiBase {
 	const TYPE_BUY = 'buy';
@@ -54,30 +55,44 @@ class TransactionRequests extends ApiBase {
 	 */
 	public function create(array $identity, array $recipient, string $type, string $icon = null, string $title = null, int $token_id = 0, string $value = '0') {
 		// Validate Txr Type
-		if (!in_array($type, self::$txr_types)) throw new \Exception('Invalid Transaction Request Type');
+		if (!in_array($type, self::$txr_types)) {
+			throw new Exception('Invalid Transaction Request Type');
+		}
 
 		// Validate Identity
 		$identities = new Identities();
 		$ident = $identities->get($identity);
-		$ident = reset($ident);
-		if (!empty($ident)) $ident = reset($ident);
-		if (empty($ident['identity_id'])) throw new Exception('Identity does not exist');
+		//@Damien - do we need to perfrom reste here and if !empty?? - will only work when I comment out the first rest($ident)
+		//$ident = reset($ident);
+		if (!empty($ident)) { 
+			$ident = reset($ident);
+		}
+		if (empty($ident['identity_id'])) {
+			throw new Exception('Identity does not exist');
+		}
 
 		// Validate Recipient
 		$recipient_db = ['recipient_id' => null, 'ethereum_address' => null];
 		$recip = $identities->get($recipient);
-		$recip = reset($recip);
+		//@Damien - do we need to perfrom reste here and if !empty?? - will only work when I comment out the first rest($recip)
+		//$recip = reset($recip);
+
 		if (!empty($recip)) {
 			$recip = reset($recip);
 			$recipient_db['recipient_id'] = $recip['identity_id'];
 		}
+		
 		if (!empty($recip['ethereum_address']) && Ethereum::validateAddress($recip['ethereum_address'])) {
 			$recipient_db['recipient_address'] = $recip['ethereum_address'];
-		} else throw new Exception('Identity does not exist');
+		} else { 
+			throw new Exception('Recipient Identity does not exist');
+		}
 
 		// Validate Value
-		if (!Ethereum::validateValue($value)) throw new Exception('Invalid Transaction Request Value');
-
+		if (!Ethereum::validateValue($value)) { 
+			throw new Exception('Invalid Transaction Request Value');
+		}
+		
 		$insert = $this->db->insert('transaction_requests');
 		$timestamp = time();
 		$insert->values([
