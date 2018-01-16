@@ -16,7 +16,7 @@ final class TransactionRequestsTest extends TestCase {
 	protected $identity;
 	protected $validRecipient;
 	protected $invalidRecipient;
-	
+	protected $latest_txr_id = 0;
 	//Setup method called before every method 
 	protected function setUp(): void {
 
@@ -49,8 +49,33 @@ final class TransactionRequestsTest extends TestCase {
 		$this->invalidRecipient = [
 			'identity_id' => $result['identity_id'], 
 			'identity_code' => $result['identity_code'],
-		];
+		];	
+		
+		//Create a transaction request for the get calls
+		$api = new TransactionRequests();	
+		$result = $api->create($this->identity, $this->validRecipient, $this->type);
+		$this->assertNotEmpty($result);
+
+		$latestResult = $api->getLatest(1);
+		$this->assertNotEmpty($latestResult);
+
+		$latest_txr_id = (int)$latestResult['txr_id'];
 	}
+	
+	public function testGets(): void {
+		//Create a transaction request for the get calls
+		$api = new TransactionRequests();	
+		$result = $api->create($this->identity, $this->validRecipient, $this->type);
+		$this->assertNotEmpty($result);
+
+		$latestResult = $api->getLatest(1);
+		$this->assertNotEmpty($latestResult);
+
+		$txr_id = (int)$latestResult['txr_id'];
+		$result = $api->get($txr_id);
+		$this->assertNotEmpty($result);
+	}
+	
 	
 	/**
      * @expectedException Exception
@@ -108,5 +133,5 @@ final class TransactionRequestsTest extends TestCase {
 		$result = $api->create($this->identity, $this->validRecipient, $this->type);
 
 		$this->assertNotEmpty($result);
-	}	
+	}
 }

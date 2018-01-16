@@ -42,6 +42,20 @@ class TransactionRequests extends ApiBase {
 	}
 
 	/**
+	 * Get the latest transaction request - used by tests
+	 */
+	public function getLatest($limit = 1) {
+		$select = $this->db->select()
+			->from('transaction_requests')
+			->order('txr_id desc')
+			->limit($limit);
+
+		$results = Db::query($select);
+		return $results->current();
+	}
+	
+	
+	/**
 	 * Create a new Transaction Request
 	 * @param array $identity
 	 * @param array $recipient
@@ -136,12 +150,13 @@ class TransactionRequests extends ApiBase {
 
 		// Check permissions for cancellation type
 		$event_type = null;
-		if (Auth::role() <= Auth::ROLE_APP)
+		if (Auth::role() <= Auth::ROLE_APP) {
 			$event_type = EventTypes::TXR_CANCELED_PLATFORM;
-		else if (Auth::role() <= Auth::ROLE_WALLET)
+		} else if (Auth::role() <= Auth::ROLE_WALLET) {
 			$event_type = EventTypes::TXR_CANCELED_USER;
-		else
+		} else {
 			throw new Exception('Authentication required');
+		}
 
 		$identity = Auth::identity();
 		$identity_id = $identity['identity_id'];
