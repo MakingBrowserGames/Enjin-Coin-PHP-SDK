@@ -76,8 +76,7 @@ class TransactionRequests extends ApiBase {
 		// Validate Identity
 		$identities = new Identities();
 		$ident = $identities->get($identity);
-		//@Damien - do we need to perfrom reste here and if !empty?? - will only work when I comment out the first rest($ident)
-		//$ident = reset($ident);
+
 		if (!empty($ident)) { 
 			$ident = reset($ident);
 		}
@@ -88,8 +87,6 @@ class TransactionRequests extends ApiBase {
 		// Validate Recipient
 		$recipient_db = ['recipient_id' => null, 'ethereum_address' => null];
 		$recip = $identities->get($recipient);
-		//@Damien - do we need to perfrom reste here and if !empty?? - will only work when I comment out the first rest($recip)
-		//$recip = reset($recip);
 
 		if (!empty($recip)) {
 			$recip = reset($recip);
