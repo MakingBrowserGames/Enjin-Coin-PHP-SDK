@@ -12,9 +12,9 @@ class Tokens extends ApiBase {
 			->order('token_id asc')
 			->limit($limit);
 
-        if (empty($app_id) && empty($token_id) && Auth::appId() > 0) {
-            $app_id = Auth::appId();
-        }
+		if (empty($app_id) && empty($token_id) && Auth::appId() > 0) {
+			$app_id = Auth::appId();
+		}
 
 		if (!empty($token_id)) {
 			$select->where(['token_id' => $token_id]);
@@ -35,8 +35,8 @@ class Tokens extends ApiBase {
 	}
 
 	public function addToken(int $token_id) {
-	    // @todo fetch data from CustomTokens contract on the blockchain
-        $result = ['creator' => 'creator',
+		// @todo fetch data from CustomTokens contract on the blockchain
+		$result = ['creator' => 'creator',
 		'adapter' => 'adapter',
 		'name' => 'name',
 		'icon' => 'icon',
@@ -47,33 +47,33 @@ class Tokens extends ApiBase {
 		'meltFee' => 'meltFee',
 		'transferable' => 'transferable'];
 
-        $data = [
-            'token_id' => $token_id,
-            'app_id' => Auth::appId(),
-            'creator' => $result['creator'],
-            'adapter' => $result['adapter'],
-            'name' => $result['name'],
-            'icon' => $result['icon'],
-            'totalSupply' => $result['totalSupply'],
-            'exchangeRate' => $result['exchangeRate'],
-            'decimals' => $result['decimals'],
-            'maxMeltFee' => $result['maxMeltFee'],
-            'meltFee' => $result['meltFee'],
-            'transferable' => $result['transferable'],
-        ];
+		$data = [
+			'token_id' => $token_id,
+			'app_id' => Auth::appId(),
+			'creator' => $result['creator'],
+			'adapter' => $result['adapter'],
+			'name' => $result['name'],
+			'icon' => $result['icon'],
+			'totalSupply' => $result['totalSupply'],
+			'exchangeRate' => $result['exchangeRate'],
+			'decimals' => $result['decimals'],
+			'maxMeltFee' => $result['maxMeltFee'],
+			'meltFee' => $result['meltFee'],
+			'transferable' => $result['transferable'],
+		];
 
-        $insert = $this->db->insert('tokens');
-        $insert->values($data, $insert::VALUES_MERGE);
-        Db::query($insert);
-        return true;
-    }
+		$insert = $this->db->insert('tokens');
+		$insert->values($data, $insert::VALUES_MERGE);
+		Db::query($insert);
+		return true;
+	}
 
-    public function removeToken(int $token_id) {
-        $delete = $this->db->delete('tokens');
-        $delete->where(['token_id' => $token_id]);
-        Db::query($delete);
-        return true;
-    }
+	public function removeToken(int $token_id) {
+		$delete = $this->db->delete('tokens');
+		$delete->where(['token_id' => $token_id]);
+		Db::query($delete);
+		return true;
+	}
 
 	public function getBalance(array $identity, $token_ids = null) {
 		/**
