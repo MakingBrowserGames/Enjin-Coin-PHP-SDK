@@ -42,7 +42,6 @@ final class PricesTest extends TestCase {
 		$symbol = 'EXCEPTION';
 		$api = new Prices();
 		$result = $api->getTotalSupply($symbol);
-
 		
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('No supply available');

@@ -28,11 +28,13 @@ class Events extends ApiBase {
 			->order('event_id desc')
 			->limit($limit);
 
-		if (!empty($event_id))
+		if (!empty($event_id)) {
 			$select->where(['event_id' => $event_id]);
+		}
 
-		if (!empty($app_id))
+		if (!empty($app_id)) {
 			$select->where(['app_id' => $app_id]);
+		}
 
 		if (!empty($identity)) {
 			$select->join('identities', 'events.identity_id = identities.identity_id', null);
@@ -41,18 +43,19 @@ class Events extends ApiBase {
 			}
 		}
 
-		if (!empty($before_event_id))
+		if (!empty($before_event_id)) {
 			$select->where->lessThan('event_id', $before_event_id);
+		}
 
-		if (!empty($after_event_id))
+		if (!empty($after_event_id)) {
 			$select->where->greaterThan('event_id', $after_event_id);
+		}
 
 		$results = Db::query($select);
 		$output = $results->toArray();
 		foreach ($output as &$value) {
 			$value['data'] = Zend\Json\Decoder::decode($value['data']);
 		}
-
 		return $output;
 	}
 
@@ -61,15 +64,22 @@ class Events extends ApiBase {
 		if ($app_id != 0) {
 			$apps = new Apps();
 			$app = $apps->get($app_id);
-			if (empty($app['app_id'])) throw new Exception('App ID does not exist');
+			if (empty($app['app_id'])) {
+				throw new Exception('App ID does not exist');
+			}
 		}
 
 		// Validate Identity
 		if (!empty($data['identity'])) {
 			$identities = new Identities();
 			$ident = $identities->get($data['identity']);
-			if (!empty($ident)) $ident = reset($ident);
-			if (empty($ident['identity_id'])) throw new Exception('Identity does not exist');
+
+			if (!empty($ident)) {
+				$ident = reset($ident);
+			}
+			if (empty($ident['identity_id'])) { 
+				throw new Exception('Identity does not exist');
+			}
 		}
 
 		// Validate Event Type
@@ -80,7 +90,9 @@ class Events extends ApiBase {
 			!empty($ident) ? $ident['identity_id'] : 0,
 			$data
 		);
-		if (empty($event)) throw new Exception('Invalid event type');
+		if (empty($event)) {
+			throw new Exception('Invalid event type');
+		}
 
 		// Insert the Event
 		// @todo: shorten all "identity" fields to only include "identity_id" if event data grows too fast or becomes cumbersome

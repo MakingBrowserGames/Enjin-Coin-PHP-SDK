@@ -13,11 +13,6 @@ use PHPUnit\Runner\Exception;
  */	
 final class TokensTest extends TestCase {
 
-/**
-* TBD damien - better tests once we can create a token
-* Once we can create a token - go over all tests and ensure that they pass - these stubs shall do for now
-*/
-
 	protected $token_id = 0;
 	protected $app_id = '';
 	protected $app_name = '';

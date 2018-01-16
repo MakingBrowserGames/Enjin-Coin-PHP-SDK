@@ -4,6 +4,7 @@ namespace EnjinCoin\Api;
 use EnjinCoin\ApiBase;
 use EnjinCoin\Util\Db;
 use RandomLib;
+use PHPUnit\Runner\Exception;
 
 class Apps extends ApiBase {
 	/**
@@ -44,7 +45,9 @@ class Apps extends ApiBase {
 	 */
 	public function create(string $name) {
 		$name = trim($name);
-		if (empty($name)) throw new Exception('Name must not be empty');
+		if (empty($name)) {
+			throw new Exception('Name must not be empty');
+		}
 
 		$app_auth_key = $this->generateAuthKey();
 
@@ -69,7 +72,9 @@ class Apps extends ApiBase {
 	 */
 	public function update(int $app_id, string $name) {
 		$name = trim($name);
-		if (empty($name)) throw new Exception('Name must not be empty');
+		if (empty($name)) { 
+			throw new Exception('Name must not be empty');
+		}
 
 		$sql = $this->db->update('apps');
 		$sql->set(['name' => $name]);
