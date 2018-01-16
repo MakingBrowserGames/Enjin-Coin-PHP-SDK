@@ -9,22 +9,28 @@ use EnjinCoin\ApiBase;
 use EnjinCoin\Util\Db;
 use RandomLib;
 
+/**
+ * Class Identities
+ * @package EnjinCoin\Api
+ */
 class Identities extends ApiBase {
+
 	/**
-	 * Retrieve identities, filtered by various parameters
-	 * @param array $identity
-	 * @param bool $linked
-	 * @param int $after_identity_id
-	 * @param int $limit
-	 * @return mixed
-	 */
-	public function get(array $identity = [], bool $linked = false, int $after_identity_id = null, int $limit = 50, $extra_fields = false) {
+     * Retrieve identities, filtered by various parameters
+     * @param array $identity
+     * @param bool $linked
+     * @param int|null $afterIdentityId
+     * @param int $limit
+     * @param bool $extraFields
+     * @return mixed
+     */
+	public function get(array $identity = [], bool $linked = false, int $afterIdentityId = null, int $limit = 50, $extraFields = false) {
 		$select = $this->db->select()
 			->from('identities')
 			->join('identity_values', 'identities.identity_id = identity_values.identity_id', ['value'], Zend\Db\Sql\Select::JOIN_LEFT)
 			->join('identity_fields', 'identity_fields.field_id = identity_values.field_id', ['key'], Zend\Db\Sql\Select::JOIN_LEFT);
 
-		if (!$extra_fields) {
+		if (!$extraFields) {
 			$select->columns(['identity_id', 'ethereum_address']);
 		}
 
@@ -46,8 +52,8 @@ class Identities extends ApiBase {
 			}
 		}
 
-		if ($after_identity_id) {
-			$select->where->greaterThan('identities.identity_id', $after_identity_id);
+		if ($afterIdentityId) {
+			$select->where->greaterThan('identities.identity_id', $afterIdentityId);
 		}
 
 		$select->limit($limit);
@@ -63,10 +69,12 @@ class Identities extends ApiBase {
 				->from('identity_values')
 				->join('identity_fields', 'identity_fields.field_id = identity_values.field_id', Zend\Db\Sql\Select::SQL_STAR, Zend\Db\Sql\Select::JOIN_INNER)
 				->where(['identity_id' => $ident['identity_id']]);
-			$v_result = Db::query($select)->toArray();
-			foreach ($v_result as $v) {
-				if (in_array($v['key'], ['identity_id', 'ethereum_address', 'identity_code'])) continue;
-				$ident[$v['key']] = $v['value'];
+			$selectResults = Db::query($select)->toArray();
+			foreach ($selectResults as $selectResult) {
+				if (in_array($selectResult['key'], ['identity_id', 'ethereum_address', 'identity_code'])) {
+					continue;
+				}
+				$ident[$selectResult['key']] = $selectResult['value'];
 			}
 		}
 
@@ -81,34 +89,34 @@ class Identities extends ApiBase {
 	public function create(array $identity) {
 		$insert = $this->db->insert('identities');
 
-		$identity_code = $this->generateLinkingCode();
-		$insert->values(['identity_code' => $identity_code], $insert::VALUES_MERGE);
+		$identityCode = $this->_generateLinkingCode();
+		$insert->values(['identity_code' => $identityCode], $insert::VALUES_MERGE);
 
 		if (!empty($identity['ethereum_address'])) {
 			$insert->values(['ethereum_address' => $identity['ethereum_address']], $insert::VALUES_MERGE);
 		}
 		$results = Db::query($insert);
-		$identity_id = $results->getGeneratedValue();
+		$identityId = $results->getGeneratedValue();
 
 		// Insert Identity Fields & Values
 		foreach ($identity as $key => $value) {
-			if (in_array($key, ['identity_id', 'identity_code', 'ethereum_address'])) { 
-				continue;				
+			if (in_array($key, ['identity_id', 'identity_code', 'ethereum_address'])) {
+				continue;
 			}
 
 			$field = $this->field($key);
 			$insert = $this->db->insert('identity_values');
-			$insert->values(['identity_id' => $identity_id], $insert::VALUES_MERGE);
+			$insert->values(['identity_id' => $identityId], $insert::VALUES_MERGE);
 			$insert->values(['field_id' => $field['field_id']], $insert::VALUES_MERGE);
 			$insert->values(['value' => $value], $insert::VALUES_MERGE);
 			Db::query($insert);
 		}
 
-		(new Events)->create(Auth::appId(), EventTypes::IDENTITY_CREATED, ['identity' => ['identity_id' => $identity_id], 'identity_code' => $identity_code]);
+		(new Events)->create(Auth::appId(), EventTypes::IDENTITY_CREATED, ['identity' => ['identity_id' => $identityId], 'identity_code' => $identityCode]);
 
 		return [
-			'identity_id' => $identity_id,
-			'identity_code' => $identity_code
+			'identity_id' => $identityId,
+			'identity_code' => $identityCode
 		];
 	}
 
@@ -116,11 +124,11 @@ class Identities extends ApiBase {
 	 * Generate a readable string using all upper case letters that are easy to recognize
 	 * @return string
 	 */
-	private function generateLinkingCode() {
+	private function _generateLinkingCode() {
 		$code = '';
-		$readable_characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+		$readableCharachters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 		for ($i = 0; $i < 6; $i++) {
-			$code .= $readable_characters[mt_rand(0, strlen($readable_characters) - 1)];
+			$code .= $readableCharachters[mt_rand(0, strlen($readableCharachters) - 1)];
 		}
 		return $code;
 	}
@@ -141,10 +149,10 @@ class Identities extends ApiBase {
 			]);
 
 		$results = Db::query($select);
-		$existing_field = $results->current();
+		$existingField = $results->current();
 
-		if (!empty($existing_field)) {
-			return $existing_field;
+		if (!empty($existingField)) {
+			return $existingField;
 		}
 
 		$insert = $this->db->insert('identity_fields');
@@ -157,12 +165,12 @@ class Identities extends ApiBase {
 		], $insert::VALUES_MERGE);
 
 		$results = Db::query($insert);
-		$field_id = $results->getGeneratedValue();
+		$fieldId = $results->getGeneratedValue();
 
 		$select = $this->db->select()
 			->from('identity_fields')
 			->where([
-				'field_id' => $field_id,
+				'field_id' => $fieldId,
 			]);
 
 		$results = Db::query($select);
@@ -195,30 +203,31 @@ class Identities extends ApiBase {
 	 * Update Identities based on filters
 	 * @param array $identity
 	 * @param array $update
-	 * @param bool $emit_event
+	 * @param bool $emitEvent
+     * @throws Exception is ethereum address is already linked
 	 * @return bool
 	 */
-	public function update($identity, $update, $emit_event = true) {
+	public function update($identity, $update, $emitEvent = true) {
 		$identity = $this->get($identity);
 		$success = false;
 
 		// Check if any identity is already linked to this Ethereum address
 		if (!empty($update['ethereum_address'])) {
-			$existing_address = $this->get(['ethereum_address' => $update['ethereum_address']]);
+			$existingAddress = $this->get(['ethereum_address' => $update['ethereum_address']]);
 
-			foreach ($existing_address as $value) {
-				foreach ($identity as $i) {
-					if ($value['identity_id'] != $i['identity_id']) {
+			foreach ($existingAddress as $value) {
+				foreach ($identity as $identityValue) {
+					if ($value['identity_id'] !== $identityValue['identity_id']) {
 						throw new Exception('This Ethereum address is already linked');
 					}
 				}
 			}
 		}
 
-		foreach ($identity as $i) {
+		foreach ($identity as $identityValue) {
 			if (!empty($update['ethereum_address'])) {
 				$sql = $this->db->update('identities');
-				$sql->where(['identity_id' => $i['identity_id']]);
+				$sql->where(['identity_id' => $identityValue['identity_id']]);
 				$sql->set([
 					'ethereum_address' => $update['ethereum_address'],
 					'identity_code' => ''
@@ -233,7 +242,7 @@ class Identities extends ApiBase {
 					$field = $this->field($key);
 					$sql = $this->db->update('identity_values');
 					$sql->where([
-						'identity_id' => $i['identity_id'],
+						'identity_id' => $identityValue['identity_id'],
 						'field_id' => $field['field_id']
 					]);
 					$sql->set(['value' => $value]);
@@ -242,8 +251,9 @@ class Identities extends ApiBase {
 				}
 			}
 
-			if ($emit_event)
-				(new Events)->create(Auth::appId(), EventTypes::IDENTITY_UPDATED, ['identity' => ['identity_id' => $i['identity_id']]]);
+			if ($emitEvent) {
+				(new Events)->create(Auth::appId(), EventTypes::IDENTITY_UPDATED, ['identity' => ['identity_id' => $identityValue['identity_id']]]);
+			}
 		}
 
 		return $success;
@@ -253,21 +263,27 @@ class Identities extends ApiBase {
 	 * Link Smart Wallet to Identity using the Linking Code
 	 * todo: sign identity code using eth private key
 	 * todo: should store hashed auth_key for security
-	 * @param string $identity_code
-	 * @param string $ethereum_address
+	 * @param string $identityCode
+	 * @param string $ethereumAddress
 	 * @param string $signature
 	 * @return bool
 	 */
-	public function link(string $identity_code, string $ethereum_address, string $signature = '') {
-		$auth_key = $this->generateAuthKey();
-		$success = $this->update(['identity_code' => $identity_code], ['ethereum_address' => $ethereum_address, 'auth_key' => $auth_key, 'identity_code' => ''], false);
+	public function link(string $identityCode, string $ethereumAddress, string $signature = '') {
+		$authKey = $this->_generateAuthKey();
+		$success = $this->update(['identity_code' => $identityCode],
+				['ethereum_address' => $ethereumAddress, 'auth_key' => $authKey, 'identity_code' => ''],
+		false);
 
-		(new Events)->create(Auth::appId(), EventTypes::IDENTITY_LINKED, ['identity' => ['ethereum_address' => $ethereum_address]]);
+		(new Events)->create(Auth::appId(), EventTypes::IDENTITY_LINKED, ['identity' => ['ethereum_address' => $ethereumAddress]]);
 
 		return $success;
 	}
 
-	private function generateAuthKey() {
+	/**
+     * Private method to generate the auth key
+     * @return string
+     */
+	private function _generateAuthKey() {
 		$factory = new RandomLib\Factory;
 		$generator = $factory->getMediumStrengthGenerator();
 		return 'i' . $generator->generateString(39);
