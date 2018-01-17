@@ -6,17 +6,25 @@ use Zend;
 use Amp\Loop;
 use Amp\Socket;
 
+/**
+ * Class GethIpc
+ * @package EnjinCoin\Ethereum
+ */
 class GethIpc implements IEthereumConnection {
 	private $fp = null;
 
+	/**
+	 * Function to connect
+	 * @return mixed
+	 */
 	public function connect() {
 		if (empty($this->fp)) {
-			$ipc_path = Config::get()->ethereum->path;
+			$ipcPath = Config::get()->ethereum->path;
 			$json = '{"jsonrpc":"2.0", "method":"eth_protocolVersion", "params":{}, "id":"1234"}';
 
-			$pipe = popen($ipc_path, 'rw');
+			$pipe = popen($ipcPath, 'rw');
 			fwrite($pipe, $json);
-			die(fread($pipe, 2048));
+			exit(fread($pipe, 2048));
 			pclose($pipe);
 
 
@@ -36,43 +44,52 @@ class GethIpc implements IEthereumConnection {
 					$this->assertSame($data, $chunk);
 				}
 			});
-			die("data: " . $odata);
+			exit("data: " . $odata);
 
 
-			$ipc_path = Config::get()->ethereum->path;
-			$this->fp = fopen($ipc_path, 'r+');
+			$ipcPath = Config::get()->ethereum->path;
+			$this->fp = fopen($ipcPath, 'r+');
 
 
 			fwrite($this->fp, $json);
 			while (!feof($this->fp)) {
 				print fread($this->fp, 256);
-				die(var_export($this->fp, true));
+				exit(var_export($this->fp, true));
 			}
 
 			fclose($this->fp);
 
-			die("\nDONE\n");
+			exit("\nDONE\n");
 
 
-			$test = file_get_contents($ipc_path, false, null, 0, 128);
-			die(var_export($test, true));
+			$test = file_get_contents($ipcPath, false, null, 0, 128);
+			exit(var_export($test, true));
 
 
 			$this->fp = \socket_create(AF_INET, SOCK_STREAM, 0);
 			//die(var_export($this->fp, true));
 			//$error = \socket_last_error();
 			//die(var_export($error, true));
-			$connected = \socket_connect($this->fp, $ipc_path, 1);
-			die(var_export($connected, true));
+			$connected = \socket_connect($this->fp, $ipcPath, 1);
+			exit(var_export($connected, true));
 		}
 
 		return $this->fp;
 	}
 
+	/**
+	 * Function to disconnect
+	 */
 	public function disconnect() {
 		\socket_close($this->fp);
 	}
 
+	/**
+	 * Function to send a message
+	 * @param string $method
+	 * @param array $params
+	 * @return null
+	 */
 	public function msg(string $method, array $params = []) {
 		$buf = null;
 		$msg = Zend\Json\Encoder::encode([

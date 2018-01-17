@@ -1,6 +1,10 @@
 <?php
 namespace EnjinCoin\Util;
 
+/**
+ * Class Object
+ * @package EnjinCoin\Util
+ */
 class Object {
 	public $data = array();
 	/* @var Descriptor[] */
@@ -19,6 +23,9 @@ class Object {
 	 */
 	static $global = null;
 
+	/**
+	 * Object constructor.
+	 */
 	function __construct() {
 		$this->proto = self::$protoObject;
 		$args = func_get_args();
@@ -39,6 +46,10 @@ class Object {
 		}
 	}
 
+	/**
+	 * @param $key
+	 * @return mixed|null
+	 */
 	function get($key) {
 		$key = (string) $key;
 		if (method_exists($this, 'get_' . $key)) {
@@ -54,6 +65,11 @@ class Object {
 		return null;
 	}
 
+	/**
+	 * @param $key
+	 * @param $value
+	 * @return mixed
+	 */
 	function set($key, $value) {
 		$key = (string) $key;
 		if (method_exists($this, 'set_' . $key)) {
@@ -65,6 +81,10 @@ class Object {
 		return $value;
 	}
 
+	/**
+	 * @param $key
+	 * @return bool
+	 */
 	function remove($key) {
 		$key = (string) $key;
 		if (array_key_exists($key, $this->dscr)) {
@@ -77,7 +97,11 @@ class Object {
 		return true;
 	}
 
-	//determine if the given property exists (don't walk proto)
+	/**
+	 * determine if the given property exists (don't walk proto)
+	 * @param $key
+	 * @return bool
+	 */
 	function hasOwnProperty($key) {
 		$key = (string) $key;
 		if (method_exists($this, 'get_' . $key)) {
@@ -86,7 +110,11 @@ class Object {
 		return array_key_exists($key, $this->data);
 	}
 
-	//determine if the given property exists (walk proto)
+	/**
+	 * determine if the given property exists (walk proto)
+	 * @param $key
+	 * @return bool
+	 */
 	function hasProperty($key) {
 		$key = (string) $key;
 		if ($this->hasOwnProperty($key)) {
@@ -99,7 +127,11 @@ class Object {
 		return false;
 	}
 
-	//produce the list of keys (optionally get only enumerable keys)
+	/**
+	 * produce the list of keys (optionally get only enumerable keys)
+	 * @param $onlyEnumerable
+	 * @return array
+	 */
 	function getOwnKeys($onlyEnumerable) {
 		$arr = array();
 		foreach ($this->data as $key => $value) {
@@ -116,9 +148,13 @@ class Object {
 		return $arr;
 	}
 
-	//produce the list of keys that are considered to be enumerable (walk proto)
+	/**
+	 * produce the list of keys that are considered to be enumerable (walk proto)
+	 * @param array $arr
+	 * @return array
+	 */
 	function getKeys(&$arr = array()) {
-		foreach ($this->data as $key => $v) {
+		foreach ($this->data as $key => $val) {
 			$key = (string) $key;
 			$dscr = isset($this->dscr[$key]) ? $this->dscr[$key] : null;
 			if (!$dscr || $dscr->enumerable) {
@@ -207,7 +243,8 @@ class Object {
 	}
 
 	/**
-	 * @param string $name
+	 * @param $name
+	 * @throws Exception if invalid method called
 	 * @return mixed
 	 */
 	function callMethod($name) {
@@ -243,24 +280,34 @@ class Object {
 	 * @return Func
 	 */
 	static function getGlobalConstructor() {
-		$Object = new Func(function ($value = null) {
+		$object = new Func(function ($value = null) {
 			if ($value === null || $value === Object::$null) {
 				return new Object();
 			} else {
 				return objectify($value);
 			}
 		});
-		$Object->set('prototype', Object::$protoObject);
-		$Object->setMethods(Object::$classMethods, true, false, true);
-		return $Object;
+		$object->set('prototype', Object::$protoObject);
+		$object->setMethods(Object::$classMethods, true, false, true);
+		return $object;
 	}
 }
 
+/**
+ * Class Descriptor
+ * @package EnjinCoin\Util
+ */
 class Descriptor {
 	public $writable = true;
 	public $enumerable = true;
 	public $configurable = true;
 
+	/**
+	 * Descriptor constructor.
+	 * @param null $writable
+	 * @param null $enumerable
+	 * @param null $configurable
+	 */
 	function __construct($writable = null, $enumerable = null, $configurable = null) {
 		$this->writable = ($writable === null) ? true : !!$writable;
 		$this->enumerable = ($enumerable === null) ? true : !!$enumerable;
@@ -268,6 +315,7 @@ class Descriptor {
 	}
 
 	/**
+	 * @param null $value
 	 * @return Object
 	 */
 	function toObject($value = null) {
@@ -279,11 +327,18 @@ class Descriptor {
 		return $result;
 	}
 
+	/**
+	 * @param null $value
+	 * @return Object
+	 */
 	static function getDefault($value = null) {
 		return new Object('value', $value, 'writable', true, 'enumerable', true, 'configurable', true);
 	}
 }
 
+/**
+ *
+ */
 Object::$classMethods = array(
 	//todo: getPrototypeOf, seal, freeze, preventExtensions, isSealed, isFrozen, isExtensible
 	'create' => function ($proto) {
@@ -425,6 +480,9 @@ Object::$classMethods = array(
 	}
 );
 
+/**
+ *
+ */
 Object::$protoMethods = array(
 	'hasOwnProperty' => function ($key) {
 		$self = Func::getContext();
@@ -448,6 +506,10 @@ Object::$protoMethods = array(
 	}
 );
 
+/**
+ * Class NullClass
+ * @package EnjinCoin\Util
+ */
 class NullClass {
 }
 

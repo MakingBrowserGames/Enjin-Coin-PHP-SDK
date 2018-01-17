@@ -7,26 +7,44 @@ namespace EnjinCoin\Util;
  * @package EnjinCoin\Util
  */
 class Numbers {
-	public static function decodeHex(string $input) {
-		if (substr($input, 0, 2) == '0x')
-			$input = substr($input, 2);
 
-		if (preg_match('/[a-f0-9]+/', $input))
-			return self::bchexdec($input);
+	/**
+	 * Function to decode hex
+	 * @param string $input
+	 * @return bool|int|string
+	 */
+	public static function decodeHex(string $input) {
+		if (substr($input, 0, 2) === '0x') {
+			$input = substr($input, 2);
+		}
+
+		if (preg_match('/[a-f0-9]+/', $input)) {
+			return self::_bchexdec($input);
+		}
 
 		return $input;
 	}
 
+	/**
+	 * Function to encode hex
+	 * @param string $input
+	 * @return string
+	 */
 	public static function encodeHex(string $input) {
-		if (substr($input, 0, 2) != '0x')
-			$hex_prefix = '0x';
-		else
-			$hex_prefix = '';
+		if (substr($input, 0, 2) !== '0x') {
+			$hexPrefix = '0x';
+		} else {
+			$hexPrefix = '';
+		}
 
-		return $hex_prefix . self::bcdechex($input);
+		return $hexPrefix . self::_bcdechex($input);
 	}
 
-	private static function bcdechex(string $dec) {
+	/**
+	 * @param string $dec
+	 * @return string
+	 */
+	private static function _bcdechex(string $dec) {
 		$hex = '';
 		do {
 			$last = bcmod($dec, 16);
@@ -36,7 +54,11 @@ class Numbers {
 		return $hex;
 	}
 
-	private static function bchexdec(string $hex) {
+	/**
+	 * @param string $hex
+	 * @return int|string
+	 */
+	private static function _bchexdec(string $hex) {
 		$dec = 0;
 		$len = strlen($hex);
 		for ($i = 1; $i <= $len; $i++) {

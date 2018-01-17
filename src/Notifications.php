@@ -2,7 +2,11 @@
 namespace EnjinCoin;
 
 use EnjinCoin\Notifications\PusherAdapter;
-
+use PHPUnit\Runner\Exception;
+/**
+ * Class Notifications
+ * @package EnjinCoin
+ */
 class Notifications {
 	private static $adapter = null;
 
@@ -21,40 +25,72 @@ class Notifications {
 		self::CHANNEL_WALLET,
 	];
 
-	public static $notification_types = [
+	public static $notificationTypes = [
 		self::TYPE_EVENT,
 		self::TYPE_PRICE,
 	];
 
-	private static function getAdapter() {
+	/**
+	 * Function to get an adapter
+	 * @throws Exception if no adapter found
+	 * @return PusherAdapter|null
+	 */
+	private static function _getAdapter() {
 		if (empty(self::$adapter)) {
 			switch (Config::get()->notifications->method) {
 				case 'pusher':
 					self::$adapter = new PusherAdapter();
 					break;
+				default:
+					throw new Exception('No adapter found');
 			}
 		}
 
 		return self::$adapter;
 	}
-
+	/**
+	 * Function to send a notification
+	 * @param $channel
+	 * @param $event
+	 * @param $data
+	 * @return mixed
+	 */
 	public static function notify($channel, $event, $data) {
-		self::getAdapter()->notify($channel, $event, $data);
+		self::_getAdapter()->notify($channel, $event, $data);
 	}
 
-	public static function getWalletChannel(string $auth_key) {
-		return hash('sha512', password_hash($auth_key . self::CHANNEL_WALLET, PASSWORD_BCRYPT));
+	/**
+	 * Function to get the wallet channel
+	 * @param string $authKey
+	 * @return string
+	 */
+	public static function getWalletChannel(string $authKey) {
+		return hash('sha512', password_hash($authKey . self::CHANNEL_WALLET, PASSWORD_BCRYPT));
 	}
 
-	public static function getSdkServerChannel(string $auth_key) {
-		return hash('sha512', password_hash($auth_key . self::CHANNEL_SDK_SERVER, PASSWORD_BCRYPT));
+	/**
+	 * Function to get the sdk server channel
+	 * @param string $authKey
+	 * @return string
+	 */
+	public static function getSdkServerChannel(string $authKey) {
+		return hash('sha512', password_hash($authKey . self::CHANNEL_SDK_SERVER, PASSWORD_BCRYPT));
 	}
 
-	public static function getSdkClientChannel(string $auth_key) {
-		return hash('sha512', password_hash($auth_key . self::CHANNEL_SDK_CLIENT, PASSWORD_BCRYPT));
+	/**
+	 * Function to get the sdk client channel
+	 * @param string $authKey
+	 * @return string
+	 */
+	public static function getSdkClientChannel(string $authKey) {
+		return hash('sha512', password_hash($authKey . self::CHANNEL_SDK_CLIENT, PASSWORD_BCRYPT));
 	}
 
+	/**
+	 * Function to get client info
+	 * @return mixed
+	 */
 	public static function getClientInfo() {
-		return self::getAdapter()->getClientInfo();
+		return self::_getAdapter()->getClientInfo();
 	}
 }

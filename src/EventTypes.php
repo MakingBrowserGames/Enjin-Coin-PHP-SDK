@@ -4,6 +4,10 @@ namespace EnjinCoin;
 use EnjinCoin\Api\Identities;
 use EnjinCoin\Api\Tokens;
 
+/**
+ * Class EventTypes
+ * @package EnjinCoin
+ */
 class EventTypes {
 	const UNKNOWN_EVENT = 0;
 	const TXR_PENDING = 1;
@@ -22,7 +26,7 @@ class EventTypes {
 	const TOKEN_UPDATED = 14;
 	const TOKEN_CREATED = 15;
 
-	public static $event_types = [
+	public static $eventTypes = [
 		self::UNKNOWN_EVENT => 'unknown',
 		self::TXR_PENDING => 'txr_pending',
 		self::TXR_CANCELED_USER => 'txr_canceled_user',
@@ -41,15 +45,23 @@ class EventTypes {
 		self::TOKEN_CREATED => 'token_created',
 	];
 
-	public function callEvent($event_type, $app_id, $identity_id, $params) {
-		$event_string = self::$event_types[$event_type];
+	/**
+	 * Function to call an event
+	 * @param $eventType
+	 * @param $appId
+	 * @param $identityId
+	 * @param $params
+	 * @return array|bool
+	 */
+	public function callEvent($eventType, $appId, $identityId, $params) {
+		$eventString = self::$eventTypes[$eventType];
 
-		if (in_array($event_string, self::$event_types) && method_exists($this, $event_string)) {
-			$data = $this->$event_string($params);
+		if (in_array($eventString, self::$eventTypes) && method_exists($this, $eventString)) {
+			$data = $this->$eventString($params);
 			return $this->createEvent([
-				'event_type' => $event_type,
-				'app_id' => $app_id,
-				'identity_id' => $identity_id,
+				'event_type' => $eventType,
+				'app_id' => $appId,
+				'identity_id' => $identityId,
 				'data' => $data
 			]);
 		}
@@ -57,6 +69,11 @@ class EventTypes {
 		return false;
 	}
 
+	/**
+	 * Pending transactions
+	 * @param $params
+	 * @return array
+	 */
 	public function txr_pending($params) {
 		$identities = new Identities();
 
@@ -72,6 +89,11 @@ class EventTypes {
 		];
 	}
 
+	/**
+	 * Cancel user transaction
+	 * @param $params
+	 * @return array
+	 */
 	public function txr_canceled_user($params) {
 		$identities = new Identities();
 
@@ -82,6 +104,11 @@ class EventTypes {
 		];
 	}
 
+	/**
+	 * Cancelled platform
+	 * @param $params
+	 * @return array
+	 */
 	public function txr_canceled_platform($params) {
 		$identities = new Identities();
 
@@ -92,6 +119,11 @@ class EventTypes {
 		];
 	}
 
+	/**
+	 * Transaction accepted
+	 * @param $params
+	 * @return array
+	 */
 	public function txr_accepted($params) {
 		$identities = new Identities();
 
@@ -108,6 +140,11 @@ class EventTypes {
 		];
 	}
 
+	/**
+	 * Transaction broadcasted
+	 * @param $params
+	 * @return array
+	 */
 	public function tx_broadcasted($params) {
 		return [
 			'txr_id' => $params['txr_id'],
@@ -116,6 +153,11 @@ class EventTypes {
 		];
 	}
 
+	/**
+	 * Transaction executed
+	 * @param $params
+	 * @return array
+	 */
 	public function tx_executed($params) {
 		return [
 			'tx_id' => $params['tx_id'],
@@ -123,6 +165,11 @@ class EventTypes {
 		];
 	}
 
+	/**
+	 * Transaction confirmed
+	 * @param $params
+	 * @return array
+	 */
 	public function tx_confirmed($params) {
 		return [
 			'tx_id' => $params['tx_id'],
@@ -130,25 +177,50 @@ class EventTypes {
 		];
 	}
 
+	/**
+	 * Identity created
+	 * @param $params
+	 * @return array
+	 */
 	public function identity_created($params) {
 		$identities = new Identities();
 		return ['identity' => $identities->get($params['identity']), 'identity_code' => $params['identity_code']];
 	}
 
+	/**
+	 * Identity linked
+	 * @param $params
+	 * @return array
+	 */
 	public function identity_linked($params) {
 		$identities = new Identities();
 		return ['identity' => $identities->get($params['identity'])];
 	}
 
+	/**
+	 * Identity updated
+	 * @param $params
+	 * @return array
+	 */
 	public function identity_updated($params) {
 		$identities = new Identities();
 		return ['identity' => $identities->get($params['identity'])];
 	}
 
+	/**
+	 * Identity deleted
+	 * @param $params
+	 * @return array
+	 */
 	public function identity_deleted($params) {
 		return ['identity' => $params['identity']];
 	}
 
+	/**
+	 * Balance updated
+	 * @param $params
+	 * @return array
+	 */
 	public function balance_updated($params) {
 		$identities = new Identities();
 
@@ -160,6 +232,11 @@ class EventTypes {
 		];
 	}
 
+	/**
+	 * Balance melted
+	 * @param $params
+	 * @return array
+	 */
 	public function balance_melted($params) {
 		$identities = new Identities();
 
@@ -172,16 +249,31 @@ class EventTypes {
 		];
 	}
 
+	/**
+	 * Token updated
+	 * @param $params
+	 * @return mixed
+	 */
 	public function token_updated($params) {
 		$tokens = new Tokens();
 		return $tokens->get($params['token_id']);
 	}
 
+	/**
+	 * Token created
+	 * @param $params
+	 * @return mixed
+	 */
 	public function token_created($params) {
 		$tokens = new Tokens();
 		return $tokens->get($params['token_id']);
 	}
 
+	/**
+	 * Function to create an event
+	 * @param $params
+	 * @return array
+	 */
 	private function createEvent($params) {
 		return [
 			'app_id' => $params['app_id'],

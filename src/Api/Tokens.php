@@ -5,27 +5,40 @@ use EnjinCoin\ApiBase;
 use EnjinCoin\Auth;
 use EnjinCoin\Util\Db;
 
+/**
+ * Class Tokens
+ * @package EnjinCoin\Api
+ */
 class Tokens extends ApiBase {
-	public function get(int $app_id = null, int $after_token_id = null, int $limit = 50, int $token_id = null) {
+
+	/**
+	 * Function to get a token
+	 * @param int|null $appId
+	 * @param int|null $afterTokenId
+	 * @param int $limit
+	 * @param int|null $tokenId
+	 * @return mixed
+	 */
+	public function get(int $appId = null, int $afterTokenId = null, int $limit = 50, int $tokenId = null) {
 		$select = $this->db->select()
 			->from('tokens')
 			->order('token_id asc')
 			->limit($limit);
 
-		if (empty($app_id) && empty($token_id) && Auth::appId() > 0) {
-			$app_id = Auth::appId();
+		if (empty($appId) && empty($tokenId) && Auth::appId() > 0) {
+			$appId = Auth::appId();
 		}
 
-		if (!empty($token_id)) {
-			$select->where(['token_id' => $token_id]);
+		if (!empty($tokenId)) {
+			$select->where(['token_id' => $tokenId]);
 		}
 
-		if (!empty($app_id)) {
-			$select->where(['app_id' => $app_id]);
+		if (!empty($appId)) {
+			$select->where(['app_id' => $appId]);
 		}
 
-		if (!empty($after_token_id)) {
-			$select->where->greaterThan('token_id', $after_token_id);
+		if (!empty($afterTokenId)) {
+			$select->where->greaterThan('token_id', $afterTokenId);
 		}
 
 		$results = Db::query($select);
@@ -34,7 +47,11 @@ class Tokens extends ApiBase {
 		return $output;
 	}
 
-	public function addToken(int $token_id) {
+	/**
+	 * @param int $tokenId
+	 * @return boolFunction to add a token
+	 */
+	public function addToken(int $tokenId) {
 		// @todo fetch data from CustomTokens contract on the blockchain
 		$result = ['creator' => null,
 		'adapter' => null,
@@ -48,7 +65,7 @@ class Tokens extends ApiBase {
 		'transferable' => 1];
 
 		$data = [
-			'token_id' => $token_id,
+			'token_id' => $tokenId,
 			'app_id' => Auth::appId(),
 			'creator' => $result['creator'],
 			'adapter' => $result['adapter'],
@@ -68,18 +85,29 @@ class Tokens extends ApiBase {
 		return true;
 	}
 
-	public function removeToken(int $token_id) {
+	/**
+	 * Function to remove a token
+	 * @param int $tokenId
+	 * @return bool
+	 */
+	public function removeToken(int $tokenId) {
 		$delete = $this->db->delete('tokens');
-		$delete->where(['token_id' => $token_id]);
+		$delete->where(['token_id' => $tokenId]);
 		Db::query($delete);
 		return true;
 	}
 
-	public function getBalance(array $identity, $token_ids = null) {
+	/**
+	 * Function to get the balance
+	 * @param $identity
+	 * @param $tokenIds
+	 * @return array
+	 */
+	public function getBalance(array $identity, $tokenIds = null) {
 		/**
 		 * @todo remove mock request
 		 */
-		if (!empty($identity['identity_id']) && $identity['identity_id'] == 1) {
+		if (!empty($identity['identity_id']) && $identity['identity_id'] === 1) {
 			return [
 				'ENJ' => '50034.871212583712984734',
 				'1' => '1',

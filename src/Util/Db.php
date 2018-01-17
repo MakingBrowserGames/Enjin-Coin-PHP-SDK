@@ -6,11 +6,17 @@ use EnjinCoin\Config;
 
 /**
  * Db Singleton
+ * Class Db
+ * @package EnjinCoin\Util
  */
 class Db {
 	public static $adapter;
 	public static $sql;
 
+	/**
+	 * Method to get a db instance
+	 * @return Zend\Db\Sql\Sql
+	 */
 	public static function getInstance() {
 		if (empty(self::$adapter)) {
 			self::$adapter = new Zend\Db\Adapter\Adapter([
@@ -25,6 +31,11 @@ class Db {
 		return self::$sql;
 	}
 
+	/**
+	 * Method to perform a db query
+	 * @param $select
+	 * @return mixed
+	 */
 	public static function query($select) {
 		
 		return self::$adapter->query(

@@ -9,31 +9,35 @@ use EnjinCoin\Notifications;
 use PHPUnit\Runner\Exception;
 use Zend;
 
+/**
+ * Class Events
+ * @package EnjinCoin\Api
+ */
 class Events extends ApiBase {
 	const PRUNE_DAYS = 30;
 
 	/**
 	 * Get a list of events
-	 * @param int $event_id
-	 * @param int $app_id
+	 * @param int $eventId
+	 * @param int $appId
 	 * @param array $identity
-	 * @param int $after_event_id
-	 * @param int $before_event_id
+	 * @param int $afterEventId
+	 * @param int $beforeEventId
 	 * @param int $limit
 	 * @return mixed
 	 */
-	public function get($event_id = null, $app_id = null, $identity = null, $after_event_id = null, $before_event_id = null, $limit = 50) {
+	public function get($eventId = null, $appId = null, $identity = null, $afterEventId = null, $beforeEventId = null, $limit = 50) {
 		$select = $this->db->select()
 			->from('events')
 			->order('event_id desc')
 			->limit($limit);
 
-		if (!empty($event_id)) {
-			$select->where(['event_id' => $event_id]);
+		if (!empty($eventId)) {
+			$select->where(['event_id' => $eventId]);
 		}
 
-		if (!empty($app_id)) {
-			$select->where(['app_id' => $app_id]);
+		if (!empty($appId)) {
+			$select->where(['app_id' => $appId]);
 		}
 
 		if (!empty($identity)) {
@@ -43,12 +47,12 @@ class Events extends ApiBase {
 			}
 		}
 
-		if (!empty($before_event_id)) {
-			$select->where->lessThan('event_id', $before_event_id);
+		if (!empty($beforeEventId)) {
+			$select->where->lessThan('event_id', $beforeEventId);
 		}
 
-		if (!empty($after_event_id)) {
-			$select->where->greaterThan('event_id', $after_event_id);
+		if (!empty($afterEventId)) {
+			$select->where->greaterThan('event_id', $afterEventId);
 		}
 
 		$results = Db::query($select);
@@ -59,11 +63,18 @@ class Events extends ApiBase {
 		return $output;
 	}
 
-	public function create(int $app_id, $event_type, $data) {
+	/**
+	 * Function to create an event
+	 * @param int $appId
+	 * @param $eventType
+	 * @param $data
+	 * @throws Exception if event type is not valid
+	 */
+	public function create(int $appId, $eventType, $data) {
 		// Validate App ID
-		if ($app_id != 0) {
+		if ($appId !== 0) {
 			$apps = new Apps();
-			$app = $apps->get($app_id);
+			$app = $apps->get($appId);
 			if (empty($app['app_id'])) {
 				throw new Exception('App ID does not exist');
 			}
@@ -83,10 +94,10 @@ class Events extends ApiBase {
 		}
 
 		// Validate Event Type
-		$event_types = new EnjinCoin\EventTypes;
-		$event = $event_types->callEvent(
-			$event_type,
-			$app_id,
+		$eventTypes = new EnjinCoin\EventTypes;
+		$event = $eventTypes->callEvent(
+			$eventType,
+			$appId,
 			!empty($ident) ? $ident['identity_id'] : 0,
 			$data
 		);
@@ -100,9 +111,9 @@ class Events extends ApiBase {
 		$timestamp = time();
 		$insert->values([
 			'timestamp' => $timestamp,
-			'app_id' => $app_id,
+			'app_id' => $appId,
 			'identity_id' => !empty($ident) ? $ident['identity_id'] : 0,
-			'event_type' => $event_type,
+			'event_type' => $eventType,
 			'data' => Zend\Json\Encoder::encode($event),
 		], $insert::VALUES_MERGE);
 
@@ -113,7 +124,7 @@ class Events extends ApiBase {
 
 		// Notify
 		// @todo: get the correct app's auth key
-		Notifications::notify(Notifications::getSdkServerChannel(Auth::authKey()), $event_type, $event);
+		Notifications::notify(Notifications::getSdkServerChannel(Auth::authKey()), $eventType, $event);
 	}
 
 	/**

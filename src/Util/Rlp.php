@@ -1,7 +1,17 @@
 <?php
 namespace EnjinCoin\Util;
 
+/**
+ * Class Rlp
+ * @package EnjinCoin\Util
+ */
 class Rlp {
+
+	/**
+	 * Function to encode
+	 * @param $input
+	 * @return mixed
+	 */
 	public static function encode($input) {
 		if (is_array($input)) {
 			$output = array();
@@ -20,13 +30,25 @@ class Rlp {
 		}
 	}
 
-	public static function safeParseInt($v, $base) {
-		if (substr($v, 0, 2) === '00') {
+	/**
+	 * @param $strVal
+	 * @param $base
+	 * @throws Exception if invalid rlp passed in
+	 * @return mixedFunction to parse an int
+	 */
+	public static function safeParseInt($strVal, $base) {
+		if (substr($strVal, 0, 2) === '00') {
 			throw new Exception('invalid RLP: extra zeros');
 		}
-		return parseInt($v, $base);
+		return parseInt($strVal, $base);
 	}
 
+	/**
+	 * Function to encode the length
+	 * @param $len
+	 * @param $offset
+	 * @return Buffer
+	 */
 	public static function encodeLength($len, $offset) {
 		if ($len < 56) {
 			return new Buffer(array($len + $offset));
@@ -38,6 +60,13 @@ class Rlp {
 		}
 	}
 
+	/**
+	 * Function to decode
+	 * @param $input
+	 * @param $stream
+	 * @throws Exception if invalid remainder
+	 * @return Buffer
+	 */
 	public static function decode($input, $stream) {
 		if (!$input || strlen($input) === 0) {
 			return new Buffer(array());
@@ -48,10 +77,17 @@ class Rlp {
 		if ($stream) {
 			return $decoded;
 		}
-		if (strlen($decoded['remainder']) != 0) throw new Exception('invalid remainder');
+		if (strlen($decoded['remainder']) !== 0) {
+			throw new Exception('invalid remainder');
+		}
 		return $decoded['data'];
 	}
 
+	/**
+	 * Function to get length
+	 * @param $input
+	 * @return Buffer|int
+	 */
 	public static function getLength($input) {
 		if (!$input || count($input) === 0) {
 			return new Buffer(array());
@@ -73,12 +109,17 @@ class Rlp {
 		}
 	}
 
-	function _decode($input) {
+	/**
+	 * Function to decode
+	 * @param $input
+	 * @return array
+	 */
+	private function _decode($input) {
 		$length = null;
 		$llength = null;
 		$data = null;
 		$innerRemainder = null;
-		$d = null;
+		$dVal = null;
 		$decoded = array();
 		$firstByte = $input[0];
 		if ($firstByte <= 0x7f) {
@@ -104,9 +145,9 @@ class Rlp {
 			$length = $firstByte - 0xbf;
 			$innerRemainder = substr($input, 1, $length);
 			while (count($innerRemainder)) {
-				$d = _decode($innerRemainder);
-				array_push($decoded, $d->data);
-				$innerRemainder = $d->remainder;
+				$dVal = _decode($innerRemainder);
+				array_push($decoded, $dVal->data);
+				$innerRemainder = $dVal->remainder;
 			}
 			return array("data" => $decoded, "remainder" => substr($input, $length));
 		} else {
@@ -119,18 +160,28 @@ class Rlp {
 			if (count($innerRemainder) === 0) {
 			}
 			while (count($innerRemainder)) {
-				$d = _decode($innerRemainder);
-				array_push($decoded, $d->data);
-				$innerRemainder = $d->remainder;
+				$dVal = _decode($innerRemainder);
+				array_push($decoded, $dVal->data);
+				$innerRemainder = $dVal->remainder;
 			}
 			return array("data" => $decoded, "remainder" => substr($input, $totalLength));
 		}
 	}
 
+	/**
+	 * Function to check if hex is prefixed
+	 * @param $str
+	 * @return bool
+	 */
 	function isHexPrefixed($str) {
 		return substr($str, 0, 2) === '0x';
 	}
 
+	/**
+	 * Function to strip the hex prefix
+	 * @param $str
+	 * @return bool|string
+	 */
 	function stripHexPrefix($str) {
 		if (gettype($str) !== 'string') {
 			return $str;
@@ -138,7 +189,11 @@ class Rlp {
 		return (isHexPrefixed($str)) ? substr($str, 2) : $str;
 	}
 
-	function intToHex($i) {
+	/**
+	 * @param $intVal
+	 * @return int|stringFUnction to convert int to hex
+	 */
+	function intToHex($intVal) {
 		$hex = (16);
 		if (count($hex) % 2) {
 			$hex = '0' + $hex;
@@ -146,39 +201,54 @@ class Rlp {
 		return $hex;
 	}
 
-	function padToEven($a) {
-		if (count($a) % 2) {
-			$a = '0' + $a;
+	/**
+	 * Function to pad to even
+	 * @param $var
+	 * @return string
+	 */
+	function padToEven($var) {
+		if (count($var) % 2) {
+			$var = '0' + $var;
 		}
-		return $a;
+		return $var;
 	}
 
-	function intToBuffer($i) {
-		$hex = intToHex($i);
+	/**
+	 * Function to convert int to buffer
+	 * @param $intVal
+	 * @return Buffer
+	 */
+	function intToBuffer($intVal) {
+		$hex = intToHex($intVal);
 		return new Buffer($hex, 'hex');
 	}
 
-	function toBuffer($v) {
-		if (!Buffer::isBuffer($v)) {
-			if (gettype($v) === 'string') {
-				if (isHexPrefixed($v)) {
-					$v = new Buffer(padToEven(stripHexPrefix($v)), 'hex');
+	/**
+	 * Function to convert to buffer
+	 * @param $var
+	 * @return Buffer
+	 */
+	function toBuffer($var) {
+		if (!Buffer::isBuffer($var)) {
+			if (gettype($var) === 'string') {
+				if (isHexPrefixed($var)) {
+					$var = new Buffer(padToEven(stripHexPrefix($var)), 'hex');
 				} else {
-					$v = new Buffer($v);
+					$var = new Buffer($var);
 				}
-			} else if (gettype($v) === 'number') {
-				if (!$v) {
-					$v = new Buffer(array());
+			} else if (gettype($var) === 'number') {
+				if (!$var) {
+					$var = new Buffer(array());
 				} else {
-					$v = intToBuffer($v);
+					$var = intToBuffer($var);
 				}
-			} else if ($v === null/* || $v === $undefined*/) {
-				$v = new Buffer(array());
-			} else if ($v->toArray) {
-				$v = new Buffer($v->toArray());
+			} else if ($var === null/* || $v === $undefined*/) {
+				$var = new Buffer(array());
+			} else if ($var->toArray) {
+				$var = new Buffer($var->toArray());
 			} else {
 			}
 		}
-		return $v;
+		return $var;
 	}
 }

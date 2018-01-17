@@ -1,6 +1,10 @@
 <?php
 namespace EnjinCoin\Util;
 
+/**
+ * Class Buffer
+ * @package EnjinCoin\Util
+ */
 class Buffer extends Object {
 
 	public $raw = '';
@@ -10,8 +14,11 @@ class Buffer extends Object {
 	static $classMethods = null;
 	static $protoMethods = null;
 
-	static $SHOW_MAX = 51;
+	static $showMax = 51;
 
+	/**
+	 * Buffer constructor.
+	 */
 	function __construct() {
 		parent::__construct();
 		$this->proto = self::$protoObject;
@@ -20,8 +27,13 @@ class Buffer extends Object {
 		}
 	}
 
+	/**
+	 * Function to perform any init logic
+	 * @throws Exception if invalid params passed
+	 * @param array $args
+	 */
 	function init($args) {
-		global $Buffer;
+		global $buffer;
 		list($subject, $encoding, $offset) = array_pad($args, 3, null);
 		$type = gettype($subject);
 		if ($type === 'integer' || $type === 'double') {
@@ -37,7 +49,7 @@ class Buffer extends Object {
 			} else {
 				$this->raw = $subject;
 			}
-		} else if (_instanceof($subject, $Buffer)) {
+		} else if (_instanceof($subject, $buffer)) {
 			$this->raw = $subject->raw;
 		} else if ($subject instanceof Arr) {
 			$this->raw = $util['arrToRaw']($subject);
@@ -50,6 +62,11 @@ class Buffer extends Object {
 		$this->set('length', (float) $len);
 	}
 
+	/**
+	 * Function to convert to json
+	 * @param null $max
+	 * @return string
+	 */
 	function toJSON($max = null) {
 		$raw = $this->raw;
 		if ($max !== null && $max < strlen($raw)) {
@@ -61,24 +78,27 @@ class Buffer extends Object {
 
 	/**
 	 * Creates the global constructor used in user-land
-	 * @return Func
+	 * @return mixed
 	 */
 	static function getGlobalConstructor() {
-		$Buffer = new Func('Buffer', function () {
+		$buffer = new Func('Buffer', function () {
 			$self = new Buffer();
 			$self->init(func_get_args());
 			return $self;
 		});
-		$Buffer->set('prototype', Buffer::$protoObject);
-		$Buffer->setMethods(Buffer::$classMethods, true, false, true);
-		return $Buffer;
+		$buffer->set('prototype', Buffer::$protoObject);
+		$buffer->setMethods(Buffer::$classMethods, true, false, true);
+		return $buffer;
 	}
 }
 
+/**
+ *
+ */
 Buffer::$classMethods = array(
 	'isBuffer' => function ($obj) {
-		global $Buffer;
-		return _instanceof($obj, $Buffer);
+		global $buffer;
+		return _instanceof($obj, $buffer);
 	},
 	'concat' => function (/*Arr*/
 		$list, $totalLength = null) {
@@ -94,7 +114,7 @@ Buffer::$classMethods = array(
 			$rawList[] = $buffer->raw;
 			$length += $buffer->length;
 		}
-		$newRaw = join('', $rawList);
+		$newRaw = implode('', $rawList);
 		if ($totalLength !== null) {
 			$totalLength = (int) $totalLength;
 			if ($totalLength > $length) {
@@ -111,8 +131,8 @@ Buffer::$classMethods = array(
 		return $newBuffer;
 	},
 	'byteLength' => function ($string, $enc = null) {
-		$b = new Buffer($string, $enc);
-		return $b->length;
+		$tempBuffer = new Buffer($string, $enc);
+		return $tempBuffer->length;
 	}
 );
 
@@ -190,7 +210,9 @@ Buffer::$protoMethods = array(
 		$start = (int) $start;
 		if ($start < 0) {
 			$start = $len + $start;
-			if ($start < 0) $start = 0;
+			if ($start < 0) {
+				$start = 0;
+			}
 		}
 		if ($start >= $len) {
 			return new Buffer(0);
@@ -228,7 +250,7 @@ Buffer::$protoMethods = array(
 	},
 	'inspect' => function () {
 		$self = Func::getContext();
-		return $self->toJSON(Buffer::$SHOW_MAX);
+		return $self->toJSON(Buffer::$showMax);
 	}
 );
 

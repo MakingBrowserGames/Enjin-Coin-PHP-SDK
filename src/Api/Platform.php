@@ -7,7 +7,16 @@ use EnjinCoin\ApiBase;
 use EnjinCoin\Config;
 use EnjinCoin\Notifications;
 
+/**
+ * Class Platform
+ * @package EnjinCoin\Api
+ */
 class Platform extends ApiBase {
+
+	/**
+	 * Function to perform the auth
+	 * @return array
+	 */
 	public function auth() {
 		return [
 			'notifications' => [
@@ -39,12 +48,12 @@ class Platform extends ApiBase {
 
 	/**
 	 * Return the role for an auth_key
-	 * @param string $auth_key
+	 * @param string $authKey
 	 * @return string
 	 */
-	public function getRole(string $auth_key) {
+	public function getRole(string $authKey) {
 		$identities = new Identities();
-		$result = $identities->get(['auth_key' => $auth_key]);
+		$result = $identities->get(['auth_key' => $authKey]);
 
 		if (!empty($result)) {
 			$identity = reset($result);

@@ -10,6 +10,10 @@ use EnjinCoin\Util\Db;
 use EnjinCoin\Ethereum as Eth;
 use PHPUnit\Runner\Exception;
 
+/**
+ * Class TransactionRequests
+ * @package EnjinCoin\Api
+ */
 class TransactionRequests extends ApiBase {
 	const TYPE_BUY = 'buy';
 	const TYPE_SELL = 'sell';
@@ -24,7 +28,7 @@ class TransactionRequests extends ApiBase {
 	const STATE_CANCELED_USER = 'canceled_user';
 	const STATE_CANCELED_PLATFORM = 'canceled_platform';
 
-	public static $txr_types = [
+	public static $txrTypes = [
 		self::TYPE_BUY,
 		self::TYPE_SELL,
 		self::TYPE_SEND,
@@ -32,10 +36,15 @@ class TransactionRequests extends ApiBase {
 		//self::TYPE_SUBSCRIBE // not implemented yet
 	];
 
-	public function get(int $txr_id) {
+	/**
+	 * Function to get a transaction request
+	 * @param int $txrId
+	 * @return mixed
+	 */
+	public function get(int $txrId) {
 		$select = $this->db->select()
 			->from('transaction_requests')
-			->where(['txr_id' => $txr_id]);
+			->where(['txr_id' => $txrId]);
 
 		$results = Db::query($select);
 		return $results->current();
@@ -43,6 +52,8 @@ class TransactionRequests extends ApiBase {
 
 	/**
 	 * Get the latest transaction request - used by tests
+	 * @param int $limit
+	 * @return mixed
 	 */
 	public function getLatest($limit = 1) {
 		$select = $this->db->select()
@@ -53,8 +64,8 @@ class TransactionRequests extends ApiBase {
 		$results = Db::query($select);
 		return $results->current();
 	}
-	
-	
+
+
 	/**
 	 * Create a new Transaction Request
 	 * @param array $identity
@@ -62,14 +73,14 @@ class TransactionRequests extends ApiBase {
 	 * @param string $type
 	 * @param string|null $icon
 	 * @param string|null $title
-	 * @param int $token_id
+	 * @param int $tokenId
 	 * @param string $value
+	 * @throws Exception if identities dont exist or the transaction request value is invalid
 	 * @return bool
-	 * @throws \Exception
 	 */
-	public function create(array $identity, array $recipient, string $type, string $icon = null, string $title = null, int $token_id = 0, string $value = '0') {
+	public function create(array $identity, array $recipient, string $type, string $icon = null, string $title = null, int $tokenId = 0, string $value = '0') {
 		// Validate Txr Type
-		if (!in_array($type, self::$txr_types)) {
+		if (!in_array($type, self::$txrTypes)) {
 			throw new Exception('Invalid Transaction Request Type');
 		}
 
@@ -85,16 +96,16 @@ class TransactionRequests extends ApiBase {
 		}
 
 		// Validate Recipient
-		$recipient_db = ['recipient_id' => null, 'ethereum_address' => null];
+		$recipientDb = ['recipient_id' => null, 'ethereum_address' => null];
 		$recip = $identities->get($recipient);
 
 		if (!empty($recip)) {
 			$recip = reset($recip);
-			$recipient_db['recipient_id'] = $recip['identity_id'];
+			$recipientDb['recipient_id'] = $recip['identity_id'];
 		}
 		
 		if (!empty($recip['ethereum_address']) && Ethereum::validateAddress($recip['ethereum_address'])) {
-			$recipient_db['recipient_address'] = $recip['ethereum_address'];
+			$recipientDb['recipient_address'] = $recip['ethereum_address'];
 		} else { 
 			throw new Exception('Recipient Identity does not exist');
 		}
@@ -111,21 +122,21 @@ class TransactionRequests extends ApiBase {
 			'app_id' => Auth::appId(),
 			'identity_id' => !empty($ident) ? $ident['identity_id'] : 0,
 			'type' => $type,
-			'recipient_id' => $recipient_db['recipient_id'],
-			'recipient_address' => $recipient_db['recipient_address'],
+			'recipient_id' => $recipientDb['recipient_id'],
+			'recipient_address' => $recipientDb['recipient_address'],
 			'icon' => $icon,
 			'title' => $title,
-			'token_id' => $token_id,
+			'token_id' => $tokenId,
 			'value' => $value,
 			'state' => self::STATE_PENDING
 		], $insert::VALUES_MERGE);
 
 		$results = Db::query($insert);
-		$txr_id = $results->getGeneratedValue();
+		$txrId = $results->getGeneratedValue();
 
 		// Create event
 		(new Events)->create(Auth::appId(), EventTypes::TXR_PENDING, [
-			'txr_id' => $txr_id,
+			'txr_id' => $txrId,
 			'identity' => $identity,
 			'recipient' => $recipient,
 			'type' => $type,
@@ -139,43 +150,51 @@ class TransactionRequests extends ApiBase {
 
 	/**
 	 * Cancel a Transaction Request
-	 * @param int $txr_id
+	 * @param int $txrId
+	 * @throws Exception if no permission to cancel the transaction request
 	 * @return bool
 	 */
-	public function cancel(int $txr_id) {
-		$txr = $this->get($txr_id);
+	public function cancel(int $txrId) {
+		$txr = $this->get($txrId);
 
 		// Check permissions for cancellation type
-		$event_type = null;
+		$eventType = null;
 		if (Auth::role() <= Auth::ROLE_APP) {
-			$event_type = EventTypes::TXR_CANCELED_PLATFORM;
+			$eventType = EventTypes::TXR_CANCELED_PLATFORM;
 		} else if (Auth::role() <= Auth::ROLE_WALLET) {
-			$event_type = EventTypes::TXR_CANCELED_USER;
+			$eventType = EventTypes::TXR_CANCELED_USER;
 		} else {
 			throw new Exception('Authentication required');
 		}
 
 		$identity = Auth::identity();
-		$identity_id = $identity['identity_id'];
+		$identityId = $identity['identity_id'];
 
-		if (empty($event_type)
-			|| ($event_type == EventTypes::TXR_CANCELED_USER && empty($identity_id))
-			|| ($event_type == EventTypes::TXR_CANCELED_USER && $txr['identity_id'] != $identity_id))
+		if (empty($eventType)
+			|| ($eventType === EventTypes::TXR_CANCELED_USER && empty($identityId))
+			|| ($eventType === EventTypes::TXR_CANCELED_USER && $txr['identity_id'] !== $identityId)) {
 			throw new Exception('You do not have permission to cancel this transaction request');
+		}
 
 		// Update the new transaction request state
 		$sql = $this->db->update('transaction_requests')
-			->where(['txr_id' => $txr_id])
-			->set(['state' => $event_type == EventTypes::TXR_CANCELED_USER ? self::STATE_CANCELED_USER : self::STATE_CANCELED_PLATFORM]);
+			->where(['txr_id' => $txrId])
+			->set(['state' => $eventType === EventTypes::TXR_CANCELED_USER ? self::STATE_CANCELED_USER : self::STATE_CANCELED_PLATFORM]);
 		Db::query($sql);
 
-		(new Events)->create(Auth::appId(), $event_type, ['txr_id' => $txr_id]);
+		(new Events)->create(Auth::appId(), $eventType, ['txr_id' => $txrId]);
 
 		return true;
 	}
 
-	public function broadcast(int $txr_id, array $data) {
-		$txr = $this->get($txr_id);
+	/**
+	 * Function to broadcast a transaction request
+	 * @param int $txrId
+	 * @param array $data
+	 * @return bool|mixed
+	 */
+	public function broadcast(int $txrId, array $data) {
+		$txr = $this->get($txrId);
 
 		if (!empty($txr)) {
 			// @todo: RLP decoding and validation of all transaction data
@@ -195,17 +214,17 @@ class TransactionRequests extends ApiBase {
 			*/
 
 			$model = new Eth;
-			$tx_id = $model->msg('eth_sendRawTransaction', array($data));
+			$txId = $model->msg('eth_sendRawTransaction', array($data));
 
 			// Update the new transaction request state
 			$sql = $this->db->update('transaction_requests')
-				->where(['txr_id' => $txr_id])
+				->where(['txr_id' => $txrId])
 				->set(['state' => self::STATE_BROADCASTED]);
 			Db::query($sql);
 
-			(new Events)->create(Auth::appId(), EventTypes::TX_BROADCASTED, ['txr_id' => $txr_id, 'tx_id' => $tx_id]);
+			(new Events)->create(Auth::appId(), EventTypes::TX_BROADCASTED, ['txr_id' => $txrId, 'tx_id' => $txId]);
 
-			return $tx_id;
+			return $txId;
 		}
 		return false;
 	}
