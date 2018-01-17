@@ -45,7 +45,7 @@ composer run test
 composer test -- --filter IdentitiesTest
 ```
 
-# Run tests for 1 class method (e.g. IdentitiesTest and the method)
+# Run tests for 1 class method (e.g. IdentitiesTest and the testGet_AfterIdentityIdIsSet method)
 ```
 composer test -- --filter IdentitiesTest::testGet_AfterIdentityIdIsSet
 ```
