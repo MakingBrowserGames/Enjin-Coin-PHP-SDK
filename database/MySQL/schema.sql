@@ -35,7 +35,7 @@ CREATE TABLE transaction_requests (
   `token_id` INT(10) UNSIGNED NOT NULL,
   `value` VARCHAR(255) NOT NULL DEFAULT '0',
   `state` ENUM('pending', 'broadcasted', 'executed', 'confirmed', 'canceled_user', 'canceled_platform', 'failed') NOT NULL DEFAULT 'pending',
-  `accepted` TINYINT(1) UNSIGNED NOT NULL,
+  `accepted` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`txr_id`),
   KEY (`app_id`), -- Review keys and optimize later
   KEY (`tx_id`),
