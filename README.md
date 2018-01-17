@@ -35,3 +35,9 @@ composer install
 
 # Run all unit tests
 composer run test
+
+# Run tests for 1 class (e.g. IdentitiesTest)
+composer test -- --filter IdentitiesTest
+
+#Run tests for 1 class method (e.g. IdentitiesTest and the method)
+composer test -- --filter IdentitiesTest::testGet_AfterIdentityIdIsSet
