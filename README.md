@@ -61,7 +61,7 @@ cd vendor/phpcheckstyle/phpcheckstyle
 php run.php --src ../../../src 
 ```
 
-#View Checkstyle Reports
+# View Checkstyle Reports
 ```
 Open vendor/phpcheckstyle/phpcheckstyle/style-report/index.html
 ```
