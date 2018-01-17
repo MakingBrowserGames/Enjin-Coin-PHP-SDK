@@ -3,15 +3,18 @@ declare(strict_types=1);
 
 namespace EnjinCoin\Test;
 
+use EnjinCoin\Api\Apps;
 use EnjinCoin\Api\TransactionRequests;
 use EnjinCoin\Api\Identities;
+use EnjinCoin\Auth;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\Exception;
 /**
  * @covers EnjinCoin\Api\TransactionRequests
  */	
 final class TransactionRequestsTest extends TestCase {
-	
+
+    protected $app_auth_key = '';
 	protected $type = '';
 	protected $identity;
 	protected $validRecipient;
@@ -19,6 +22,9 @@ final class TransactionRequestsTest extends TestCase {
 	protected $latest_txr_id = 0;
 	//Setup method called before every method 
 	protected function setUp(): void {
+	    $result = (new Apps())->create('TestApp_' . rand(1, 999999999));
+	    $this->app_auth_key = $result['app_auth_key'];
+	    Auth::init($this->app_auth_key);
 
 		$this->type = TransactionRequests::TYPE_BUY;
 
@@ -134,4 +140,9 @@ final class TransactionRequestsTest extends TestCase {
 
 		$this->assertNotEmpty($result);
 	}
+
+	public function tearDown(): void {
+	    $api = new Apps();
+	    $api->delete(Auth::appId());
+    }
 }
