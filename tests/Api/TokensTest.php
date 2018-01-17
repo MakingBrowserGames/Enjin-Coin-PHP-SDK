@@ -97,10 +97,10 @@ final class TokensTest extends TestCase {
 	public function testRemoveToken(): void {
 		$token_id = rand(100000000, 999999999);
 		$api = new Tokens();
-		$result = $api->addToken(token_id);
+		$result = $api->addToken($token_id);
 		$this->assertTrue($result);
 		
-		$result = $api->removeToken(token_id);
+		$result = $api->removeToken($token_id);
 		$this->assertTrue($result);
 	}	
 	
