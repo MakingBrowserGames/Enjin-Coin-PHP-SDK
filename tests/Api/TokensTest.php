@@ -39,7 +39,11 @@ final class TokensTest extends TestCase {
 		$api = new Tokens();
 		$result = $api->get($this->app_id);
 
-		$this->assertEmpty($result);
+		$this->assertNotEmpty($result);
+		$this->assertNotEmpty($result[0]);
+		$this->assertNotEmpty($result[0]['token_id']);
+		$this->assertNotEmpty($result[0]['app_id']);
+		$this->assertSame((int)$result[0]['app_id'], (int)$this->app_id);
 	}
 	
 	public function testGet_AuthHasOccuredNoTokens(): void {
@@ -48,7 +52,12 @@ final class TokensTest extends TestCase {
 		
 		$api = new Tokens();
 		$result = $api->get();
-		$this->assertEmpty($result);
+
+		$this->assertNotEmpty($result);
+		$this->assertNotEmpty($result[0]);
+		$this->assertNotEmpty($result[0]['token_id']);
+		$this->assertNotEmpty($result[0]['app_id']);
+		$this->assertSame((int)$result[0]['app_id'], (int)$this->app_id);
 	}
 
 	public function testGet_AppIdNotSet(): void {
@@ -63,7 +72,11 @@ final class TokensTest extends TestCase {
 		$api = new Tokens();
 		$result = $api->get($this->app_id, $after_token_id);
 
-		$this->assertEmpty($result);
+		$this->assertNotEmpty($result);
+		$this->assertNotEmpty($result[0]);
+		$this->assertNotEmpty($result[0]['token_id']);
+		$this->assertNotEmpty($result[0]['app_id']);
+		$this->assertSame((int)$result[0]['app_id'], (int)$this->app_id);
 	}
 	
 		
@@ -73,7 +86,11 @@ final class TokensTest extends TestCase {
 		$api = new Tokens();
 		$result = $api->get($this->app_id, $after_token_id, $limit);
 
-		$this->assertEmpty($result);
+		$this->assertNotEmpty($result);
+		$this->assertNotEmpty($result[0]);
+		$this->assertNotEmpty($result[0]['token_id']);
+		$this->assertNotEmpty($result[0]['app_id']);
+		$this->assertSame((int)$result[0]['app_id'], (int)$this->app_id);
 	}
 	
 	public function testGet_TokenIdSet(): void {
