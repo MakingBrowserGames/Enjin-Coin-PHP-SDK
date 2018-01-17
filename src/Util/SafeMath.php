@@ -1,6 +1,6 @@
 <?php
 namespace EnjinCoin\Util;
-
+use PHPUnit\Runner\Exception;
 /**
  * Class SafeMath
  * Casts strings for processing 256-bit integers in PHP
@@ -57,7 +57,7 @@ class SafeMath {
 	 */
 	public static function mul(string $valA, string $valB) {
 		$output = floor($valA * $valB);
-		if (!($valA === 0 || $output / $valA === $valB)) {
+		if (!($valA === 0 || $output / $valA == $valB)) {
 			throw new Exception('multiplying values failed');
 		}
 		return $output;
