@@ -142,6 +142,10 @@ final class TransactionRequestsTest extends TestCase {
 	}
 
 	public function tearDown(): void {
+	    $api = new Identities();
+	    $api->delete(['identity_id' => $this->identity_id]);
+	    $api->delete(['identity_id' => $this->invalidRecipient['identity_id']]);
+
 	    $api = new Apps();
 	    $api->delete(Auth::appId());
     }

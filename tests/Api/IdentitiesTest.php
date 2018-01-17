@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace EnjinCoin\Test;
 
+use EnjinCoin\Api\Apps;
 use EnjinCoin\Api\Identities;
+use EnjinCoin\Auth;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \EnjinCoin\Api\Identities
  */	
 final class IdentitiesTest extends TestCase {
+    protected $app_auth_key = '';
 	protected $identity_id = 0;
 	protected $identity_code = '';
 	protected $ethereum_address = '';
@@ -17,6 +20,9 @@ final class IdentitiesTest extends TestCase {
 
 	//Setup method called before every method 
 	protected function setUp(): void {
+        $result = (new Apps())->create('TestApp_' . rand(1, 999999999));
+        $this->app_auth_key = $result['app_auth_key'];
+        Auth::init($this->app_auth_key);
 
 		$this->ethereum_address = '0x0000000000000000000000000000000' . rand(100000000, 999999999);
 		$this->player_name = 'testplayer' . rand(100000000, 999999999);
@@ -127,5 +133,8 @@ final class IdentitiesTest extends TestCase {
 		$api = new Identities();
 		$api->delete(['identity_id' => $this->identity_id]);
 		$api->delete(['identity_id' => $this->identity_id + 1]);
+
+        $api = new Apps();
+        $api->delete(Auth::appId());
 	}
 }

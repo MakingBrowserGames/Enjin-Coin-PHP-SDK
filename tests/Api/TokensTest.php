@@ -15,20 +15,21 @@ final class TokensTest extends TestCase {
 
 	protected $token_id = 0;
 	protected $app_id = '';
-	protected $app_name = '';
 	protected $app_auth_key = '';
 
 	
 	//Setup method called before every method 
 	protected function setUp(): void {
+        $result = (new Apps())->create('TestApp_' . rand(1, 999999999));
+        $this->app_id = $result['app_id'];
+        $this->app_auth_key = $result['app_auth_key'];
+        Auth::init($this->app_auth_key);
 
 		//Add a token before each test
 		$this->token_id = rand(100000000, 999999999);		
 		$api = new Tokens();
 		$result = $api->addToken($this->token_id);
 		$this->assertTrue($result);
-		
-		$this->app_name = 'testApp' . rand(100000000, 999999999);
 
 		$appsApi = new Apps();
 		$result = $appsApi->create($this->app_name);
@@ -131,4 +132,9 @@ final class TokensTest extends TestCase {
 		$this->assertArrayHasKey('3', $result);
 		$this->assertArrayHasKey('4', $result);
 	}
+
+    public function tearDown(): void {
+        $api = new Apps();
+        $api->delete(Auth::appId());
+    }
 }

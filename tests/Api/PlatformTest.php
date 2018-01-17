@@ -14,6 +14,8 @@ use PHPUnit\Framework\TestCase;
  */	
 final class PlatformTest extends TestCase {
 	protected $app_auth_key = '';
+	protected $identity_id;
+	protected $identity_code;
 
 	protected function setUp(): void {
 		$result = (new Apps())->create('TestApp_' . rand(1, 999999999));
@@ -81,6 +83,9 @@ final class PlatformTest extends TestCase {
 	}
 	
 	public function tearDown(): void {
+	    $api = new Identities();
+        $api->delete(['identity_id' => $this->identity_id]);
+
 		$api = new Apps();
 		$api->delete(Auth::appId());
 	}
