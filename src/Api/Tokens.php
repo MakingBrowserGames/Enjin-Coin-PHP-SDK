@@ -36,16 +36,16 @@ class Tokens extends ApiBase {
 
 	public function addToken(int $token_id) {
 		// @todo fetch data from CustomTokens contract on the blockchain
-		$result = ['creator' => 'creator',
-		'adapter' => 'adapter',
-		'name' => 'name',
-		'icon' => 'icon',
-		'totalSupply' => 'totalSupply',
-		'exchangeRate' => 'exchangeRate',
-		'decimals' => 'decimals',
-		'maxMeltFee' => 'maxMeltFee',
-		'meltFee' => 'meltFee',
-		'transferable' => 'transferable'];
+		$result = ['creator' => null,
+		'adapter' => null,
+		'name' => null,
+		'icon' => null,
+		'totalSupply' => null,
+		'exchangeRate' => null,
+		'decimals' => 0,
+		'maxMeltFee' => null,
+		'meltFee' => null,
+		'transferable' => 1];
 
 		$data = [
 			'token_id' => $token_id,

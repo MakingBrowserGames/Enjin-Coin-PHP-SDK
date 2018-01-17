@@ -16,11 +16,14 @@ final class TokensTest extends TestCase {
 	protected $token_id = 0;
 	protected $app_id = '';
 	protected $app_auth_key = '';
+	protected $app_name = '';
 
 	
 	//Setup method called before every method 
 	protected function setUp(): void {
-        $result = (new Apps())->create('TestApp_' . rand(1, 999999999));
+	    $this->app_name = 'TestApp_' . rand(1, 999999999);
+
+        $result = (new Apps())->create($this->app_name);
         $this->app_id = $result['app_id'];
         $this->app_auth_key = $result['app_auth_key'];
         Auth::init($this->app_auth_key);
@@ -30,13 +33,6 @@ final class TokensTest extends TestCase {
 		$api = new Tokens();
 		$result = $api->addToken($this->token_id);
 		$this->assertTrue($result);
-
-		$appsApi = new Apps();
-		$result = $appsApi->create($this->app_name);
-		
-		$this->app_id = $result['app_id'];
-		$this->app_name = $result['name'];
-		$this->app_auth_key = $result['app_auth_key'];
 	}
 
 	public function testGet_AppIdSet(): void {
@@ -91,14 +87,15 @@ final class TokensTest extends TestCase {
 	}
 	
 	public function testAddToken(): void {
-		$this->token_id = rand(100000000, 999999999);		
+		$token_id = rand(100000000, 999999999);
 		$api = new Tokens();
-		$result = $api->addToken($this->token_id);
+		$result = $api->addToken(token_id);
 		$this->assertTrue($result);
+		$api->removeToken($token_id);
 	}
 	
 	public function testRemoveToken(): void {
-		$this->token_id = rand(100000000, 999999999);		
+		$token_id = rand(100000000, 999999999);
 		$api = new Tokens();
 		$result = $api->addToken($this->token_id);
 		$this->assertTrue($result);
@@ -134,6 +131,9 @@ final class TokensTest extends TestCase {
 	}
 
     public function tearDown(): void {
+	    $api = new Tokens();
+	    $api->removeToken($this->token_id);
+
         $api = new Apps();
         $api->delete(Auth::appId());
     }
