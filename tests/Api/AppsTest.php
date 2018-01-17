@@ -42,6 +42,48 @@ final class AppsTest extends TestCase {
 		$this->assertEquals($this->name, $result['name']);
 	}
 
+	/**
+     * @expectedException Exception
+     */
+	public function testCreate_NameIsEmpty(): void {
+		$this->name = '';
+		$api = new Apps();
+		$result = $api->create($this->name);
+		
+		$this->assertEmpty($result);
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage('Name must not be empty');
+	}
+	
+	public function testCreate(): void {
+		$this->name = 'TestApp_' . rand(1, 999999999);
+		$api = new Apps();
+		$result = $api->create($this->name);
+		$this->assertNotEmpty($result);
+		$this->assertArrayHasKey('app_id', $result);
+		$this->assertArrayHasKey('name', $result);
+		$this->assertArrayHasKey('app_auth_key', $result);
+		
+		$this->app_id = $result['app_id'];
+
+		$result = $api->get($this->app_id);
+		$this->assertArrayHasKey('name', $result);
+		$this->assertEquals($this->name, $result['name']);
+	}	
+	
+	/**
+     * @expectedException Exception
+     */
+	public function testUpdate_NameIsEmpty(): void {
+		$this->name = '';
+		$api = new Apps();
+		$result = $api->update($this->app_id, $this->name);
+		
+		$this->assertEquals(false, $result);
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage('Name must not be empty');
+	}
+	
 	public function testUpdate(): void {
 		$api = new Apps();
 		$result = $api->update($this->app_id, $this->name . 'updated');
