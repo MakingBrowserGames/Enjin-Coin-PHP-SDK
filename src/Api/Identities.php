@@ -71,6 +71,8 @@ class Identities extends ApiBase {
 				->where(['identity_id' => $ident['identity_id']]);
 			$selectResults = Db::query($select)->toArray();
 			foreach ($selectResults as $selectResult) {
+				$tempKey = $selectResult['key'];
+
 				if (in_array($selectResult['key'], ['identity_id', 'ethereum_address', 'identity_code'])) {
 					continue;
 				}

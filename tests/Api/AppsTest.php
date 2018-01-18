@@ -13,19 +13,18 @@ final class AppsTest extends TestCase {
 	protected $app_id = 0;
 	protected $name = '';
 	protected $app_auth_key = '';
-
+	protected $appsApi;
 	protected function setUp(): void {
 		$this->name = 'TestApp_' . rand(1, 999999999);
 
-		$api = new Apps();
-		$result = $api->create($this->name);
+		$this->appsApi = new Apps();
+		$result = $this->appsApi->create($this->name);
 		$this->app_id = $result['app_id'];
 		$this->app_auth_key = $result['app_auth_key'];
 	}
 
 	public function testGet(): void {
-		$api = new Apps();
-		$result = $api->get($this->app_id);
+		$result = $this->appsApi->get($this->app_id);
 
 		$this->assertArrayHasKey('app_id', $result);
 		$this->assertArrayHasKey('name', $result);
@@ -35,8 +34,7 @@ final class AppsTest extends TestCase {
 	}
 
 	public function testGetByKey(): void {
-		$api = new Apps();
-		$result = $api->getByKey($this->app_auth_key);
+		$result = $this->appsApi->getByKey($this->app_auth_key);
 
 		$this->assertArrayHasKey('name', $result);
 		$this->assertEquals($this->name, $result['name']);
@@ -47,8 +45,7 @@ final class AppsTest extends TestCase {
      */
 	public function testCreate_NameIsEmpty(): void {
 		$this->name = '';
-		$api = new Apps();
-		$result = $api->create($this->name);
+		$result = $this->appsApi->create($this->name);
 		
 		$this->assertEmpty($result);
 		$this->expectException(Exception::class);
@@ -57,8 +54,7 @@ final class AppsTest extends TestCase {
 	
 	public function testCreate(): void {
 		$this->name = 'TestApp_' . rand(1, 999999999);
-		$api = new Apps();
-		$result = $api->create($this->name);
+		$result = $this->appsApi->create($this->name);
 		$this->assertNotEmpty($result);
 		$this->assertArrayHasKey('app_id', $result);
 		$this->assertArrayHasKey('name', $result);
@@ -66,7 +62,7 @@ final class AppsTest extends TestCase {
 		
 		$this->app_id = $result['app_id'];
 
-		$result = $api->get($this->app_id);
+		$result = $this->appsApi->get($this->app_id);
 		$this->assertArrayHasKey('name', $result);
 		$this->assertEquals($this->name, $result['name']);
 	}	
@@ -76,8 +72,7 @@ final class AppsTest extends TestCase {
      */
 	public function testUpdate_NameIsEmpty(): void {
 		$this->name = '';
-		$api = new Apps();
-		$result = $api->update($this->app_id, $this->name);
+		$result = $this->appsApi->update($this->app_id, $this->name);
 		
 		$this->assertEquals(false, $result);
 		$this->expectException(Exception::class);
@@ -85,27 +80,24 @@ final class AppsTest extends TestCase {
 	}
 	
 	public function testUpdate(): void {
-		$api = new Apps();
-		$result = $api->update($this->app_id, $this->name . 'updated');
+		$result = $this->appsApi->update($this->app_id, $this->name . 'updated');
 		$this->assertEquals(true, $result);
 
-		$result = $api->get($this->app_id);
+		$result = $this->appsApi->get($this->app_id);
 		$this->assertArrayHasKey('name', $result);
 		$this->assertEquals($this->name . 'updated', $result['name']);
 	}
 
 	public function testDelete(): void {
-		$api = new Apps();
-		$result = $api->delete($this->app_id);
+		$result = $this->appsApi->delete($this->app_id);
 		$this->assertEquals(true, $result);
 
-		$result = $api->get($this->app_id);
+		$result = $this->appsApi->get($this->app_id);
 		$this->assertEmpty($result);
 	}
 
 	public function tearDown(): void {
-		$api = new Apps();
-		$api->delete($this->app_id);
-		$api->delete($this->app_id + 1);
+		$this->appsApi->delete($this->app_id);
+		$this->appsApi->delete($this->app_id + 1);
 	}
 }

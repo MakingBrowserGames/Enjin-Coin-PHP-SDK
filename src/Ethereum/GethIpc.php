@@ -15,7 +15,7 @@ class GethIpc implements IEthereumConnection {
 
 	/**
 	 * Function to connect
-	 * @return mixed
+	 * @return fp
 	 */
 	public function connect() {
 		if (empty($this->fp)) {

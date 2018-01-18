@@ -99,13 +99,14 @@ class Tokens extends ApiBase {
 
 	/**
 	 * Function to get the balance
-	 * @param $identity
+	 * @param array $identity
 	 * @param $tokenIds
 	 * @return array
 	 */
 	public function getBalance(array $identity, $tokenIds = null) {
 		/**
 		 * @todo remove mock request
+		 * @return array
 		 */
 		if (!empty($identity['identity_id']) && $identity['identity_id'] === 1) {
 			return [
