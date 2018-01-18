@@ -16,16 +16,22 @@ final class PlatformTest extends TestCase {
 	protected $app_auth_key = '';
 	protected $identity_id;
 	protected $identity_code;
-
+	protected $appsApi;
+	protected $platformApi;
+	protected $identitiesApi;
+	
 	protected function setUp(): void {
-		$result = (new Apps())->create('TestApp_' . rand(1, 999999999));
+		$this->appsApi = new Apps();
+		$result = $this->appsApi->create('TestApp_' . rand(1, 999999999));
 		$this->app_auth_key = $result['app_auth_key'];
 		Auth::init($this->app_auth_key);
+		
+		$this->platformApi = new Platform();
+		$this->identitiesApi = new Identities();
 	}
 
 	public function testAuth(): void {
-		$api = new Platform();
-		$result = $api->auth();
+		$result = $this->platformApi->auth();
 
 		$this->assertArrayHasKey('notifications', $result);
 		$this->assertArrayHasKey('method', $result['notifications']);
@@ -41,14 +47,12 @@ final class PlatformTest extends TestCase {
 	}
 
 	public function testGetRoles() {
-		$api = new Platform();
-		$result = $api->getRoles();
+		$result = $this->platformApi->getRoles();
 		$this->assertNotEmpty($result);
 	}
 
 	public function testGetRole() {
-		$api = new Platform();
-		$result = $api->getRole(Auth::authKey());
+		$result = $this->platformApi->getRole(Auth::authKey());
 		$this->assertEquals(Auth::ROLE_GUEST, $result);
 		//$this->assertEquals(Auth::ROLE_SERVER, $result);
 	}
@@ -58,8 +62,7 @@ final class PlatformTest extends TestCase {
 		//Create the initial identity so that we can use it to associate an auth key
 		$this->ethereum_address = '0x0000000000000000000000000000000' . rand(100000000, 999999999);
 		$this->player_name = 'testplayer' . rand(100000000, 999999999);
-		$identitiesApi = new Identities();
-		$result = $identitiesApi->create([
+		$result = $this->identitiesApi->create([
 			'ethereum_address' => $this->ethereum_address,
 			'player_name' => $this->player_name,
 		]);
@@ -68,25 +71,23 @@ final class PlatformTest extends TestCase {
 
 		//Link the identity so that an auth key is set on the record
 		$new_eth_address = '0x1234567890123456789000' . rand(100000000, 999999999) . rand(100000000, 999999999);
-		$result = $identitiesApi->link($this->identity_code, $new_eth_address);
+		$result = $this->identitiesApi->link($this->identity_code, $new_eth_address);
 		$this->assertEquals(true, $result);
 
-		$result = $identitiesApi->get(['identity_id' => $this->identity_id]);
+		$result = $this->identitiesApi->get(['identity_id' => $this->identity_id]);
 		/*$this->assertArrayHasKey('auth_key', $result[0]);
 
 		$this->app_auth_key = $result['auth_key'];
 
 		$api = new Platform();
-		$result = $api->getRole($this->app_auth_key);
+		$result = $this->platformApi->getRole($this->app_auth_key);
 		$this->assertEquals(Auth::ROLE_GUEST, $result);*/
 		//$this->assertEquals(Auth::ROLE_SERVER, $result);
 	}
 	
-	public function tearDown(): void {
-	    $api = new Identities();
-        $api->delete(['identity_id' => $this->identity_id]);
+	public function tearDown(): void {	    
+        $this->identitiesApi->delete(['identity_id' => $this->identity_id]);
 
-		$api = new Apps();
-		$api->delete(Auth::appId());
+		$this->appsApi->delete(Auth::appId());
 	}
 }
