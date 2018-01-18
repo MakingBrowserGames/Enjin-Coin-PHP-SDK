@@ -11,27 +11,26 @@ use PHPUnit\Runner\Exception;
  */	
 final class PricesTest extends TestCase {
 
+	protected $pricesApi;
+	protected function setUp(): void {
+		$this->pricesApi = new Prices();
+	}
+
 	public function testGetTotalSupply_ENJ(): void {
 		$symbol = 'ENJ';
-		$api = new Prices();
-		$result = $api->getTotalSupply($symbol);
-
+		$result = $this->pricesApi->getTotalSupply($symbol);
 		$this->assertNotNull($result);
 	}
 	
 	public function testGetTotalSupply_BTC(): void {
 		$symbol = 'BTC';
-		$api = new Prices();
-		$result = $api->getTotalSupply($symbol);
-
+		$result = $this->pricesApi->getTotalSupply($symbol);
 		$this->assertNotNull($result);
 	}
 	
 	public function testGetTotalSupply_LTC(): void {
 		$symbol = 'LTC';
-		$api = new Prices();
-		$result = $api->getTotalSupply($symbol);
-
+		$result = $this->pricesApi->getTotalSupply($symbol);
 		$this->assertNotNull($result);
 	}
 
@@ -40,18 +39,14 @@ final class PricesTest extends TestCase {
      */
 	public function testGetTotalSupply_Exception(): void {
 		$symbol = 'EXCEPTION';
-		$api = new Prices();
-		$result = $api->getTotalSupply($symbol);
-		
+		$result = $this->pricesApi->getTotalSupply($symbol);		
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('No supply available');
 	}
 
 	public function testGetCirculatingSupply_ENJ(): void {
 		$symbol = 'ENJ';
-		$api = new Prices();
-		$result = $api->getCirculatingSupply($symbol);
-
+		$result = $this->pricesApi->getCirculatingSupply($symbol);
 		$this->assertNotNull($result);
 	}
 	
@@ -60,9 +55,7 @@ final class PricesTest extends TestCase {
      */
 	public function testGetCirculatingSupply_EXCEPTION(): void {
 		$symbol = 'EXCEPTION';
-		$api = new Prices();
-		$result = $api->getCirculatingSupply($symbol);
-
+		$result = $this->pricesApi->getCirculatingSupply($symbol);
 		$this->assertNotNull($result);
 	}	
 }
