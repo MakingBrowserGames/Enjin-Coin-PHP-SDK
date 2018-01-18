@@ -17,27 +17,28 @@ final class TokensTest extends TestCase {
 	protected $app_id = '';
 	protected $app_auth_key = '';
 	protected $app_name = '';
-
+	protected $appsApi;
+	protected $tokensApi;
 	
 	//Setup method called before every method 
 	protected function setUp(): void {
+		$this->appsApi = new Apps();
 	    $this->app_name = 'TestApp_' . rand(1, 999999999);
 
-        $result = (new Apps())->create($this->app_name);
+        $result = $this->appsApi->create($this->app_name);
         $this->app_id = $result['app_id'];
         $this->app_auth_key = $result['app_auth_key'];
         Auth::init($this->app_auth_key);
 
 		//Add a token before each test
 		$this->token_id = rand(100000000, 999999999);		
-		$api = new Tokens();
-		$result = $api->addToken($this->token_id);
+		$this->tokensApi = new Tokens();
+		$result = $this->tokensApi->addToken($this->token_id);
 		$this->assertTrue($result);
 	}
 
 	public function testGet_AppIdSet(): void {
-		$api = new Tokens();
-		$result = $api->get($this->app_id);
+		$result = $this->tokensApi->get($this->app_id);
 
 		$this->assertNotEmpty($result);
 		$this->assertNotEmpty($result[0]);
@@ -50,9 +51,7 @@ final class TokensTest extends TestCase {
 		$result = Auth::init($this->app_auth_key);
 		$this->assertTrue($result);
 		
-		$api = new Tokens();
-		$result = $api->get();
-
+		$result = $this->tokensApi->get();
 		$this->assertNotEmpty($result);
 		$this->assertNotEmpty($result[0]);
 		$this->assertNotEmpty($result[0]['token_id']);
@@ -61,16 +60,14 @@ final class TokensTest extends TestCase {
 	}
 
 	public function testGet_AppIdNotSet(): void {
-		$api = new Tokens();
-		$result = $api->get();
+		$result = $this->tokensApi->get();
 
 		$this->assertNotEmpty($result);
 	}
 	
 	public function testGet_AfterTokenIdSet(): void {
 		$after_token_id = 1;
-		$api = new Tokens();
-		$result = $api->get($this->app_id, $after_token_id);
+		$result = $this->tokensApi->get($this->app_id, $after_token_id);
 
 		$this->assertNotEmpty($result);
 		$this->assertNotEmpty($result[0]);
@@ -83,8 +80,7 @@ final class TokensTest extends TestCase {
 	public function testGet_LimitSet(): void {
 		$after_token_id = 1;
 		$limit = 100;
-		$api = new Tokens();
-		$result = $api->get($this->app_id, $after_token_id, $limit);
+		$result = $this->tokensApi->get($this->app_id, $after_token_id, $limit);
 
 		$this->assertNotEmpty($result);
 		$this->assertNotEmpty($result[0]);
@@ -97,47 +93,41 @@ final class TokensTest extends TestCase {
 		$after_token_id = 1;
 		$limit = 100;
 		$token_id = 1;
-		$api = new Tokens();
-		$result = $api->get($this->app_id, $after_token_id, $limit, $token_id);
+		$result = $this->tokensApi->get($this->app_id, $after_token_id, $limit, $token_id);
 
 		$this->assertEmpty($result);
 	}
 	
 	public function testAddToken(): void {
 		$token_id = rand(100000000, 999999999);
-		$api = new Tokens();
-		$result = $api->addToken($token_id);
+		$result = $this->tokensApi->addToken($token_id);
 		$this->assertTrue($result);
-		$api->removeToken($token_id);
+		$this->tokensApi->removeToken($token_id);
 	}
 	
 	public function testRemoveToken(): void {
 		$token_id = rand(100000000, 999999999);
-		$api = new Tokens();
-		$result = $api->addToken($token_id);
+		$result = $this->tokensApi->addToken($token_id);
 		$this->assertTrue($result);
 		
-		$result = $api->removeToken($token_id);
+		$result = $this->tokensApi->removeToken($token_id);
 		$this->assertTrue($result);
 	}	
 	
 	public function testGetBalance_IdentityArrayEmpty(): void {
-		$api = new Tokens();
-		$result = $api->getBalance([]);
+		$result = $this->tokensApi->getBalance([]);
 
 		$this->assertEmpty($result);
 	}
 	public function testGetBalance_IdentityNotEmptyIdIs0(): void {
-		$api = new Tokens();
 		$this->identity_id = 0;
-		$result = $api->getBalance(['identity_id' => $this->identity_id]);
+		$result = $this->tokensApi->getBalance(['identity_id' => $this->identity_id]);
 
 		$this->assertEmpty($result);
 	}
 	public function testGetBalance_IdentityNotEmptyIdIs1(): void {
-		$api = new Tokens();
 		$this->identity_id = 1;
-		$result = $api->getBalance(['identity_id' => $this->identity_id]);
+		$result = $this->tokensApi->getBalance(['identity_id' => $this->identity_id]);
 
 		$this->assertNotEmpty($result);
 		$this->assertArrayHasKey('ENJ', $result);
@@ -148,10 +138,8 @@ final class TokensTest extends TestCase {
 	}
 
     public function tearDown(): void {
-	    $api = new Tokens();
-	    $api->removeToken($this->token_id);
+	    $this->tokensApi->removeToken($this->token_id);
 
-        $api = new Apps();
-        $api->delete(Auth::appId());
+        $this->appsApi->delete(Auth::appId());
     }
 }
