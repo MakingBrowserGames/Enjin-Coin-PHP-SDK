@@ -23,9 +23,14 @@ final class EventsTest extends TestCase {
 	protected $event_type;
 	protected $event_data;
 	protected $identity;
+	protected $appsApi;
+	protected $eventsApi;
+	protected $identitiesApi;
+	
 	//Setup method called before every method 
 	protected function setUp(): void {
-        $result = (new Apps())->create('TestApp_' . rand(1, 999999999));
+		$this->appsApi = new Apps();
+        $result = $this->appsApi->create('TestApp_' . rand(1, 999999999));
         $this->app_id = $result['app_id'];
         $this->app_auth_key = $result['app_auth_key'];
         Auth::init($this->app_auth_key);
@@ -33,11 +38,11 @@ final class EventsTest extends TestCase {
 		$this->event_type = EventTypes::IDENTITY_LINKED;
 
 		//Create an identity so we can guarantee it exists
-		$identitiesApi = new Identities();
+		$this->identitiesApi = new Identities();
 		$ethereum_address = '0x0000000000000000000000000000000' . rand(100000000, 999999999);
 		$player_name = 'testplayer' . rand(100000000, 999999999);
 		
-		$result = $identitiesApi->create([
+		$result = $this->identitiesApi->create([
 			'ethereum_address' => $ethereum_address,
 			'player_name' => $player_name,
 		]);
@@ -54,31 +59,28 @@ final class EventsTest extends TestCase {
 		];
 
 		//Create an event for the get calls
-		$api = new Events();
-		$result = $api->create($this->app_id, $this->event_type, $this->event_data);
+		$this->eventsApi = new Events();
+		$result = $this->eventsApi->create($this->app_id, $this->event_type, $this->event_data);
 		$this->assertEmpty($result);
 
-		$result = $api->get();
+		$result = $this->eventsApi->get();
 		$this->assertNotEmpty($result);	
 		$this->assertNotEmpty($result[0]['event_id']);	
 		$this->event_id = $result[0]['event_id'];
 	}
 	
 	public function testGet_NoParams(): void {
-		$api = new Events();
-		$result = $api->get();
+		$result = $this->eventsApi->get();
 		$this->assertNotEmpty($result);
 	}
 	public function testGet_EventIdSet(): void {
-		$api = new Events();
-		$result = $api->get($this->event_id);
+		$result = $this->eventsApi->get($this->event_id);
 
 		$this->assertNotEmpty($result);
 	}
 	public function testGet_AppIdSet(): void {
 		$this->event_id = '';
-		$api = new Events();
-		$result = $api->get($this->event_id, $this->app_id);
+		$result = $this->eventsApi->get($this->event_id, $this->app_id);
 
 		$this->assertNotEmpty($result);
 	}
@@ -86,23 +88,20 @@ final class EventsTest extends TestCase {
 		$this->event_id = '';
 		$this->app_id   = '';
 		
-		$api = new Events();
-		$result = $api->get($this->event_id, $this->app_id, $this->identity);
+		$result = $this->eventsApi->get($this->event_id, $this->app_id, $this->identity);
 
 		$this->assertNotEmpty($result);
 	}
 	public function testGet_BeforeIdentityIdSet(): void {
 		$before_event_id = 1;
-		$api = new Events();
-		$result = $api->get('', '', [], $before_event_id);
+		$result = $this->eventsApi->get('', '', [], $before_event_id);
 
 		$this->assertNotEmpty($result);
 	}
 	public function testGet_AfterIdentityIdSet(): void {
 		$before_event_id = '';
 		$after_event_id = 99999999;
-		$api = new Events();
-		$result = $api->get('', '', [], $before_event_id, $after_event_id);
+		$result = $this->eventsApi->get('', '', [], $before_event_id, $after_event_id);
 
 		$this->assertNotEmpty($result);
 	}	
@@ -111,9 +110,8 @@ final class EventsTest extends TestCase {
      */
 	public function testCreate_AppDoesntExist(): void {
 		$tempAppId = rand(100000000, 999999999);	
-		$api = new Events();
 		$this->event_data = [];
-		$result = $api->create($tempAppId, $this->event_type, $this->event_data);
+		$result = $this->eventsApi->create($tempAppId, $this->event_type, $this->event_data);
 
 		$this->assertEmpty($result);
 		$this->expectException(Exception::class);
@@ -125,9 +123,8 @@ final class EventsTest extends TestCase {
      */
 	public function testCreate_IdentityIdDoesntExist(): void {
 		$tempIdentityId = rand(100000000, 999999999);
-		$api = new Events();
 		$this->event_data = ['identity' => ['identity_id' => $tempIdentityId]];
-		$result = $api->create($this->app_id, $this->event_type, $this->event_data);
+		$result = $this->eventsApi->create($this->app_id, $this->event_type, $this->event_data);
 
 		$this->assertEmpty($result);
 		$this->expectException(Exception::class);
@@ -136,8 +133,7 @@ final class EventsTest extends TestCase {
 	
 
 	public function testCreate_IdentityDoesExist(): void {
-		$api = new Events();
-		$result = $api->create($this->app_id, $this->event_type, $this->event_data);
+		$result = $this->eventsApi->create($this->app_id, $this->event_type, $this->event_data);
 
 		$this->assertEmpty($result);
 	}
@@ -149,8 +145,7 @@ final class EventsTest extends TestCase {
 		$this->event_type = EventTypes::UNKNOWN_EVENT;
 	
 		$tempAppId = 0;	
-		$api = new Events();
-		$result = $api->create($tempAppId, $this->event_type, $this->event_data);
+		$result = $this->eventsApi->create($tempAppId, $this->event_type, $this->event_data);
 
 		$this->assertEmpty($result);
 		$this->expectException(Exception::class);
@@ -158,19 +153,16 @@ final class EventsTest extends TestCase {
 	}	
 	
 	public function testPrune(): void {
-		$api = new Events();
-		$result = $api->prune();
+		$result = $this->eventsApi->prune();
 
 		$this->assertTrue($result);
 	}
 
     public function tearDown(): void {
-        $api = new Identities();
         if (!empty($this->identity)) {
-            $api->delete(['identity_id' => $this->identity['identity_id']]);
+            $this->identitiesApi->delete(['identity_id' => $this->identity['identity_id']]);
         }
 
-        $api = new Apps();
-        $api->delete(Auth::appId());
+        $this->appsApi->delete(Auth::appId());
     }
 }
