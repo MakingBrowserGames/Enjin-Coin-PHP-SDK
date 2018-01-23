@@ -17,6 +17,17 @@ final class SafeMathTest extends TestCase {
 		);
 	}
 
+	/**
+     * @expectedException Exception
+     */		
+	public function testAdd_failed(): void {
+		$result = SafeMath::add('10000000000000000000', '-20000000000000000001');
+		$this->assertEmpty($result);
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage('adding values failed');
+		
+	}	
+	
 	public function testSub(): void {
 		$this->assertEquals(
 			'10000000000000000001',
@@ -24,6 +35,17 @@ final class SafeMathTest extends TestCase {
 		);
 	}
 
+	/**
+     * @expectedException Exception
+     */		
+	public function testSubfailed(): void {
+		$result = SafeMath::sub('10000000000000000000', '20000000000000000001');
+		$this->assertEmpty($result);
+		$this->expectException(Exception::class);
+		$this->expectExceptionMessage('subtracting values failed');
+		
+	}	
+	
 	public function testDiv(): void {
 		$this->assertEquals(
 			'952380952380952380',
@@ -37,4 +59,5 @@ final class SafeMathTest extends TestCase {
 			SafeMath::mul('20000000000000000000', '21')
 		);
 	}
+
 }
