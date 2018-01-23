@@ -11,13 +11,34 @@ use Zend\Db\Sql\Sql;
  */	
 final class DbTest extends TestCase {
 	
-	public function testCorrectDbClass(): void {
+	public function testGetInstance_AdapterIsEmpty(): void {
+		Db::$adapter = '';
         $db = Db::getInstance();
 
 	    $this->assertInstanceOf(
 			\Zend\Db\Sql\Sql::class,
 			$db
 		);
+	}
+	
+	public function testGetInstance(): void {
+        $db = Db::getInstance();
+
+	    $this->assertInstanceOf(
+			\Zend\Db\Sql\Sql::class,
+			$db
+		);
+	}
+	
+	public function testSelect(): void {
+		
+		$sql    = new Sql(Db::$adapter);
+		$select = $sql->select();
+		$select->from('apps');
+		
+        $result = Db::query($select);
+
+	    $this->assertNotEmpty($result);
 	}
 }
 
