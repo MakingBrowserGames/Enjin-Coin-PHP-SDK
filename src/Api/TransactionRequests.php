@@ -145,7 +145,7 @@ class TransactionRequests extends ApiBase {
 			'value' => $value,
 		]);
 
-		return true;
+		return $txrId;
 	}
 
 	/**
@@ -182,7 +182,7 @@ class TransactionRequests extends ApiBase {
 			->set(['state' => $eventType === EventTypes::TXR_CANCELED_USER ? self::STATE_CANCELED_USER : self::STATE_CANCELED_PLATFORM]);
 		Db::query($sql);
 
-		(new Events)->create(Auth::appId(), $eventType, ['txr_id' => $txrId]);
+		(new Events)->create(Auth::appId(), $eventType, ['txr_id' => $txrId, 'identity' => $identity]);
 
 		return true;
 	}

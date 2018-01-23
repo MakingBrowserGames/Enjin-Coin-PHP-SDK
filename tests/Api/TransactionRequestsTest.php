@@ -23,6 +23,8 @@ final class TransactionRequestsTest extends TestCase {
 	protected $appsApi;
 	protected $identitiesApi;
 	protected $transactionRequestsApi;
+	protected $txr_id;
+	
 	//Setup method called before every method 
 	protected function setUp(): void {
 		$this->appsApi = new Apps();
@@ -64,7 +66,8 @@ final class TransactionRequestsTest extends TestCase {
 		//Create a transaction request for the get calls
 		$this->transactionRequestsApi = new TransactionRequests();	
 		$result = $this->transactionRequestsApi->create($this->identity, $this->validRecipient, $this->type);
-		$this->assertNotEmpty($result);
+		$this->txr_id = $result;
+		$this->assertNotEmpty($this->txr_id);
 
 		$latestResult = $this->transactionRequestsApi->getLatest(1);
 		$this->assertNotEmpty($latestResult);

@@ -16,7 +16,8 @@
   },
   "require-dev": {
 	"phpunit/phpunit": "^6.4",
-	"phpcheckstyle/phpcheckstyle": "dev-master"
+	"phpcheckstyle/phpcheckstyle": "dev-master",
+	"mockery/mockery": "dev-master"
   },
   "autoload": {
 	"psr-4": {
