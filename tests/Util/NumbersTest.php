@@ -26,8 +26,6 @@ final class NumbersTest extends TestCase {
 	public function testEncodeHex_Success1(): void {
 		$input = "0x00000000";
 		$result = Numbers::encodeHex($input);
-		print_r($result);
-		echo "result:".$result;
 		$this->assertNotNull($result);
 		$this->assertSame('0', $result);			
 	}
@@ -35,8 +33,6 @@ final class NumbersTest extends TestCase {
 	public function testEncodeHex_Success2(): void {
 		$input = "XXXXXX";
 		$result = Numbers::encodeHex($input);
-		print_r($result);
-		echo "result:".$result;
 		$this->assertNotNull($input, $result);			
 	}
 }
