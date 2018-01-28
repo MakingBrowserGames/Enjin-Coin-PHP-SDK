@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace EnjinCoin\Test;
 
+use function Amp\Dns\query;
 use EnjinCoin\Api\Apps;
 use EnjinCoin\Api\Identities;
 use EnjinCoin\Auth;
+use EnjinCoin\Util\Db;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -84,6 +86,26 @@ final class IdentitiesTest extends TestCase {
 		$result = $this->identitiesApi->get(['random_field' => $this->identity_id]);
 
 		$this->assertEmpty($result);
+	}
+
+	public function testGet_ContinueIfKeyEqualsEthereumAddress(): void {
+		$createResult = $this->identitiesApi->create([
+			'ethereum_address' => $this->ethereum_address,
+			'identity_code' => 'fdsf',
+		]);
+		$this->assertNotEmpty($createResult);
+
+		$fieldResult = $this->identitiesApi->field('ethereum_address');
+		$this->assertNotEmpty($fieldResult);
+
+		$insert = $this->identitiesApi->db->insert('identity_values');
+		$insert->values(['identity_id' => $createResult['identity_id']], $insert::VALUES_MERGE);
+		$insert->values(['field_id' => $fieldResult['field_id']], $insert::VALUES_MERGE);
+		$insert->values(['value' => $this->ethereum_address], $insert::VALUES_MERGE);
+		DB::query($insert);
+
+		$getResult = $this->identitiesApi->get(['ethereum_address' => $this->ethereum_address]);
+		$this->assertNotEmpty($getResult);
 	}
 
 	public function testUpdate(): void {
