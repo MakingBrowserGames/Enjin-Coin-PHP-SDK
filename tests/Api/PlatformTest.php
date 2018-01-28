@@ -7,6 +7,8 @@ use EnjinCoin\Api\Identities;
 use EnjinCoin\Auth;
 use EnjinCoin\Api\Apps;
 use EnjinCoin\Api\Platform;
+use EnjinCoin\Config;
+use EnjinCoin\Util\Db;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -83,6 +85,31 @@ final class PlatformTest extends TestCase {
 		$result = $this->platformApi->getRole($this->app_auth_key);
 		$this->assertEquals(Auth::ROLE_GUEST, $result);*/
 		//$this->assertEquals(Auth::ROLE_SERVER, $result);
+	}
+
+	public function testGetRole_ResultNotEmpty(): void {
+		$this->ethereum_address = '0x0000000000000000000000000000000' . rand(100000000, 999999999);
+		$result = $this->identitiesApi->create([
+			'ethereum_address' => $this->ethereum_address,
+			'auth_key' => 'xxxx',
+		]);
+
+		$update = Db::getInstance()->update('identities');
+		$update->set(['role' => 'platform', 'auth_key' => 'xxxx']);
+		$update->where(['ethereum_address' => $this->ethereum_address]);
+		$updateResult = DB::query($update);
+		$this->assertNotNull($updateResult);
+
+		$select = Db::getInstance()->select('identities');
+		$select->where(['ethereum_address' => $this->ethereum_address]);
+		$selectResult = Db::query($select);
+
+		$this->assertGreaterThan(0, $selectResult->count());
+		$identity = $selectResult->toArray()[0];
+		$role = $this->platformApi->getRole($identity['auth_key']);
+		$this->assertEquals('platform', array_keys((array) Config::get()->permissions)[$role - 1]);
+
+		$this->identitiesApi->delete(['identity_id' => $result['identity_id']]);
 	}
 
 	public function tearDown(): void {
