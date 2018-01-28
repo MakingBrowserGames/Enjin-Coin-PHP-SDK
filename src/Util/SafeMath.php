@@ -1,6 +1,8 @@
 <?php
 namespace EnjinCoin\Util;
+
 use PHPUnit\Runner\Exception;
+
 /**
  * Class SafeMath
  * Casts strings for processing 256-bit integers in PHP

@@ -45,7 +45,7 @@ class Auth {
 			}
 			self::$appId = (int) $app['app_id'];
 			self::$role = self::ROLE_APP;
-		} else {	
+		} else {
 			$identities = new Identities();
 			$identity = $identities->get(['auth_key' => $authKey]);
 			if (empty($identity)) {

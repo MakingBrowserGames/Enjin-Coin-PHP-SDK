@@ -88,7 +88,7 @@ class Events extends ApiBase {
 			if (!empty($ident)) {
 				$ident = reset($ident);
 			}
-			if (empty($ident['identity_id'])) { 
+			if (empty($ident['identity_id'])) {
 				throw new Exception('Identity does not exist');
 			}
 		}

@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \EnjinCoin\Api\Platform
- */	
+ */
 final class PlatformTest extends TestCase {
 	protected $app_auth_key = '';
 	protected $identity_id;
@@ -19,13 +19,13 @@ final class PlatformTest extends TestCase {
 	protected $appsApi;
 	protected $platformApi;
 	protected $identitiesApi;
-	
+
 	protected function setUp(): void {
 		$this->appsApi = new Apps();
 		$result = $this->appsApi->create('TestApp_' . rand(1, 999999999));
 		$this->app_auth_key = $result['app_auth_key'];
 		Auth::init($this->app_auth_key);
-		
+
 		$this->platformApi = new Platform();
 		$this->identitiesApi = new Identities();
 	}
@@ -84,9 +84,9 @@ final class PlatformTest extends TestCase {
 		$this->assertEquals(Auth::ROLE_GUEST, $result);*/
 		//$this->assertEquals(Auth::ROLE_SERVER, $result);
 	}
-	
-	public function tearDown(): void {	    
-        $this->identitiesApi->delete(['identity_id' => $this->identity_id]);
+
+	public function tearDown(): void {
+		$this->identitiesApi->delete(['identity_id' => $this->identity_id]);
 
 		$this->appsApi->delete(Auth::appId());
 	}

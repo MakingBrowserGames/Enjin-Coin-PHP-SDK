@@ -8,12 +8,13 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \EnjinCoin\Api\Apps
- */	
+ */
 final class AppsTest extends TestCase {
 	protected $app_id = 0;
 	protected $name = '';
 	protected $app_auth_key = '';
 	protected $appsApi;
+
 	protected function setUp(): void {
 		$this->name = 'TestApp_' . rand(1, 999999999);
 
@@ -41,17 +42,17 @@ final class AppsTest extends TestCase {
 	}
 
 	/**
-     * @expectedException Exception
-     */
+	 * @expectedException Exception
+	 */
 	public function testCreate_NameIsEmpty(): void {
 		$this->name = '';
 		$result = $this->appsApi->create($this->name);
-		
+
 		$this->assertEmpty($result);
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('Name must not be empty');
 	}
-	
+
 	public function testCreate(): void {
 		$this->name = 'TestApp_' . rand(1, 999999999);
 		$result = $this->appsApi->create($this->name);
@@ -59,26 +60,26 @@ final class AppsTest extends TestCase {
 		$this->assertArrayHasKey('app_id', $result);
 		$this->assertArrayHasKey('name', $result);
 		$this->assertArrayHasKey('app_auth_key', $result);
-		
+
 		$this->app_id = $result['app_id'];
 
 		$result = $this->appsApi->get($this->app_id);
 		$this->assertArrayHasKey('name', $result);
 		$this->assertEquals($this->name, $result['name']);
-	}	
-	
+	}
+
 	/**
-     * @expectedException Exception
-     */
+	 * @expectedException Exception
+	 */
 	public function testUpdate_NameIsEmpty(): void {
 		$this->name = '';
 		$result = $this->appsApi->update($this->app_id, $this->name);
-		
+
 		$this->assertEquals(false, $result);
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('Name must not be empty');
 	}
-	
+
 	public function testUpdate(): void {
 		$result = $this->appsApi->update($this->app_id, $this->name . 'updated');
 		$this->assertEquals(true, $result);

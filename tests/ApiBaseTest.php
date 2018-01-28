@@ -8,7 +8,7 @@ use EnjinCoin\ApiBase;
 
 /**
  * @covers EnjinCoin\ApiBase
- */	
+ */
 final class ApiBaseTest extends TestCase {
 	public function testHasDbInstance(): void {
 		$apibase = new ApiBase();

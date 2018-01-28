@@ -16,10 +16,9 @@ $subscriptions = [];
 		/*
 		 * Assign the appropriate subscription IDs to their types
 		 */
-		if(!empty($response['error'])) {
+		if (!empty($response['error'])) {
 			echo("\nError: " . var_export($response, true) . "\n");
-		}
-		else if (!empty($response['id'])) {
+		} else if (!empty($response['id'])) {
 			echo("\nsubscribing to " . var_export($response, true) . "\n");
 			switch ($response['id']) {
 				case 1:
@@ -38,14 +37,12 @@ $subscriptions = [];
 					// do nothing
 					break;
 			}
-		}
-
-		/*
+		} /*
 		 * Handle notifications
 		 */
 		else if (!empty($response['params']['subscription']) && isset(Eth::$subscriptions[$response['params']['subscription']])) {
 			$method = Eth::$subscriptions[$response['params']['subscription']];
-			if(method_exists('EnjinCoin\Ethereum', $method)) {
+			if (method_exists('EnjinCoin\Ethereum', $method)) {
 				Eth::$method($response['params']['result']);
 			}
 		}

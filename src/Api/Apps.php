@@ -45,7 +45,7 @@ class Apps extends ApiBase {
 	 * Create a new App
 	 * todo: should store hashed app_auth_key for security
 	 * @param string $name
-     * @throws Exception if name is empty
+	 * @throws Exception if name is empty
 	 * @return array
 	 */
 	public function create(string $name) {
@@ -73,12 +73,12 @@ class Apps extends ApiBase {
 	 * Update the App
 	 * @param int $appId
 	 * @param string $name
-     * @throws Exception if name is empty
+	 * @throws Exception if name is empty
 	 * @return bool
 	 */
 	public function update(int $appId, string $name) {
 		$name = trim($name);
-		if (empty($name)) { 
+		if (empty($name)) {
 			throw new Exception('Name must not be empty');
 		}
 

@@ -65,7 +65,6 @@ class TransactionRequests extends ApiBase {
 		return $results->current();
 	}
 
-
 	/**
 	 * Create a new Transaction Request
 	 * @param array $identity
@@ -88,7 +87,7 @@ class TransactionRequests extends ApiBase {
 		$identities = new Identities();
 		$ident = $identities->get($identity);
 
-		if (!empty($ident)) { 
+		if (!empty($ident)) {
 			$ident = reset($ident);
 		}
 		if (empty($ident['identity_id'])) {
@@ -103,18 +102,18 @@ class TransactionRequests extends ApiBase {
 			$recip = reset($recip);
 			$recipientDb['recipient_id'] = $recip['identity_id'];
 		}
-		
+
 		if (!empty($recip['ethereum_address']) && Ethereum::validateAddress($recip['ethereum_address'])) {
 			$recipientDb['recipient_address'] = $recip['ethereum_address'];
-		} else { 
+		} else {
 			throw new Exception('Recipient Identity does not exist');
 		}
 
 		// Validate Value
-		if (!Ethereum::validateValue($value)) { 
+		if (!Ethereum::validateValue($value)) {
 			throw new Exception('Invalid Transaction Request Value');
 		}
-		
+
 		$insert = $this->db->insert('transaction_requests');
 		$timestamp = time();
 		$insert->values([

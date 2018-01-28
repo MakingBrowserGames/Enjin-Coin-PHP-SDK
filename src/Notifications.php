@@ -3,6 +3,7 @@ namespace EnjinCoin;
 
 use EnjinCoin\Notifications\PusherAdapter;
 use PHPUnit\Runner\Exception;
+
 /**
  * Class Notifications
  * @package EnjinCoin
@@ -48,6 +49,7 @@ class Notifications {
 
 		return self::$adapter;
 	}
+
 	/**
 	 * Function to send a notification
 	 * @param $channel

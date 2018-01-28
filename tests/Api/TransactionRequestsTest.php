@@ -9,12 +9,13 @@ use EnjinCoin\Api\Identities;
 use EnjinCoin\Auth;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\Exception;
+
 /**
  * @covers EnjinCoin\Api\TransactionRequests
- */	
+ */
 final class TransactionRequestsTest extends TestCase {
 
-    protected $app_auth_key = '';
+	protected $app_auth_key = '';
 	protected $type = '';
 	protected $identity;
 	protected $validRecipient;
@@ -24,13 +25,13 @@ final class TransactionRequestsTest extends TestCase {
 	protected $identitiesApi;
 	protected $transactionRequestsApi;
 	protected $txr_id;
-	
+
 	//Setup method called before every method 
 	protected function setUp(): void {
 		$this->appsApi = new Apps();
-	    $result = $this->appsApi->create('TestApp_' . rand(1, 999999999));
-	    $this->app_auth_key = $result['app_auth_key'];
-	    Auth::init($this->app_auth_key);
+		$result = $this->appsApi->create('TestApp_' . rand(1, 999999999));
+		$this->app_auth_key = $result['app_auth_key'];
+		Auth::init($this->app_auth_key);
 
 		$this->type = TransactionRequests::TYPE_BUY;
 
@@ -38,33 +39,33 @@ final class TransactionRequestsTest extends TestCase {
 		$ethereum_address = '0x0000000000000000000000000000000' . rand(100000000, 999999999);
 		$player_name = 'testplayer' . rand(100000000, 999999999);
 		$player_name2 = 'testplayer2' . rand(100000000, 999999999);
-		
+
 		$result = $this->identitiesApi->create([
 			'ethereum_address' => $ethereum_address,
 			'player_name' => $player_name,
 		]);
-		$this->identity_id   = $result['identity_id'];
+		$this->identity_id = $result['identity_id'];
 		$this->identity_code = $result['identity_code'];
 		$this->identity = [
-			'identity_id' => $this->identity_id, 
+			'identity_id' => $this->identity_id,
 			'identity_code' => $this->identity_code,
 		];
 		$this->validRecipient = [
-			'identity_id' => $this->identity_id, 
+			'identity_id' => $this->identity_id,
 			'identity_code' => $this->identity_code,
 		];
 
 		$result = $this->identitiesApi->create([
 			'ethereum_address' => '',
 			'player_name' => $player_name2,
-		]);		
+		]);
 		$this->invalidRecipient = [
-			'identity_id' => $result['identity_id'], 
+			'identity_id' => $result['identity_id'],
 			'identity_code' => $result['identity_code'],
-		];	
-		
+		];
+
 		//Create a transaction request for the get calls
-		$this->transactionRequestsApi = new TransactionRequests();	
+		$this->transactionRequestsApi = new TransactionRequests();
 		$result = $this->transactionRequestsApi->create($this->identity, $this->validRecipient, $this->type);
 		$this->txr_id = $result;
 		$this->assertNotEmpty($this->txr_id);
@@ -72,9 +73,9 @@ final class TransactionRequestsTest extends TestCase {
 		$latestResult = $this->transactionRequestsApi->getLatest(1);
 		$this->assertNotEmpty($latestResult);
 
-		$latest_txr_id = (int)$latestResult['txr_id'];
+		$latest_txr_id = (int) $latestResult['txr_id'];
 	}
-	
+
 	public function testGets(): void {
 		//Create a transaction request for the get calls
 		$result = $this->transactionRequestsApi->create($this->identity, $this->validRecipient, $this->type);
@@ -83,15 +84,14 @@ final class TransactionRequestsTest extends TestCase {
 		$latestResult = $this->transactionRequestsApi->getLatest(1);
 		$this->assertNotEmpty($latestResult);
 
-		$txr_id = (int)$latestResult['txr_id'];
+		$txr_id = (int) $latestResult['txr_id'];
 		$result = $this->transactionRequestsApi->get($txr_id);
 		$this->assertNotEmpty($result);
 	}
-	
-	
+
 	/**
-     * @expectedException Exception
-     */
+	 * @expectedException Exception
+	 */
 	public function testCreate_TypeIsUnknown(): void {
 		$tempType = $this->type . rand(100000000, 999999999);
 
@@ -101,9 +101,10 @@ final class TransactionRequestsTest extends TestCase {
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('Invalid Transaction Request Type');
 	}
+
 	/**
-     * @expectedException Exception
-     */
+	 * @expectedException Exception
+	 */
 	public function testCreate_IdentityDoesntExist(): void {
 		$this->identity = ['identity_id' => $this->identity_id . rand(100000000, 999999999)];
 		$result = $this->transactionRequestsApi->create($this->identity, $this->validRecipient, $this->type);
@@ -112,10 +113,10 @@ final class TransactionRequestsTest extends TestCase {
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('Identity does not exist');
 	}
-	
+
 	/**
-     * @expectedException Exception
-     */
+	 * @expectedException Exception
+	 */
 	public function testCreate_RecipientDoesntExist(): void {
 		$this->validRecipient = ['recipient_id' => $this->identity_id . rand(100000000, 999999999)];
 		$result = $this->transactionRequestsApi->create($this->identity, $this->validRecipient, $this->type);
@@ -124,18 +125,18 @@ final class TransactionRequestsTest extends TestCase {
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('Recipient Identity does not exist');
 	}
-	
+
 	/**
-     * @expectedException Exception
-     */
+	 * @expectedException Exception
+	 */
 	public function testCreate_RecipientExistsButNoEthereumAddress(): void {
 		$result = $this->transactionRequestsApi->create($this->identity, $this->invalidRecipient, $this->type);
 
 		$this->assertEmpty($result);
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('Invalid Transaction Request Value');
-	}	
-	
+	}
+
 	public function testCreate_RecipientExistsValidEthereumAddress(): void {
 		$result = $this->transactionRequestsApi->create($this->identity, $this->validRecipient, $this->type);
 
@@ -143,9 +144,9 @@ final class TransactionRequestsTest extends TestCase {
 	}
 
 	public function tearDown(): void {
-	    $this->identitiesApi->delete(['identity_id' => $this->identity_id]);
-	    $this->identitiesApi->delete(['identity_id' => $this->invalidRecipient['identity_id']]);
+		$this->identitiesApi->delete(['identity_id' => $this->identity_id]);
+		$this->identitiesApi->delete(['identity_id' => $this->invalidRecipient['identity_id']]);
 
-	    $this->appsApi->delete(Auth::appId());
-    }
+		$this->appsApi->delete(Auth::appId());
+	}
 }

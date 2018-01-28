@@ -6,12 +6,14 @@ namespace EnjinCoin\Test;
 use EnjinCoin\Api\Prices;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\Exception;
+
 /**
  * @covers EnjinCoin\Api\Prices
- */	
+ */
 final class PricesTest extends TestCase {
 
 	protected $pricesApi;
+
 	protected function setUp(): void {
 		$this->pricesApi = new Prices();
 	}
@@ -21,13 +23,13 @@ final class PricesTest extends TestCase {
 		$result = $this->pricesApi->getTotalSupply($symbol);
 		$this->assertNotNull($result);
 	}
-	
+
 	public function testGetTotalSupply_BTC(): void {
 		$symbol = 'BTC';
 		$result = $this->pricesApi->getTotalSupply($symbol);
 		$this->assertNotNull($result);
 	}
-	
+
 	public function testGetTotalSupply_LTC(): void {
 		$symbol = 'LTC';
 		$result = $this->pricesApi->getTotalSupply($symbol);
@@ -35,11 +37,11 @@ final class PricesTest extends TestCase {
 	}
 
 	/**
-     * @expectedException Exception
-     */
+	 * @expectedException Exception
+	 */
 	public function testGetTotalSupply_Exception(): void {
 		$symbol = 'EXCEPTION';
-		$result = $this->pricesApi->getTotalSupply($symbol);		
+		$result = $this->pricesApi->getTotalSupply($symbol);
 		$this->expectException(Exception::class);
 		$this->expectExceptionMessage('No supply available');
 	}
@@ -49,15 +51,15 @@ final class PricesTest extends TestCase {
 		$result = $this->pricesApi->getCirculatingSupply($symbol);
 		$this->assertNotNull($result);
 	}
-	
+
 	/**
-     * @expectedException Exception
-     */
+	 * @expectedException Exception
+	 */
 	public function testGetCirculatingSupply_EXCEPTION(): void {
 		$symbol = 'EXCEPTION';
 		$result = $this->pricesApi->getCirculatingSupply($symbol);
 		$this->assertNotNull($result);
-	}	
+	}
 }
 
 ?>

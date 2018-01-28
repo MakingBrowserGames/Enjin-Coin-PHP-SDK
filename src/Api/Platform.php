@@ -57,7 +57,7 @@ class Platform extends ApiBase {
 
 		if (!empty($result)) {
 			$identity = reset($result);
-		} else  {
+		} else {
 			return Auth::ROLE_GUEST;
 		}
 

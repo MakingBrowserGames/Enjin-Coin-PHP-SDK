@@ -16,14 +16,14 @@ use RandomLib;
 class Identities extends ApiBase {
 
 	/**
-     * Retrieve identities, filtered by various parameters
-     * @param array $identity
-     * @param bool $linked
-     * @param int|null $afterIdentityId
-     * @param int $limit
-     * @param bool $extraFields
-     * @return mixed
-     */
+	 * Retrieve identities, filtered by various parameters
+	 * @param array $identity
+	 * @param bool $linked
+	 * @param int|null $afterIdentityId
+	 * @param int $limit
+	 * @param bool $extraFields
+	 * @return mixed
+	 */
 	public function get(array $identity = [], bool $linked = false, int $afterIdentityId = null, int $limit = 50, $extraFields = false) {
 		$select = $this->db->select()
 			->from('identities')
@@ -206,7 +206,7 @@ class Identities extends ApiBase {
 	 * @param array $identity
 	 * @param array $update
 	 * @param bool $emitEvent
-     * @throws Exception is ethereum address is already linked
+	 * @throws Exception is ethereum address is already linked
 	 * @return bool
 	 */
 	public function update($identity, $update, $emitEvent = true) {
@@ -273,8 +273,8 @@ class Identities extends ApiBase {
 	public function link(string $identityCode, string $ethereumAddress, string $signature = '') {
 		$authKey = $this->_generateAuthKey();
 		$success = $this->update(['identity_code' => $identityCode],
-				['ethereum_address' => $ethereumAddress, 'auth_key' => $authKey, 'identity_code' => ''],
-		false);
+			['ethereum_address' => $ethereumAddress, 'auth_key' => $authKey, 'identity_code' => ''],
+			false);
 
 		(new Events)->create(Auth::appId(), EventTypes::IDENTITY_LINKED, ['identity' => ['ethereum_address' => $ethereumAddress]]);
 
@@ -282,9 +282,9 @@ class Identities extends ApiBase {
 	}
 
 	/**
-     * Private method to generate the auth key
-     * @return string
-     */
+	 * Private method to generate the auth key
+	 * @return string
+	 */
 	private function _generateAuthKey() {
 		$factory = new RandomLib\Factory;
 		$generator = $factory->getMediumStrengthGenerator();
