@@ -14,116 +14,19 @@ var app = new Vue({
 				title: 'Identities',
 				open: true,
 				methods: {
-					get: {
-						title: 'Identities.get',
+					createIdentity: {
+						title: 'Create Identity',
 						open: false,
 						params: {
-							identities: {
-								label: 'Identities',
-								type: 'text',
-								value: ''
-							},
-							linked: {
-								label: 'Linked',
-								type: 'select',
-								options: {
-									'1': 'True',
-									'0': 'False'
-								},
-								value: 0
-							},
-							afterIdentityId: {
-								label: 'After Identity ID',
-								type: 'number',
-								value: null
-							},
-							limit: {
-								label: 'Limit',
-								type: 'number',
-								value: 50
-							},
-							extraFields: {
-								label: 'Extra Fields',
+							playerName: {
+								label: 'Player Name',
 								type: 'text',
 								value: ''
 							}
 						}
 					},
-					create: {
-						title: 'Identities.create',
-						open: false,
-						params: {
-							identity: {
-								label: 'Identity',
-								type: 'text',
-								value: ''
-							}
-						}
-					},
-					field: {
-						title: 'Identities.field',
-						open: false,
-						params: {
-							key: {
-								label: 'Key',
-								type: 'text',
-								value: ''
-							},
-							searchable: {
-								label: 'Searchable',
-								type: 'number',
-								value: ''
-							},
-							displayable: {
-								label: 'Displayable',
-								type: 'number',
-								value: ''
-							},
-							unique: {
-								label: 'Unique',
-								type: 'number',
-								value: ''
-							}
-						}
-					},
-					delete: {
-						title: 'Identities.delete',
-						open: false,
-						params: {
-							identity: {
-								label: 'Identity',
-								type: 'text',
-								value: ''
-							}
-						}
-					},
-					update: {
-						title: 'Identities.update',
-						open: false,
-						params: {
-							identity: {
-								label: 'Identity',
-								type: 'text',
-								value: ''
-							},
-							update: {
-								label: 'Update',
-								type: 'text',
-								value: ''
-							},
-							emitEvent: {
-								label: 'Emit Event',
-								type: 'select',
-								options: {
-									'1': 'True',
-									'0': 'False'
-								},
-								value: '1'
-							}
-						}
-					},
-					link: {
-						title: 'Identities.link',
+					linkIdentity: {
+						title: 'Link Identity',
 						open: false,
 						params: {
 							identityCode: {
@@ -134,10 +37,32 @@ var app = new Vue({
 							ethereumAddress: {
 								label: 'Ethereum Address',
 								type: 'text',
+								value: Core.getRandomEthAddress()
+							}
+						}
+					},
+					deleteIdentity: {
+						title: 'Delete Identity',
+						open: false,
+						params: {
+							identityCode: {
+								label: 'Identity Code',
+								type: 'text',
+								value: ''
+							}
+						}
+					},
+					updateIdentity: {
+						title: 'Update Identity',
+						open: false,
+						params: {
+							identityCode: {
+								label: 'Identity Code',
+								type: 'text',
 								value: ''
 							},
-							signature: {
-								label: 'Signature',
+							playerName: {
+								label: 'Player Name',
 								type: 'text',
 								value: ''
 							}
@@ -149,134 +74,22 @@ var app = new Vue({
 				title: 'Tokens',
 				open: true,
 				methods: {
-					get: {
-						title: 'Tokens.get',
+					createToken: {
+						title: 'Create Token',
 						open: false,
-						params: {
-							appId: {
-								label: 'App ID',
-								type: 'number',
-								value: ''
-							},
-							afterTokenId: {
-								label: 'After Token ID',
-								type: 'number',
-								value: ''
-							},
-							limit: {
-								label: 'Limit',
-								type: 'number',
-								value: ''
-							},
-							tokenId: {
-								label: 'Token ID',
-								type: 'number',
-								value: ''
-							}
-						}
+						params: {}
 					},
-					addToken: {
-						title: 'Tokens.addToken',
+					updateToken: {
+						title: 'Update Token',
 						open: false,
-						params: {
-							tokenId: {
-								label: 'Token ID',
-								type: 'number',
-								value: ''
-							}
-						}
-					},
-					removeToken: {
-						title: 'Tokens.removeToken',
-						open: false,
-						params: {
-							tokenId: {
-								label: 'Token ID',
-								type: 'number',
-								value: ''
-							}
-						}
-					},
-					getBalance: {
-						title: 'Tokens.getBalance',
-						open: false,
-						params: {
-							identity: {
-								label: 'Identity',
-								type: 'text',
-								value: ''
-							},
-							tokenId: {
-								label: 'Token ID',
-								type: 'number',
-								value: ''
-							}
-						}
+						params: {}
 					}
 				}
 			},
 			events: {
 				title: 'Events',
 				open: true,
-				methods: {
-					get: {
-						title: 'Events.get',
-						open: false,
-						params: {
-							eventId: {
-								label: 'Event ID',
-								type: 'number',
-								value: ''
-							},
-							appId: {
-								label: 'App ID',
-								type: 'number',
-								value: ''
-							},
-							identity: {
-								label: 'Identity',
-								type: 'text',
-								value: ''
-							},
-							afterEventId: {
-								label: 'After Event ID',
-								type: 'number',
-								value: ''
-							},
-							beforeEventId: {
-								label: 'Before Event ID',
-								type: 'number',
-								value: ''
-							},
-							limit: {
-								label: 'Limit',
-								type: 'number',
-								value: ''
-							}
-						}
-					},
-					create: {
-						title: 'Events.create',
-						open: false,
-						params: {
-							appId: {
-								label: 'App ID',
-								type: 'number',
-								value: ''
-							},
-							eventType: {
-								label: 'Event Type',
-								type: 'text',
-								value: ''
-							},
-							data: {
-								label: 'Data',
-								type: 'text',
-								value: ''
-							}
-						}
-					}
-				}
+				methods: {}
 			}
 		}
 	},
@@ -287,6 +100,22 @@ var app = new Vue({
 
 		toggleMethod: function(section, method) {
 			this.sections[section].methods[method].open = this.sections[section].methods[method].open == false;
+		},
+
+		execute: function (section, method) {
+			var btn = event.target;
+			btn.innerText = 'Working..';
+
+			var params = {};
+			for (var paramKey in this.sections[section].methods[method].params) {
+				params[paramKey] = this.sections[section].methods[method].params[paramKey].value;
+			}
+
+			var that = this;
+			Core.jsonrpc('TestPanel', method, params, function (resp) {
+				that.sections.console.value = JSON.stringify(resp);
+				btn.innerText = 'Execute';
+			});
 		}
 	},
 	mounted: function() {

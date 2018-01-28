@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
 	<title>Enjin Coin SDK Test Panel</title>
 	<meta charset="utf-8">
@@ -15,7 +15,8 @@
 			<section v-for="(section, sectionKey) in sections">
 				<div class="section-title" v-on:click="toggleSection(sectionKey)">{{ section.title }}</div>
 				<div class="section-toggle" v-show="section.open">
-					<textarea rows="7" class="form-control console-textarea" v-model="section.value" v-if="sectionKey == 'console'"></textarea>
+					<textarea rows="5" class="form-control console-textarea" v-model="section.value"
+							  v-if="sectionKey == 'console'"></textarea>
 					<div class="methods">
 						<div v-for="(method, methodKey) in section.methods" class="method">
 							<div class="method-title" v-on:click="toggleMethod(sectionKey, methodKey)">{{ method.title }}</div>
@@ -30,132 +31,18 @@
 										</select>
 									</div>
 								</div>
-								<div class="btn btn-sm btn-primary">Execute</div>
+								<div class="btn btn-sm btn-primary" v-on:click="execute(sectionKey, methodKey)">
+									Execute
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</section>
-
-			<!--
-			<section class="console">
-				<div class="section-title" v-on:click="toggleSection('console')">Console</div>
-				<div class="section-toggle" v-show="sections.console.open">
-					<textarea rows="7" class="form-control" v-model="sections.console.value"></textarea>
-				</div>
-			</section>
-			<section class="identities">
-				<div class="section-title" v-on:click="toggleSection('identities')">Identities</div>
-				<div class="section-toggle" v-show="sections.identities.open">
-					<div class="methods">
-						<div class="method">
-							<div class="method-title" v-on:click="toggleMethod('identities', 'get')">Identities.get</div>
-							<div class="method-toggle" v-show="sections.identities.methods.get.open">
-								<div class="form-group row">
-									<div class="col-6">
-										<label class="form-label">Identities</label>
-										<input type="text" v-model="sections.identities.methods.get.params.identities" class="form-control" placeholder="Identities separated by commas" />
-									</div>
-									<div class="col-6">
-										<label class="form-label">Linked</label>
-										<select class="form-control" v-model="sections.identities.methods.get.params.linked">
-											<option value="1">True</option>
-											<option value="0">False</option>
-										</select>
-									</div>
-								</div>
-								<div class="form-group row">
-									<div class="col-6">
-										<label class="form-label">After Identity ID</label>
-										<input type="text" v-model="sections.identities.methods.get.params.afterIdentityId" class="form-control" />
-									</div>
-									<div class="col-6">
-										<label class="form-label">Limit</label>
-										<input type="number" v-model="sections.identities.methods.get.params.limit" class="form-control" />
-									</div>
-								</div>
-								<div class="form-group row">
-									<div class="col-6">
-										<label class="form-label">Extra Fields</label>
-										<input type="text" v-model="sections.identities.methods.get.params.extraFields" class="form-control" />
-									</div>
-									<div class="col-6">
-
-									</div>
-								</div>
-								<div class="btn btn-sm btn-primary">Execute</div>
-							</div>
-						</div>
-						<div class="method">
-							<div class="method-title" v-on:click="toggleMethod('identities', 'create')">Identities.create</div>
-							<div class="method-toggle" v-show="sections.identities.methods.create.open">
-								<div class="form-group row">
-									<div class="col-6">
-										<label class="form-label">Identity</label>
-										<input type="text" v-model="sections.identities.methods.get.params.identity" class="form-control" />
-									</div>
-									<div class="col-6">
-
-									</div>
-								</div>
-								<div class="btn btn-sm btn-primary">Execute</div>
-							</div>
-						</div>
-						<div class="method">
-							<div class="method-title" v-on:click="toggleMethod('identities', 'field')">Identities.field</div>
-							<div class="method-toggle" v-show="sections.identities.methods.field.open">
-								<div class="form-group row">
-
-								</div>
-								<div class="btn btn-sm btn-primary">Execute</div>
-							</div>
-						</div>
-						<div class="method">
-							<div class="method-title" v-on:click="toggleMethod('identities', 'delete')">Identities.delete</div>
-							<div class="method-toggle" v-show="sections.identities.methods.delete.open">
-								<div class="form-group row">
-
-								</div>
-								<div class="btn btn-sm btn-primary">Execute</div>
-							</div>
-						</div>
-						<div class="method">
-							<div class="method-title" v-on:click="toggleMethod('identities', 'update')">Identities.update</div>
-							<div class="method-toggle" v-show="sections.identities.methods.update.open">
-								<div class="form-group row">
-
-								</div>
-								<div class="btn btn-sm btn-primary">Execute</div>
-							</div>
-						</div>
-						<div class="method">
-							<div class="method-title" v-on:click="toggleMethod('identities', 'link')">Identities.link</div>
-							<div class="method-toggle" v-show="sections.identities.methods.link.open">
-								<div class="form-group row">
-
-								</div>
-								<div class="btn btn-sm btn-primary">Execute</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-			<section class="tokens">
-				<div class="section-title" v-on:click="toggleSection('tokens')">Tokens</div>
-				<div class="section-toggle" v-show="sections.tokens.open">
-					tokens
-				</div>
-			</section>
-			<section class="events">
-				<div class="section-title" v-on:click="toggleSection('events')">Events</div>
-				<div class="section-toggle" v-show="sections.events.open">
-					events
-				</div>
-			</section>
-			-->
 		</div>
 	</div>
 </body>
 <script src="/js/lib/vue.min.js"></script>
+<script src="/js/core.js"></script>
 <script src="/js/test-panel.js"></script>
 </html>

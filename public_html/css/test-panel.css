@@ -10,10 +10,10 @@ h1 {
 }
 
 .box-panel {
-	padding: 25px;
+	padding: 35px;
 	margin: 50px 0;
-	border: 1px solid #0000005e;
-	border-radius: 3px;
+	border: 1px solid #00000026;
+	border-radius: 10px;
 }
 .box-panel section {
 	padding-top: 35px;
