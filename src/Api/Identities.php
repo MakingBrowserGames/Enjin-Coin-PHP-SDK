@@ -71,11 +71,6 @@ class Identities extends ApiBase {
 				->where(['identity_id' => $ident['identity_id']]);
 			$selectResults = Db::query($select)->toArray();
 			foreach ($selectResults as $selectResult) {
-				$tempKey = $selectResult['key'];
-
-				if (in_array($selectResult['key'], ['identity_id', 'ethereum_address', 'identity_code'])) {
-					continue;
-				}
 				$ident[$selectResult['key']] = $selectResult['value'];
 			}
 		}
@@ -102,7 +97,7 @@ class Identities extends ApiBase {
 
 		// Insert Identity Fields & Values
 		foreach ($identity as $key => $value) {
-			if (in_array($key, ['identity_id', 'identity_code', 'ethereum_address'])) {
+			if (in_array(strtolower($key), ['identity_id', 'identity_code', 'ethereum_address'])) {
 				continue;
 			}
 
@@ -144,6 +139,10 @@ class Identities extends ApiBase {
 	 * @return mixed
 	 */
 	public function field(string $key, int $searchable = 1, int $displayable = 1, int $unique = 1) {
+		if (in_array(strtolower($key), ['identity_id', 'identity_code', 'ethereum_address'])) {
+			throw new Exception('Invalid field key name.');
+		}
+
 		$select = $this->db->select()
 			->from('identity_fields')
 			->where([
@@ -241,6 +240,10 @@ class Identities extends ApiBase {
 
 			if (!empty($update)) {
 				foreach ($update as $key => $value) {
+					if (in_array(strtolower($key), ['identity_id', 'identity_code', 'ethereum_address'])) {
+						continue;
+					}
+
 					$field = $this->field($key);
 					$sql = $this->db->update('identity_values');
 					$sql->where([
