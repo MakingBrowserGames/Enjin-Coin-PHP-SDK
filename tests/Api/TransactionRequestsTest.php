@@ -144,14 +144,6 @@ final class TransactionRequestsTest extends BaseTest {
 		$this->assertNotEmpty($result);
 	}
 
-	public function testCreate_Cancel(): void {
-		$result = $this->transactionRequestsApi->create($this->identity, $this->validRecipient, $this->type);
-		$this->assertNotNull($result);
-		$result = $this->transactionRequestsApi->cancel($result);
-		$this->assertTrue($result);
-
-	}
-
 	public function tearDown(): void {
 		$this->identitiesApi->delete(['identity_id' => $this->identity_id]);
 		$this->identitiesApi->delete(['identity_id' => $this->invalidRecipient['identity_id']]);
