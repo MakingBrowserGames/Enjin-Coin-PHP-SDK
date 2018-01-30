@@ -14,6 +14,6 @@ class ApiBase {
 	 * ApiBase constructor.
 	 */
 	public function __construct() {
-		$this->db = Db::getInstance();
+		$this->db = Db::getDatabase();
 	}
 }

@@ -95,13 +95,13 @@ final class PlatformTest extends BaseTest {
 			'auth_key' => 'xxxx',
 		]);
 
-		$update = Db::getInstance()->update('identities');
+		$update = Db::getDatabase()->update('identities');
 		$update->set(['role' => 'platform', 'auth_key' => 'xxxx']);
 		$update->where(['ethereum_address' => $this->ethereum_address]);
 		$updateResult = DB::query($update);
 		$this->assertNotNull($updateResult);
 
-		$select = Db::getInstance()->select('identities');
+		$select = Db::getDatabase()->select('identities');
 		$select->where(['ethereum_address' => $this->ethereum_address]);
 		$selectResult = Db::query($select);
 

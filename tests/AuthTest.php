@@ -59,7 +59,7 @@ final class AuthTest extends BaseTest {
 
 	protected function tearDown(): void {
 		foreach (AuthTest::$tables as $table) {
-			$delete = Db::getInstance()->delete($table);
+			$delete = Db::getDatabase()->delete($table);
 			$delete->where('1=1');
 			Db::query($delete);
 		}

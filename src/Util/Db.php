@@ -10,25 +10,50 @@ use EnjinCoin\Config;
  * @package EnjinCoin\Util
  */
 class Db {
-	public static $adapter;
-	public static $sql;
+	private static $instance;
+	private $adapter;
+	private $sql;
+
+	function __construct() {
+		$this->adapter = new Zend\Db\Adapter\Adapter([
+			'driver' => Config::get()->db->adapter,
+			'database' => Config::get()->db->database,
+			'username' => Config::get()->db->username,
+			'password' => Config::get()->db->password
+		]);
+
+		$this->sql = new Zend\Db\Sql\Sql($this->adapter);
+	}
 
 	/**
-	 * Method to get a db instance
-	 * @return Zend\Db\Sql\Sql
+	 * Method to get Db instance;
+	 * @return Db
 	 */
 	public static function getInstance() {
-		if (empty(self::$adapter)) {
-			self::$adapter = new Zend\Db\Adapter\Adapter([
-				'driver' => Config::get()->db->adapter,
-				'database' => Config::get()->db->database,
-				'username' => Config::get()->db->username,
-				'password' => Config::get()->db->password
-			]);
-
-			self::$sql = $sql = new Zend\Db\Sql\Sql(self::$adapter);
+		if (empty(self::$instance)) {
+			self::$instance = new Db();
 		}
-		return self::$sql;
+		return self::$instance;
+	}
+
+	public static function clearInstance() {
+		self::$instance = null;
+	}
+
+	/**
+	 * Method to get Sql instance
+	 * @return Zend\Db\Sql\Sql
+	 */
+	public static function getDatabase() {
+		return self::getInstance()->sql;
+	}
+
+	/**
+	 * Method to get Adapter instance
+	 * @return Zend\Db\Adapter\Adapter
+	 */
+	public static function getAdapter() {
+		return self::getInstance()->adapter;
 	}
 
 	/**
@@ -37,9 +62,8 @@ class Db {
 	 * @return mixed
 	 */
 	public static function query($select) {
-
-		return self::$adapter->query(
-			self::$sql->buildSqlString($select),
+		return self::getAdapter()->query(
+			self::getDatabase()->buildSqlString($select),
 			Zend\Db\Adapter\Adapter::QUERY_MODE_EXECUTE
 		);
 	}
