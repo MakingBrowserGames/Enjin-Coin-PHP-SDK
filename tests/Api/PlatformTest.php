@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \EnjinCoin\Api\Platform
  */
-final class PlatformTest extends TestCase {
+final class PlatformTest extends BaseTest {
 	protected $app_auth_key = '';
 	protected $identity_id;
 	protected $identity_code;
@@ -23,6 +23,7 @@ final class PlatformTest extends TestCase {
 	protected $identitiesApi;
 
 	protected function setUp(): void {
+		parent::setUp();
 		$this->appsApi = new Apps();
 		$result = $this->appsApi->create('TestApp_' . rand(1, 999999999));
 		$this->app_auth_key = $result['app_auth_key'];

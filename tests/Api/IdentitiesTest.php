@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \EnjinCoin\Api\Identities
  */
-final class IdentitiesTest extends TestCase {
+final class IdentitiesTest extends BaseTest {
 	protected $app_auth_key = '';
 	protected $identity_id = 0;
 	protected $identity_code = '';

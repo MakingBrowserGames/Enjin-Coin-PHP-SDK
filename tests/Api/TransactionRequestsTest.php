@@ -13,7 +13,7 @@ use PHPUnit\Runner\Exception;
 /**
  * @covers EnjinCoin\Api\TransactionRequests
  */
-final class TransactionRequestsTest extends TestCase {
+final class TransactionRequestsTest extends BaseTest {
 
 	protected $app_auth_key = '';
 	protected $type = '';
@@ -28,6 +28,7 @@ final class TransactionRequestsTest extends TestCase {
 
 	//Setup method called before every method 
 	protected function setUp(): void {
+		parent::setUp();
 		$this->appsApi = new Apps();
 		$result = $this->appsApi->create('TestApp_' . rand(1, 999999999));
 		$this->app_auth_key = $result['app_auth_key'];
@@ -141,6 +142,14 @@ final class TransactionRequestsTest extends TestCase {
 		$result = $this->transactionRequestsApi->create($this->identity, $this->validRecipient, $this->type);
 
 		$this->assertNotEmpty($result);
+	}
+
+	public function testCreate_Cancel(): void {
+		$result = $this->transactionRequestsApi->create($this->identity, $this->validRecipient, $this->type);
+		$this->assertNotNull($result);
+		$result = $this->transactionRequestsApi->cancel($result);
+		$this->assertTrue($result);
+
 	}
 
 	public function tearDown(): void {

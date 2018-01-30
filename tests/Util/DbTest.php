@@ -39,7 +39,7 @@ final class DbTest extends TestCase {
 
 		$result = Db::query($select);
 
-		$this->assertNotEmpty($result);
+		$this->assertNotNull($result);
 	}
 }
 

@@ -14,7 +14,7 @@ use PHPUnit\Runner\Exception;
 /**
  * @covers EnjinCoin\Api\Events
  */
-final class EventsTest extends TestCase {
+final class EventsTest extends BaseTest {
 
 	protected $token_id = 0;
 	protected $app_id = '';
@@ -30,6 +30,7 @@ final class EventsTest extends TestCase {
 
 	//Setup method called before every method 
 	protected function setUp(): void {
+		parent::setUp();
 		$this->appsApi = new Apps();
 		$result = $this->appsApi->create('TestApp_' . rand(1, 999999999));
 		$this->app_id = $result['app_id'];

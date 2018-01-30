@@ -9,16 +9,13 @@ use EnjinCoin\Auth;
 use EnjinCoin\Util\Db;
 use PHPUnit\Framework\TestCase;
 
-final class AuthTest extends TestCase {
+final class AuthTest extends BaseTest {
 
 	private static $tables = ['apps', 'identities'];
 
 	protected $defaultEthereumAddress = '0x0';
 	protected $defaultIdentityAuthKey = 'identity-auth-key';
 	protected $defaultAppAuthKey = 'app-auth-key';
-
-	protected function setUp(): void {
-	}
 
 	public function testInit_AuthKeyEmpty(): void {
 		$result = Auth::init(null);

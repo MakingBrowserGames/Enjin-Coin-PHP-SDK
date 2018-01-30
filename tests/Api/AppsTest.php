@@ -9,13 +9,14 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \EnjinCoin\Api\Apps
  */
-final class AppsTest extends TestCase {
+final class AppsTest extends BaseTest {
 	protected $app_id = 0;
 	protected $name = '';
 	protected $app_auth_key = '';
 	protected $appsApi;
 
 	protected function setUp(): void {
+		parent::setUp();
 		$this->name = 'TestApp_' . rand(1, 999999999);
 
 		$this->appsApi = new Apps();

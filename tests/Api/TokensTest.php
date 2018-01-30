@@ -12,7 +12,7 @@ use PHPUnit\Runner\Exception;
 /**
  * @covers EnjinCoin\Api\Tokens
  */
-final class TokensTest extends TestCase {
+final class TokensTest extends BaseTest {
 
 	protected $token_id = 0;
 	protected $app_id = '';
@@ -23,6 +23,7 @@ final class TokensTest extends TestCase {
 
 	//Setup method called before every method 
 	protected function setUp(): void {
+		parent::setUp();
 		$this->appsApi = new Apps();
 		$this->app_name = 'TestApp_' . rand(1, 999999999);
 

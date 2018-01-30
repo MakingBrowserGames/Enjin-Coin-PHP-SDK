@@ -10,11 +10,12 @@ use PHPUnit\Runner\Exception;
 /**
  * @covers EnjinCoin\Api\Prices
  */
-final class PricesTest extends TestCase {
+final class PricesTest extends BaseTest {
 
 	protected $pricesApi;
 
 	protected function setUp(): void {
+		parent::setUp();
 		$this->pricesApi = new Prices();
 	}
 

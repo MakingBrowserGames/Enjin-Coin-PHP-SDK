@@ -6,10 +6,7 @@ namespace EnjinCoin\Test;
 use PHPUnit\Framework\TestCase;
 use EnjinCoin\ApiBase;
 
-/**
- * @covers EnjinCoin\ApiBase
- */
-final class ApiBaseTest extends TestCase {
+final class ApiBaseTest extends BaseTest {
 	public function testHasDbInstance(): void {
 		$apibase = new ApiBase();
 
