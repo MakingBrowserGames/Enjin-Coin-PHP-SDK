@@ -16,10 +16,22 @@ class Auth {
 	const ROLE_WALLET = 3;
 	const ROLE_GUEST = 4;
 
-	private static $authKey = '';
-	private static $role = self::ROLE_GUEST;
-	private static $appId = 0;
-	private static $identity = null;
+    private static $instance;
+	private $authKey = '';
+	private $role = self::ROLE_GUEST;
+	private $appId = 0;
+	private $identity = null;
+
+	public static function getInstance() {
+        if(empty(self::$instance)) {
+            self::$instance = new Auth();
+        }
+	    return self::$instance;
+    }
+
+    public static function clearInstance() {
+	    self::$instance = null;
+    }
 
 	/**
 	 * Function to perform the auth initialization
@@ -35,7 +47,7 @@ class Auth {
 		// Main concerns are bcrypt hash time slowing down each API request, perhaps a temp token can be used
 		//$auth_hash = password_hash($auth_key, PASSWORD_BCRYPT);
 
-		self::$authKey = $authKey;
+		self::getInstance()->authKey = $authKey;
 
 		if (substr($authKey, 0, 1) === 'a') {
 			$apps = new Apps();
@@ -43,16 +55,16 @@ class Auth {
 			if (empty($app['app_id'])) {
 				return false;
 			}
-			self::$appId = (int) $app['app_id'];
-			self::$role = self::ROLE_APP;
+			self::getInstance()->appId = (int) $app['app_id'];
+			self::getInstance()->role = self::ROLE_APP;
 		} else {
 			$identities = new Identities();
 			$identity = $identities->get(['auth_key' => $authKey]);
 			if (empty($identity)) {
 				return false;
 			}
-			self::$identity = reset($identity);
-			self::$role = self::ROLE_WALLET;
+			self::getInstance()->identity = reset($identity);
+			self::getInstance()->role = self::ROLE_WALLET;
 		}
 
 		return true;
@@ -63,7 +75,7 @@ class Auth {
 	 * @return int
 	 */
 	public static function appId() {
-		return self::$appId;
+		return self::getInstance()->appId;
 	}
 
 	/**
@@ -71,7 +83,7 @@ class Auth {
 	 * @return string
 	 */
 	public static function authKey() {
-		return self::$authKey;
+		return self::getInstance()->authKey;
 	}
 
 	/**
@@ -79,7 +91,7 @@ class Auth {
 	 * @return int
 	 */
 	public static function role() {
-		return self::$role;
+		return self::getInstance()->role;
 	}
 
 	/**
@@ -87,6 +99,6 @@ class Auth {
 	 * @return null
 	 */
 	public static function identity() {
-		return self::$identity;
+		return self::getInstance()->identity;
 	}
 }
