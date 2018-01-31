@@ -1,13 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace EnjinCoin\Test;
+namespace EnjinCoin\Api\Test;
 
 use EnjinCoin\Api\Identities;
 use EnjinCoin\Auth;
 use EnjinCoin\Api\Apps;
 use EnjinCoin\Api\Platform;
 use EnjinCoin\Config;
+use EnjinCoin\Test\BaseTest;
 use EnjinCoin\Util\Db;
 use PHPUnit\Framework\TestCase;
 
@@ -108,7 +109,7 @@ final class PlatformTest extends BaseTest {
 		$this->assertGreaterThan(0, $selectResult->count());
 		$identity = $selectResult->toArray()[0];
 		$role = $this->platformApi->getRole($identity['auth_key']);
-		$this->assertEquals('platform', array_keys((array) Config::get()->permissions)[$role - 1]);
+		$this->assertEquals('testpanel', array_keys((array) Config::get()->permissions)[$role - 1]);
 
 		$this->identitiesApi->delete(['identity_id' => $result['identity_id']]);
 	}

@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace EnjinCoin\Test;
+namespace EnjinCoin\Api\Test;
 
 use function Amp\Dns\query;
 use EnjinCoin\Api\Apps;
 use EnjinCoin\Api\Identities;
 use EnjinCoin\Auth;
+use EnjinCoin\Test\BaseTest;
 use EnjinCoin\Util\Db;
 use Exception;
 use PHPUnit\Framework\TestCase;

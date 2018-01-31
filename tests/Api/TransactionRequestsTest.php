@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace EnjinCoin\Test;
+namespace EnjinCoin\Api\Test;
 
 use EnjinCoin\Api\Apps;
 use EnjinCoin\Api\TransactionRequests;
 use EnjinCoin\Api\Identities;
 use EnjinCoin\Auth;
+use EnjinCoin\Test\BaseTest;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\Exception;
 
