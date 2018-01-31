@@ -1,9 +1,7 @@
 <?php
 namespace EnjinCoin;
 
-use EnjinCoin\Ethereum\GethIpc;
 use EnjinCoin\Ethereum\GethWebsocket;
-use PHPUnit\Runner\Exception;
 
 /**
  * Class Ethereum

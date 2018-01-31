@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace EnjinCoin\Api\Test;
+namespace EnjinCoin\Test\Api;
 
 use EnjinCoin\Api\Prices;
 use EnjinCoin\Test\BaseTest;

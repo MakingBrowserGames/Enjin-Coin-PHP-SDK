@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace EnjinCoin\Test;
+namespace EnjinCoin\Test\Util;
 
 use PHPUnit\Framework\TestCase;
 use EnjinCoin\Util\SafeMath;
