@@ -5,6 +5,8 @@ use EnjinCoin\ApiBase;
 use EnjinCoin\Auth;
 use EnjinCoin\Util\Db;
 use EnjinCoin\Api\Identities;
+use EnjinCoin\Api\Tokens;
+use EnjinCoin\Api\Events;
 
 /**
  * Class TestPanel
@@ -14,11 +16,11 @@ class TestPanel extends ApiBase {
 	public function __construct() {
 		parent::__construct();
 		$this->identities = new Identities();
-
-		// @todo make sure the user has the correct (admin) permissions to access this class
+		$this->tokens = new Tokens;
+		$this->events = new Events;
 	}
 
-	/**
+	/*
 	 * Identity Methods
 	 */
 
@@ -38,11 +40,19 @@ class TestPanel extends ApiBase {
 		return $this->identities->update(['identity_code' => $identityCode], ['player_name' => $playerName], false);
 	}
 
-	/**
+	/*
 	 * Token Methods
 	 */
 
-	/**
+	public function createToken() {
+
+	}
+
+	public function updateToken() {
+
+	}
+
+	/*
 	 * Event Methods
 	 */
 }

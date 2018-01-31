@@ -22,7 +22,8 @@ var Core = {
 		};
 
 		xhr.open('POST', '/api.php?class=' + className, true);
-		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+		//xhr.setRequestHeader('X-Auth-Token', token);
 
 		xhr.send(JSON.stringify(body));
 	},

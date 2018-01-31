@@ -35,6 +35,9 @@
 		"app": {
 			"Identities": ["get", "create", "update"]
 		},
+		"testpanel": {
+			"TestPanel": "*"
+		},
 		"platform": "*"
 	},
 	"event_channels": {

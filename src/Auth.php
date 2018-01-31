@@ -15,6 +15,7 @@ class Auth {
 	const ROLE_CLIENT = 2;
 	const ROLE_WALLET = 3;
 	const ROLE_GUEST = 4;
+	const ROLE_TESTPANEL = 5;
 
     private static $instance;
 	private $authKey = '';
