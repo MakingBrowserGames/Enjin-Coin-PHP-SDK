@@ -184,7 +184,10 @@ class EventTypes {
 	 */
 	public function identity_created($params) {
 		$identities = new Identities();
-		return ['identity' => $identities->get($params['identity']), 'identity_code' => $params['identity_code']];
+		return [
+			'identity' => $identities->get($params['identity']),
+			'identity_code' => $params['identity_code']
+		];
 	}
 
 	/**
@@ -194,7 +197,9 @@ class EventTypes {
 	 */
 	public function identity_linked($params) {
 		$identities = new Identities();
-		return ['identity' => $identities->get($params['identity'])];
+		return [
+			'identity' => $identities->get($params['identity'])
+		];
 	}
 
 	/**
@@ -204,7 +209,9 @@ class EventTypes {
 	 */
 	public function identity_updated($params) {
 		$identities = new Identities();
-		return ['identity' => $identities->get($params['identity'])];
+		return [
+			'identity' => $identities->get($params['identity'])
+		];
 	}
 
 	/**
@@ -213,7 +220,9 @@ class EventTypes {
 	 * @return array
 	 */
 	public function identity_deleted($params) {
-		return ['identity' => $params['identity']];
+		return [
+			'identity' => $params['identity']
+		];
 	}
 
 	/**
@@ -245,7 +254,7 @@ class EventTypes {
 			'from' => $identities->get($params['from']),
 			'pending' => $params['pending'],
 			'confirmed' => $params['confirmed'],
-			'ENJ' => $params['enj']
+			'enj' => $params['enj']
 		];
 	}
 
