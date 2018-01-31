@@ -5,6 +5,7 @@ namespace EnjinCoin\Test;
 
 use EnjinCoin\Auth;
 use EnjinCoin\Config;
+use EnjinCoin\Notifications;
 use EnjinCoin\Util\Db;
 use PHPUnit\Framework\TestCase;
 use Zend\Db\Adapter\Adapter;
@@ -14,6 +15,7 @@ abstract class BaseTest extends TestCase {
 	protected function setUp(): void {
 		Auth::clearInstance();
 		Db::clearInstance();
+		Notifications::clearInstance();
 
 		$results = Db::getDatabase()->getAdapter()->query('SHOW TABLES', Adapter::QUERY_MODE_EXECUTE);
 

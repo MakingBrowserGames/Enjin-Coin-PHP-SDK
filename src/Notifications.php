@@ -50,6 +50,12 @@ class Notifications {
 		return self::$adapter;
 	}
 
+	public static function clearInstance() {
+		if (!empty(self::$adapter)) {
+			self::$adapter = null;
+		}
+	}
+
 	/**
 	 * Function to send a notification
 	 * @param $channel
