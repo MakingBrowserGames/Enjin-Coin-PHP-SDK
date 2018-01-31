@@ -5,11 +5,15 @@ namespace EnjinCoin\Test;
 
 use PHPUnit\Framework\TestCase;
 use EnjinCoin\Util\SafeMath;
+use PHPUnit\Runner\Exception;
 
 /**
  * @covers \EnjinCoin\Util\SafeMath
  */
 final class SafeMathTest extends TestCase {
+
+	public $largeNum = '999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999';
+
 	public function testAdd(): void {
 		$this->assertEquals(
 			'30000000000000000001',
@@ -58,6 +62,16 @@ final class SafeMathTest extends TestCase {
 			'420000000000000000000',
 			SafeMath::mul('20000000000000000000', '21')
 		);
+	}
+
+	public function testMul_Zero(): void {
+		self::assertEquals(0, SafeMath::mul('0', '10'));
+		self::assertEquals(0, SafeMath::mul('10', '0'));
+	}
+
+	public function testMul_Invalid(): void {
+		$this->expectException(Exception::class);
+		SafeMath::mul($this->largeNum, $this->largeNum);
 	}
 
 }

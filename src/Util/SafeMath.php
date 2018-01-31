@@ -58,8 +58,11 @@ class SafeMath {
 	 * @return float
 	 */
 	public static function mul(string $valA, string $valB) {
+		if ($valA == 0 || $valB == 0)
+			return 0;
+
 		$output = floor($valA * $valB);
-		if (!($valA === 0 || $output / $valA == $valB)) {
+		if ($output / $valA != $valB) {
 			throw new Exception('multiplying values failed');
 		}
 		return $output;
