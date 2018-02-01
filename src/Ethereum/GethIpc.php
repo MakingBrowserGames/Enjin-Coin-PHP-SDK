@@ -11,7 +11,13 @@ use Amp\Socket;
  * @package EnjinCoin\Ethereum
  */
 class GethIpc implements IEthereumConnection {
-	private $fp = null;
+	private $path;
+	private $fp;
+
+	public function __construct($path) {
+		$this->path = $path;
+		$this->fp = null;
+	}
 
 	/**
 	 * Function to connect
@@ -19,69 +25,39 @@ class GethIpc implements IEthereumConnection {
 	 */
 	public function connect() {
 		if (empty($this->fp)) {
-			$ipcPath = Config::get()->ethereum->path;
+			$ipcPath = $this->path;
 			$json = '{"jsonrpc":"2.0", "method":"eth_protocolVersion", "params":{}, "id":"1234"}';
 
-			$pipe = popen($ipcPath, 'rw');
-			fwrite($pipe, $json);
-			exit(fread($pipe, 2048));
-			pclose($pipe);
-
-
-			$odata = "";
-
-			Loop::run(function () {
-				$data = "Testing\n";
-
-				list($serverSock, $clientSock) = Socket\pair();
-
-				\fwrite($serverSock, $data);
-				\fclose($serverSock);
-
-				$client = new Socket\ClientSocket($clientSock);
-
-				while (($chunk = yield $client->read()) !== null) {
-					$this->assertSame($data, $chunk);
+			$file = fopen($ipcPath, 'r+');
+			if ($file) {
+				$this->fp = $file;
+				$write = fwrite($file, $json);
+				flush();
+				if ($write) {
+					$data = null;
+					while (!feof($this->fp) && "\n" !== ($char = fgetc($file)))
+						$data .= $char;
+					$json = json_decode($data);
+					if (array_key_exists('result', $json)) {
+						return $this->fp;
+					}
 				}
-			});
-			exit("data: " . $odata);
-
-
-			$ipcPath = Config::get()->ethereum->path;
-			$this->fp = fopen($ipcPath, 'r+');
-
-
-			fwrite($this->fp, $json);
-			while (!feof($this->fp)) {
-				print fread($this->fp, 256);
-				exit(var_export($this->fp, true));
 			}
-
-			fclose($this->fp);
-
-			exit("\nDONE\n");
-
-
-			$test = file_get_contents($ipcPath, false, null, 0, 128);
-			exit(var_export($test, true));
-
-
-			$this->fp = \socket_create(AF_INET, SOCK_STREAM, 0);
-			//die(var_export($this->fp, true));
-			//$error = \socket_last_error();
-			//die(var_export($error, true));
-			$connected = \socket_connect($this->fp, $ipcPath, 1);
-			exit(var_export($connected, true));
 		}
 
-		return $this->fp;
+		return false;
 	}
 
 	/**
 	 * Function to disconnect
 	 */
 	public function disconnect() {
-		\socket_close($this->fp);
+		$result = false;
+		if (!empty($this->fp)) {
+			$result = fclose($this->fp);
+			$this->fp = null;
+		}
+		return $result;
 	}
 
 	/**
@@ -91,15 +67,24 @@ class GethIpc implements IEthereumConnection {
 	 * @return null
 	 */
 	public function msg(string $method, array $params = []) {
-		$buf = null;
-		$msg = Zend\Json\Encoder::encode([
-			'jsonrpc' => '2.0',
-			'method' => $method,
-			'params' => $params,
-			'id' => mt_rand(1, 999999999)
-		]);
-		\socket_send($this->fp, $msg, strlen($msg), MSG_EOF);
-		\socket_recv($this->fp, $buf, 8192, MSG_WAITALL);
-		return $buf;
+		$result = false;
+		if (empty($this->fp))
+			$result = $this->connect();
+		if ($result) {
+			$msg = Zend\Json\Encoder::encode([
+				'jsonrpc' => '2.0',
+				'method' => $method,
+				'params' => $params,
+				'id' => mt_rand(1, 999999999)
+			]);
+			$result = fwrite($this->fp, $msg);
+			if ($result) {
+				$data = null;
+				while (!feof($this->fp) && "\n" !== ($char = fgetc($this->fp)))
+					$data .= $char;
+				$result = json_decode($data);
+			}
+		}
+		return $result;
 	}
 }

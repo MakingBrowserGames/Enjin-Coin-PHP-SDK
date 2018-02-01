@@ -16,27 +16,29 @@ class GethIpcTest extends TestCase {
 	private $ipc;
 
 	protected function setUp() {
-		Config::get()->ethereum->path = '\\\\.\\pipe\\get.ipc';
-		$this->ipc = new GethIpc();
+		Config::get()->ethereum->path = '//./pipe/geth.ipc';
+		$this->ipc = new GethIpc(Config::get()->ethereum->path);
 	}
 
 	public function testConnect() {
-		self::assertEmpty($this->ipc->connect());
+		$conn = $this->ipc->connect();
+		self::assertNotEmpty($conn);
+		self::assertNotFalse($conn);
 	}
 
 	public function testConnect_ExistingConnection() {
 		$this->ipc->connect();
-		self::assertEmpty($this->ipc->connect());
+		self::assertFalse($this->ipc->connect());
 	}
 
 	public function testDisconnect() {
 		$this->ipc->connect();
-		self::assertEmpty($this->ipc->disconnect());
+		self::assertTrue($this->ipc->disconnect());
 	}
 
 	public function testMsg() {
 		$result = $this->ipc->msg('eth_protocolVersion', []);
-		self::assertEquals('0x3f', $result['result']);
+		self::assertTrue(array_key_exists('result', $result));
 	}
 
 	protected function tearDown() {
