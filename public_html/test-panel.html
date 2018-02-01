@@ -29,6 +29,7 @@
 										<select v-if="param.type == 'select'" v-model="param.value" class="form-control">
 											<option v-for="(optionValue, optionKey) in param.options" :value="optionKey">{{ optionValue }}</option>
 										</select>
+										<small class="form-text text-muted" v-if="param.help">{{ param.help }}</small>
 									</div>
 								</div>
 								<div class="btn btn-sm btn-primary" v-on:click="execute(sectionKey, methodKey)">

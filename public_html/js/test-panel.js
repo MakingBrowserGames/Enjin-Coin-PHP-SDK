@@ -18,9 +18,10 @@ var app = new Vue({
 						title: 'Create Identity',
 						open: false,
 						params: {
-							playerName: {
-								label: 'Player Name',
+							identity: {
+								label: 'Identity Fields',
 								type: 'text',
+								help: 'Format: player_name|Josh816, uuid|123456789, some_other_key|some_other_value',
 								value: ''
 							}
 						}
@@ -38,6 +39,11 @@ var app = new Vue({
 								label: 'Ethereum Address',
 								type: 'text',
 								value: Core.getRandomEthAddress()
+							},
+							signature: {
+								label: 'Signature (optional)',
+								type: 'text',
+								value: ''
 							}
 						}
 					},
@@ -61,9 +67,10 @@ var app = new Vue({
 								type: 'text',
 								value: ''
 							},
-							playerName: {
-								label: 'Player Name',
+							identity: {
+								label: 'New Identity Fields',
 								type: 'text',
+								help: 'Format: player_name|Josh816, uuid|123456789, some_other_key|some_other_value',
 								value: ''
 							}
 						}
@@ -74,16 +81,7 @@ var app = new Vue({
 				title: 'Tokens',
 				open: true,
 				methods: {
-					createToken: {
-						title: 'Create Token',
-						open: false,
-						params: {}
-					},
-					updateToken: {
-						title: 'Update Token',
-						open: false,
-						params: {}
-					}
+
 				}
 			},
 			events: {

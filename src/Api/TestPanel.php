@@ -24,32 +24,42 @@ class TestPanel extends ApiBase {
 	 * Identity Methods
 	 */
 
-	public function createIdentity(string $playerName) {
-		return $this->identities->create(['player_name' => $playerName]);
+	public function createIdentity(string $identity) {
+		$identity = explode(',', $identity);
+		$newIdentity = [];
+		foreach ($identity as $id) {
+			$field = explode('|', trim($id));
+			if (!empty($field[0]) && !empty($field[1]) && !in_array($field[0], ['identity_code', 'identity_id'])) {
+				$newIdentity[$field[0]] = $field[1];
+			}
+		}
+
+		return $this->identities->create($newIdentity);
 	}
 
-	public function linkIdentity(string $identityCode, string $ethereumAddress) {
-		return $this->identities->link($identityCode, $ethereumAddress);
+	public function linkIdentity(string $identityCode, string $ethereumAddress, string $signature = null) {
+		if (empty($signature)) {
+			$signature = null;
+		}
+
+		return $this->identities->link($identityCode, $ethereumAddress, $signature);
 	}
 
 	public function deleteIdentity(string $identityCode) {
 		return $this->identities->delete(['identity_code' => $identityCode]);
 	}
 
-	public function updateIdentity(string $identityCode, string $playerName) {
-		return $this->identities->update(['identity_code' => $identityCode], ['player_name' => $playerName], false);
-	}
+	public function updateIdentity(string $identityCode, string $identity) {
+		$identity = explode(',', $identity);
+		$newIdentity = [];
+		foreach ($identity as $id) {
+			$field = explode('|', trim($id));
+			if (!empty($field[0]) && !empty($field[1]) && !in_array($field[0], ['identity_code', 'identity_id'])) {
+				$newIdentity[$field[0]] = $field[1];
+			}
+		}
 
-	/*
-	 * Token Methods
-	 */
-
-	public function createToken() {
-
-	}
-
-	public function updateToken() {
-
+		return $this->identities->update(['identity_code' => $identityCode], $newIdentity, true);
 	}
 
 	/*
