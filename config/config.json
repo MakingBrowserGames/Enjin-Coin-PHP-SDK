@@ -4,6 +4,7 @@
 	},
 	"db": {
 		"adapter": "mysqli",
+		"host": "localhost",
 		"database": "enjin_coin",
 		"username": "root",
 		"password": "root"

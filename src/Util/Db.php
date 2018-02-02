@@ -17,6 +17,7 @@ class Db {
 	function __construct() {
 		$this->adapter = new Zend\Db\Adapter\Adapter([
 			'driver' => Config::get()->db->adapter,
+			'host' => Config::get()->db->host,
 			'database' => Config::get()->db->database,
 			'username' => Config::get()->db->username,
 			'password' => Config::get()->db->password
