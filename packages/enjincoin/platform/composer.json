@@ -1,0 +1,20 @@
+{
+    "name": "enjin/platform",
+    "description": "Enjin Coin Platform for Laravel",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": {
+      "psr-4": {
+        "EnjinCoin\\": "src"
+      }
+    },
+    "extra": {
+      "laravel": {
+        "providers": [
+          "EnjinCoin\\EnjinCoinServiceProvider"
+        ]
+      }
+    }
+}

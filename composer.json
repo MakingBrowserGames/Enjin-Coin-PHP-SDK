@@ -1,40 +1,60 @@
 {
-  "name": "enjin/Enjin-Coin-PHP-SDK",
-  "description": "Enjin Coin Platform SDK",
-  "license": "Apache-2.0",
-  "require": {
-	"zendframework/zend-db": "^2.8",
-	"zendframework/zend-json": "^3.0",
-	"zendframework/zend-json-server": "^3.0",
-    "amphp/socket": "^0.10.4",
-    "ccxt/ccxt": "^1.10",
-    "pusher/pusher-php-server": "^3.0",
-    "amphp/websocket": "dev-master",
-    "textalk/websocket": "^1.2",
-    "paragonie/random-lib": "^2.0",
-    "ratchet/pawl": "^0.3.1"
-  },
-  "require-dev": {
-	"phpunit/phpunit": "^6.4",
-	"phpcheckstyle/phpcheckstyle": "dev-master",
-	"mockery/mockery": "dev-master"
-  },
-  "autoload": {
-	"psr-4": {
-	  "EnjinCoin\\": "src/",
-	  "EnjinCoin\\Api\\": "src/Api/",
-	  "EnjinCoin\\Ethereum\\": "src/Ethereum/",
-	  "EnjinCoin\\Util\\": "src/Util/"
-	}
-  },
-  "autoload-dev": {
-	"psr-4": {
-	  "EnjinCoin\\Test\\": "tests/"
-	}
-  },
-  "scripts": {
-	"test": [
-	  "phpunit tests --bootstrap vendor/autoload.php"
-	]
-  }
+    "name": "laravel/laravel",
+    "description": "The Laravel Framework.",
+    "keywords": ["framework", "laravel"],
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "php": ">=7.0.0",
+        "fideloper/proxy": "~3.3",
+        "laravel/framework": "5.5.*",
+        "laravel/passport": "^4.0",
+        "laravel/tinker": "~1.0",
+        "pusher/pusher-php-server": "~3.0"
+    },
+    "require-dev": {
+        "filp/whoops": "~2.0",
+        "fzaninotto/faker": "~1.4",
+        "mockery/mockery": "~1.0",
+        "phpunit/phpunit": "~6.0",
+        "symfony/thanks": "^1.0"
+    },
+    "autoload": {
+        "classmap": [
+            "database/seeds",
+            "database/factories"
+        ],
+        "psr-4": {
+            "App\\": "app/",
+            "EnjinCoin\\" : "packages/enjincoin/platform/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+            ]
+        }
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
+        ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    }
 }
