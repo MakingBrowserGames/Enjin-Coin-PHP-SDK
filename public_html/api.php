@@ -2,28 +2,36 @@
 
 // Composer autoloading
 include __DIR__ . '/../vendor/autoload.php';
+$server = new Zend\Json\Server\Server();
 
 // Load API class
-$class = $_REQUEST['class'];
+try {
+	if (empty($_REQUEST['class'])) throw new Exception('No class specified.');
 
-$server = new Zend\Json\Server\Server();
-$server->setClass('\EnjinCoin\Api\\' . $class);
+	$server->setClass('\EnjinCoin\Api\\' . $_REQUEST['class']);
 
-// SMD request
-if ('GET' === $_SERVER['REQUEST_METHOD']) {
-	$server->setTarget('/api.php')
-		->setEnvelope(Zend\Json\Server\Smd::ENV_JSONRPC_2);
+	// SMD request
+	if ('GET' === $_SERVER['REQUEST_METHOD']) {
+		$server->setTarget('/api.php')
+			->setEnvelope(Zend\Json\Server\Smd::ENV_JSONRPC_2);
 
-	$smd = $server->getServiceMap();
+		header('Content-Type: application/json');
+		echo $server->getServiceMap();
+		return;
+	}
 
-	header('Content-Type: application/json');
-	echo $smd;
-	return;
+	// Authenticate, or continue as a guest
+	// @todo: restrict method access to config permissions
+	$authenticated = !empty($_SERVER['X-Auth-Key']) ? \EnjinCoin\Auth::init($_SERVER['X-Auth-Key']) : true;
+	if (!$authenticated) throw new Exception('Authentication failed!');
+	$server->handle();
+} catch (Exception $e) {
+	$request = $server->getRequest();
+
+	$server->fault($e->getMessage(), $e->getCode());
+	$server->getResponse()
+		->setId($request->getId())
+		->setVersion($request->getVersion());
+
+	echo $server->getResponse();
 }
-
-// Authenticate, or continue as a guest
-// @todo: restrict method access to config permissions
-$authenticated = !empty($_SERVER['X-Auth-Key']) ? \EnjinCoin\Auth::init($_SERVER['X-Auth-Key']) : true;
-if (!$authenticated) throw new Exception('Authentication failed!');
-
-$server->handle();
