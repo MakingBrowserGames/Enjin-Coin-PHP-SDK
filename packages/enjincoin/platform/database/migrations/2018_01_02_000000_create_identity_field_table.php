@@ -18,7 +18,7 @@ class CreateIdentityFieldTable extends Migration
         Schema::create('enjin_identity_field', function (Blueprint $table) {
             $table->integer('identity_id');
             $table->integer('field_id');
-            $table->string('field_value');
+            $table->string('field_value')->nullable();
             $table->integer('updated_at')->nullable();
             $table->integer('created_at')->nullable();
         });

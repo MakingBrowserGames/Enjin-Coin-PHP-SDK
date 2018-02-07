@@ -133,7 +133,53 @@ class IdentityController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // Try to find the specified identity
+        $identity = EnjinIdentity::findOrFail($id);
 
+        // Check if an ethereum_address was wupplied
+        if($request->filled('ethereum_address'))
+        {
+            // Try to find the given ethereum address in the database.
+            $address = EnjinIdentity::where('ethereum_address', $request->input('ethereum_address'))->first();
+
+            // If found then return a 409 data conflict, otherwise set the address on the identity.
+            if(isset($address))
+            {
+                return response()->json(['error' => 'Data Conflict (Ethereum address already linked)'], 409);
+            }
+            $identity->ethereum_address = $request->input('ethereum_address');
+            $identity->linking_code = null;
+            $identity->save();
+        }
+
+        // If identity fields have been supplied then add them.
+        if($request->filled('fields'))
+        {
+            foreach ($request->input('fields') as $value)
+            {
+                // Check for keys which aren't allowed.
+                if (in_array(strtolower(key($value)), $this->invalidKeyNames)) {
+                    continue;
+                }
+
+                // Search to see if the current key is already in the database.
+                $field = EnjinIdentityField::where('key', key($value))->first();
+
+                // If not then create it.
+                if(!isset($field))
+                {
+                    $field = new EnjinIdentityField();
+                    $field->key = key($value);
+                    $field->save();
+                }
+
+                // Attach to the identity
+                $identity->fields()->detach($field);
+                $identity->fields()->attach($field, ['field_value' => $value[key($value)]]);
+            }
+        }
+
+        return response()->json($identity);
     }
 
     /**
