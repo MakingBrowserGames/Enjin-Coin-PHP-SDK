@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Identity;
+use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -49,7 +49,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:identities',
+            'email' => 'required|string|email|max:255|unique:users',    // Make sure the right table is referenced here!
             'password' => 'required|string|min:6|confirmed',
         ]);
     }
@@ -58,12 +58,12 @@ class RegisterController extends Controller
      * Create a new identity instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\Identity
+     * @return \App\User
      */
     protected function create(array $data)
     {
         // Create the new identity.
-        $identity = Identity::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
@@ -71,17 +71,19 @@ class RegisterController extends Controller
 
         // If an ethereum address was supplied at the same time then link it to the identity,
         // otherwise create a linking code so it can be done later.
+        /*
         if(isset($data['ethereum_address'])) {
             $identity->enjinWallet()->create(['ethereum_address' => $data['ethereum_address']]);
         }
         else {
             $identity->enjinWallet()->create(['linking_code' => $identity->generateLinkingCode()]);
         }
+        */
 
         // Create a Bearer Token
-        $identity->createToken('EnjinCoin Token')->accessToken;
+        $user->createToken('Login Token')->accessToken;
 
         // Return the identity.
-        return $identity;
+        return $user;
     }
 }

@@ -2,21 +2,15 @@
 
 namespace App;
 
-use EnjinCoin\EnjinCoinIdentity;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 
-class Identity extends Authenticatable
+class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable, EnjinCoinIdentity;
+    use HasApiTokens, Notifiable;
 
-    /**
-     * Set the table name manually as the plural of identity is not 'identitys'.
-     *
-     * @var string
-     */
-    protected $table = 'identities';
+    protected $dateFormat = 'U';
 
     /**
      * The attributes that are mass assignable.
@@ -35,4 +29,10 @@ class Identity extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function identity()
+    {
+        return $this->hasOne('EnjinCoin\EnjinIdentity', 'user_id');
+    }
+
 }

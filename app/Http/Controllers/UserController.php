@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use EnjinCoin\EnjinWallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Identity;
+use App\User;
 
-class IdentityController extends Controller
+class UserController extends Controller
 {
+
     /**
      * Enforce middleware.
      */
@@ -16,7 +16,7 @@ class IdentityController extends Controller
     {
         // Setup middleware so we require a Bearer Token for all routes,
         // other than the ones specified in the except clause.
-        $this->middleware('auth:api', ['except' => ['store', 'login', 'updateWallet']]);
+        //$this->middleware('auth:api', ['except' => ['store', 'login', 'updateWallet']]);
     }
 
     /**
@@ -26,7 +26,9 @@ class IdentityController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::with('identity')->get();
+
+        return response()->json($users);
     }
 
     /**
@@ -51,33 +53,24 @@ class IdentityController extends Controller
         if($request->filled('name') && $request->filled('email') && $request->filled('password'))
         {
             // Check if this email address has already been registered.
-            $identity = Identity::where('email', $request->input('email'))->first();
-            if(isset($identity))
+            $user = User::where('email', $request->input('email'))->first();
+            if(isset($user))
             {
                 return response()->json(['error' => 'Data Conflict (email already in use)'], 409);
             }
 
-            // Create a new identity.
-            $identity = Identity::create([
+            // Create a new user.
+            $user = User::create([
                 'name' => $request->input('name'),
                 'email' => $request->input('email'),
                 'password' => bcrypt($request->input('password')),
             ]);
 
-            // If an ethereum address has been supplied at the same time then link it right away,
-            // otherwise generate a linking code.
-            if($request->filled('ethereum_address')) {
-                $identity->enjinWallet = EnjinWallet::create(['ethereum_address' => $request->input('ethereum_address')]);
-            }
-            else {
-                $identity->enjinWallet = EnjinWallet::create(['linking_code' => $identity->generateLinkingCode()]);
-            }
+            // Generate the access token so the user is 'logged in' after creating.
+            $tokenStr = $user->createToken('Login Token')->accessToken;
 
-            // Generate the access token so the identity is 'logged in' after creating.
-            $tokenStr = $identity->createToken('Token Name')->accessToken;
-
-            // Return the new identity and the Bearer Token.
-            return response()->json(['identity' => $identity, 'token' => $tokenStr]);
+            // Return the new user and the Bearer Token.
+            return response()->json(['user' => $user, 'token' => $tokenStr]);
         }
 
         // Return a Bad Request status if not all the data was supplied.
@@ -85,27 +78,27 @@ class IdentityController extends Controller
     }
 
     /**
-     * Display the specified identity (requires Bearer Token).
+     * Display the specified user (requires Bearer Token).
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        // Only allow the logged in identity to access their own data.
-        if(Auth::id() == $id) {
+        // Only allow the logged in user to access their own data.
+        //if(Auth::id() == $id) {
 
-            // Find the identity in the database and return the model.
-            $identity = Identity::findOrFail($id);
+            // Find the user in the database and return the model.
+            $user = User::findOrFail($id);
 
             // Gather the associated EnjInWallet model.
-            $identity->enjinWallet;
+            $user->identity;
 
             // Return the data as JSON.
-            return response()->json($identity);
-        }
+            return response()->json($user);
+        //}
 
-        // If the check fails then the identity isn't allowed to see anyone else's data.
+        // If the check fails then the user isn't allowed to see anyone else's data.
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
@@ -128,79 +121,35 @@ class IdentityController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Only allow the logged in identity to update their own data.
+        // Only allow the logged in user to update their own data.
         if($request->user()->id == $id) {
 
-            // Find the identity in the database and return the model.
-            $identity = Identity::findOrFail($id);
-
-            // Gather the associated EnjInWallet model.
-            $identity->enjinWallet;
+            // Find the user in the database and return the model.
+            $user = User::findOrFail($id);
 
             // Update the supplied fields (if any) and save.
             if($request->filled('name')){
-                $identity->name = $request->input('name');
+                $user->name = $request->input('name');
             }
             if($request->filled('email')){
-                $identity->email = $request->input('email');
+                $user->email = $request->input('email');
             }
             if($request->filled('password')){
-                $identity->password = bcrypt($request->input('password'));
-            }
-            if($request->filled('ethereum_address')){
-                $identity->enjinWallet->ethereum_address = $request->input('ethereum_address');
-                $identity->enjinWallet->save();
-            }
-
-            // If the user wants to change which ethereum address their wallet is linked to
-            // then we can generate a new linking code for them.
-            if($request->filled('relink_wallet') && $request->input('relink_wallet') == 1){
-                $identity->enjinWallet->ethereum_address = null;
-                $identity->enjinWallet->linking_code = $identity->generateLinkingCode();
-                $identity->enjinWallet->save();
+                $user->password = bcrypt($request->input('password'));
             }
 
             // Save the updates to the database.
-            $identity->save();
+            $user->save();
 
             // Return the data as JSON.
-            return response()->json($identity);
+            return response()->json($user);
         }
 
-        // If the check fails then the identity isn't allowed to update anyone else's data.
+        // If the check fails then the user isn't allowed to update anyone else's data.
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
-    /**
-     * Link a wallet with the specified linking code to an ethereum address.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string $linkingCode
-     * @return \Illuminate\Http\Response
-     */
-    public function updateWallet(Request $request, $linkingCode)
-    {
-        // Check we have been supplied with an ethereum address
-        // (Do we need to check if it's valid?)
-        if($request->filled('ethereum_address'))
-        {
-            // Find the wallet with the corresponding linking code,
-            // or respond with a 404 if no wallet was found.
-            $wallet = EnjinWallet::where('linking_code', $linkingCode)->firstOrFail();
 
-            // Update the ethereum_address field with the supplied address,
-            // and set the linking code field to null.
-            $wallet->ethereum_address = $request->input('ethereum_address');
-            $wallet->linking_code = null;
-            $wallet->save();
-
-            // Return the updated wallet.
-            return response()->json($wallet);
-        }
-
-        // Respond with a Bad Request if no ethereum address was supplied.
-        return response()->json(['error' => 'Bad Request'], 400);
-    }
 
     /**
      * Login the user via the API and generate another access token.
@@ -219,7 +168,7 @@ class IdentityController extends Controller
         {
             // Get the identity from the email address,
             // or respond with a 404 if no identity was found.
-            $identity = Identity::where('email', $request->input('email'))->firstOrFail();
+            $identity = User::where('email', $request->input('email'))->firstOrFail();
 
             // Check the password and return the identity (including wallet),
             // or respond with an Unauthorized status.

@@ -12,8 +12,11 @@ use Illuminate\Http\Request;
 */
 
 // Open endpoints for login and linking wallets where no oAuth Bearer Token is needed.
-Route::get('/v1/identity/login', 'IdentityController@login');
+Route::get('/v1/user/login', 'UserController@login');
 Route::put('/v1/identity/link-wallet/{linkingCode}', 'IdentityController@updateWallet');
+
+
+Route::resource('/v1/users', 'UserController');
 
 // RESTful resource routes for identity collections.
 // A Bearer Token is required to access most of these endpoints,

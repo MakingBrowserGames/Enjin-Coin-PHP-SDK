@@ -6,6 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateIdentitiesTable extends Migration
 {
+    // Table to hold identities
+
     /**
      * Run the migrations.
      *
@@ -13,13 +15,13 @@ class CreateIdentitiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('identities', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
+        Schema::create('enjin_identities', function (Blueprint $table) {
+            $table->increments('identity_id');
+            $table->integer('user_id');
+            $table->string('ethereum_address')->nullable();
+            $table->string('linking_code')->nullable();
+            $table->integer('updated_at');
+            $table->integer('created_at');
         });
     }
 
@@ -30,6 +32,6 @@ class CreateIdentitiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('identities');
+        Schema::dropIfExists('enjin_identities');
     }
 }
