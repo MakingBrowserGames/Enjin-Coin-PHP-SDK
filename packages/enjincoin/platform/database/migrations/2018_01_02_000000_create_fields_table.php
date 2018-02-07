@@ -16,11 +16,11 @@ class CreateFieldsTable extends Migration
     public function up()
     {
         Schema::create('enjin_fields', function (Blueprint $table) {
-            $table->integer('id');
+            $table->increments('id');
             $table->string('key');
-            $table->integer('searchable');
-            $table->integer('displayable');
-            $table->integer('unique');
+            $table->integer('searchable')->default(1);
+            $table->integer('displayable')->default(1);
+            $table->integer('unique')->default(1);
             $table->integer('updated_at');
             $table->integer('created_at');
         });

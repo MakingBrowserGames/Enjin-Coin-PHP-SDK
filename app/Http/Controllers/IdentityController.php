@@ -91,7 +91,7 @@ class IdentityController extends Controller
                 if(!isset($field))
                 {
                     $field = new EnjinIdentityField();
-                    $field->name = key($value);
+                    $field->key = key($value);
                     $field->save();
                 }
 

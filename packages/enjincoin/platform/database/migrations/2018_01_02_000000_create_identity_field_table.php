@@ -19,8 +19,8 @@ class CreateIdentityFieldTable extends Migration
             $table->integer('identity_id');
             $table->integer('field_id');
             $table->string('field_value');
-            $table->integer('updated_at');
-            $table->integer('created_at');
+            $table->integer('updated_at')->nullable();
+            $table->integer('created_at')->nullable();
         });
     }
 
