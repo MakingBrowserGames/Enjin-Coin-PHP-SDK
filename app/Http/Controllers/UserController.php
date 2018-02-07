@@ -122,7 +122,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         // Only allow the logged in user to update their own data.
-        if($request->user()->id == $id) {
+        //if($request->user()->id == $id) {
 
             // Find the user in the database and return the model.
             $user = User::findOrFail($id);
@@ -143,7 +143,7 @@ class UserController extends Controller
 
             // Return the data as JSON.
             return response()->json($user);
-        }
+        //}
 
         // If the check fails then the user isn't allowed to update anyone else's data.
         return response()->json(['error' => 'Unauthorized'], 401);
@@ -192,6 +192,6 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // Detach fields from a linked identity and remove the identity too.
     }
 }

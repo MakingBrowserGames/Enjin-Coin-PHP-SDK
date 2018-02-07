@@ -65,7 +65,14 @@ class IdentityController extends Controller
         // otherwise generate a linking code.
         if($request->filled('ethereum_address'))
         {
+            // If found then return a 409 data conflict, otherwise set the address on the identity.
+            if($this->ethereumAddressAlreadyLinked($request->input('ethereum_address')))
+            {
+                return response()->json(['error' => 'Data Conflict (Ethereum address already linked)'], 409);
+            }
+
             $identity->ethereum_address = $request->input('ethereum_address');
+            $identity->linking_code = null;
         }
         else{
             $identity->linking_code = $identity->generateLinkingCode();
@@ -139,11 +146,8 @@ class IdentityController extends Controller
         // Check if an ethereum_address was wupplied
         if($request->filled('ethereum_address'))
         {
-            // Try to find the given ethereum address in the database.
-            $address = EnjinIdentity::where('ethereum_address', $request->input('ethereum_address'))->first();
-
             // If found then return a 409 data conflict, otherwise set the address on the identity.
-            if(isset($address))
+            if($this->ethereumAddressAlreadyLinked($request->input('ethereum_address')))
             {
                 return response()->json(['error' => 'Data Conflict (Ethereum address already linked)'], 409);
             }
@@ -209,6 +213,12 @@ class IdentityController extends Controller
         // (Do we need to check if it's valid?)
         if($request->filled('ethereum_address'))
         {
+            // If found then return a 409 data conflict, otherwise set the address on the identity.
+            if($this->ethereumAddressAlreadyLinked($request->input('ethereum_address')))
+            {
+                return response()->json(['error' => 'Data Conflict (Ethereum address already linked)'], 409);
+            }
+
             // Find the identity with the corresponding linking code,
             // or respond with a 404 if no identity was found.
             $identity = EnjinIdentity::where('linking_code', $linkingCode)->firstOrFail();
@@ -225,5 +235,17 @@ class IdentityController extends Controller
 
         // Respond with a Bad Request if no ethereum address was supplied.
         return response()->json(['error' => 'Bad Request'], 400);
+    }
+
+    protected function ethereumAddressAlreadyLinked($address)
+    {
+        // Try to find the given ethereum address in the database.
+        $identity = EnjinIdentity::where('ethereum_address', $address)->first();
+        
+        if(isset($identity))
+        {
+            return true;
+        }
+        return false;
     }
 }
