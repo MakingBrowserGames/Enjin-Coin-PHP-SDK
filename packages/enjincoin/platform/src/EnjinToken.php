@@ -3,31 +3,33 @@
  * Created by PhpStorm.
  * User: Simon Evans
  * Date: 06/02/2018
- * Time: 15:23
+ * Time: 17:18
  */
 
 namespace EnjinCoin;
 
 use EnjinCoin\Database\EnjinModel;
 
-class EnjinIdentityField extends EnjinModel
+class EnjinToken extends EnjinModel
 {
 
     protected $dateFormat = 'U';
+
+    public $incrementing = false;
 
     /**
      * Set the table name.
      *
      * @var string
      */
-    protected $table = 'enjin_fields';
+    protected $table = 'enjin_tokens';
 
     /**
      * Set the identity_id column to be the primary key.
      *
      * @var string
      */
-    public $primaryKey  = 'id';
+    public $primaryKey  = 'token_id';
 
     /**
      * The attributes that are mass assignable.
@@ -36,20 +38,13 @@ class EnjinIdentityField extends EnjinModel
      * @var array
      */
     protected $fillable = [
-        'key', 'searchable', 'displayable', 'unique'
+        'app_id', 'creator', 'adapter', 'name', 'icon', 'totalSupply', 'exchangeRate', 'decimals', 'maxMeltFee', 'meltFee', 'transferable'
     ];
+
+    //protected $guarded = ['token_id'];
 
     protected $hidden = [
-        'pivot'
+
     ];
 
-    /**
-     * Define the relationship to the identity model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function identity()
-    {
-        return $this->belongsToMany('EnjinCoin\EnjinIdentity', 'enjin_identity_field', 'field_id', 'identity_id'); //->as('fields')->withPivot('field_value');
-    }
 }

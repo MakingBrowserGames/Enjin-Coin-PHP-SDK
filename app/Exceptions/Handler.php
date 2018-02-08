@@ -49,12 +49,32 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if ($exception instanceof ModelNotFoundException || substr($request->path(), 0, 3) == 'api') {
+        if (substr($request->path(), 0, 3) == 'api') {
 
-            return response()->json([
-                'error' => 'Resource Not Found',
-            ], 404);
+            switch(true)
+            {
+                case $exception instanceOf \EnjinCoin\Exceptions\BadRequestException:
+                    return response()->json([
+                        'error' => $exception->getMessage()
+                    ], 400);
+                case $exception instanceof ModelNotFoundException:
+                    return response()->json([
+                        'error' => 'Resource Not Found',
+                    ], 404);
+                    break;
+                case $exception instanceOf \EnjinCoin\Exceptions\DataConflictException:
+                    return response()->json([
+                        'error' => $exception->getMessage()
+                    ], 409);
+                case $exception instanceOf \EnjinCoin\Exceptions\NotYetImplementedException:
+                    return response()->json([
+                        'error' => $exception->getMessage()
+                    ], 501);
+                default:
+                    return parent::render($request, $exception);
+                    break;
 
+            }
         }
 
         return parent::render($request, $exception);

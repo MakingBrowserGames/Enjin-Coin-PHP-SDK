@@ -1,16 +1,16 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Moosley
+ * User: Simon Evans
  * Date: 06/02/2018
  * Time: 17:18
  */
 
 namespace EnjinCoin;
 
-use Illuminate\Database\Eloquent\Model;
+use EnjinCoin\Database\EnjinModel;
 
-class EnjinIdentity extends Model
+class EnjinIdentity extends EnjinModel
 {
 
     protected $dateFormat = 'U';

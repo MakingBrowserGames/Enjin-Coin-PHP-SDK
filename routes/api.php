@@ -23,6 +23,8 @@ Route::resource('/v1/users', 'UserController');
 // other than POST requests to /v1/identities which is open to enable creating new identities.
 Route::resource('/v1/identities', 'IdentityController');
 
+Route::resource('/v1/tokens', 'TokenController');
+
 // A singe GET end point to retrieve the current user from their Bearer Token.
 Route::middleware('auth:api')->get('/v1/identity', function (Request $request) {
     $user = $request->user();
