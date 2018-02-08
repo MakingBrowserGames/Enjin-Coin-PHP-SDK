@@ -1,0 +1,33 @@
+.panel.console textarea {
+	resize: vertical;
+}
+
+.panel:not(.console) .panel-heading {
+	cursor: pointer;
+}
+
+.panel .method-title {
+	font-size: 18px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.panel .method-toggle {
+	padding-top: 10px;
+}
+
+.panel .method {
+	padding: 15px 0;
+}
+
+.panel .method:first-child {
+	padding-top: 0;
+}
+
+.panel .method:last-child {
+	padding-bottom: 0;
+}
+
+.panel .method:not(:last-child) {
+	border-bottom: 1px solid #DDD;
+}
