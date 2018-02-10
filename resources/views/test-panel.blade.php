@@ -16,7 +16,7 @@
 								}}
 							</div>
 							<div class="method-toggle" v-show="method.open">
-								<div v-for="param in method.params" class="col-6">
+								<div v-for="param in method.params">
 									<div class="form-group">
 										<label class="form-label">@{{ param.label }}</label>
 										<input type="text" v-if="param.type == 'text'" v-model="param.value"

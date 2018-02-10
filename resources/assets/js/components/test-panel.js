@@ -17,6 +17,7 @@ Vue.component('test-panel', {
 					methods: {
 						createIdentity: {
 							title: 'Create Identity',
+							type: 'post',
 							open: false,
 							params: {
 								identity: {
@@ -29,6 +30,7 @@ Vue.component('test-panel', {
 						},
 						linkIdentity: {
 							title: 'Link Identity',
+							type: 'post',
 							open: false,
 							params: {
 								identityCode: {
@@ -50,6 +52,7 @@ Vue.component('test-panel', {
 						},
 						deleteIdentity: {
 							title: 'Delete Identity',
+							type: 'post',
 							open: false,
 							params: {
 								identityCode: {
@@ -61,6 +64,7 @@ Vue.component('test-panel', {
 						},
 						updateIdentity: {
 							title: 'Update Identity',
+							type: 'post',
 							open: false,
 							params: {
 								identityCode: {
@@ -105,30 +109,25 @@ Vue.component('test-panel', {
 		},
 
 		execute: function (section, method) {
+			const that = this;
 			const btn = event.target;
 			btn.innerText = 'Working..';
 
 			let params = {};
-			for (var paramKey in this.sections[section].methods[method].params) {
+			for (let paramKey in this.sections[section].methods[method].params) {
 				params[paramKey] = this.sections[section].methods[method].params[paramKey].value;
 			}
 
-			const that = this;
-			Core.jsonrpc('TestPanel', method, params, function (resp) {
-				that.sections.console.value = JSON.stringify(resp);
-				btn.innerText = 'Execute';
-			});
-
 			xhr({
-				method: "post",
-				body: someJSONString,
-				uri: "/api/v1/identities",
+				method: this.sections[section].methods[method].type,
+				body: JSON.stringify(params),
+				uri: "/api/v1/testPanel/" + method,
 				headers: {
 					"Content-Type": "application/json"
 				}
 			}, function (err, resp, body) {
-				// check resp.statusCode
-			})
+				that.sections.console.value = body;
+			});
 		}
 	},
 	mounted: function () {

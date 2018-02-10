@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use EnjinCoin\EnjinIdentity;
+use EnjinCoin\EnjinIdentityField;
+use Auth;
 
 class TestpanelController extends Controller {
 	public function __construct() {
@@ -13,8 +16,8 @@ class TestpanelController extends Controller {
 		return view('test-panel');
 	}
 
-	public function createIdentity(string $identity) {
-		$identity = explode(',', $identity);
+	public function createIdentity(Request $request) {
+		$identity = explode(',', $request->input('identity'));
 		$newIdentity = [];
 		foreach ($identity as $id) {
 			$field = explode('|', trim($id));
@@ -23,31 +26,49 @@ class TestpanelController extends Controller {
 			}
 		}
 
-		return $this->identities->create($newIdentity);
-	}
+		// Create a new Identity Model
+		$identity = new EnjinIdentity();
+		$identity->user_id = Auth::id();
+		$identity->linking_code = $identity->generateLinkingCode();
 
-	public function linkIdentity(string $identityCode, string $ethereumAddress, string $signature = null) {
-		if (empty($signature)) {
-			$signature = null;
-		}
+		// Save the new identity
+		$identity->save();
 
-		return $this->identities->link($identityCode, $ethereumAddress, $signature);
-	}
+		// If identity fields have been supplied then add them.
+		if (!empty($newIdentity)) {
+			foreach ($newIdentity as $key => $value) {
+				// Check for keys which aren't allowed.
+				if (in_array(strtolower($key), ['identity_id', 'identity_code', 'ethereum_address'])) {
+					continue;
+				}
 
-	public function deleteIdentity(string $identityCode) {
-		return $this->identities->delete(['identity_code' => $identityCode]);
-	}
+				// Search to see if the current key is already in the database.
+				$field = EnjinIdentityField::where('key', $key)->first();
 
-	public function updateIdentity(string $identityCode, string $identity) {
-		$identity = explode(',', $identity);
-		$newIdentity = [];
-		foreach ($identity as $id) {
-			$field = explode('|', trim($id));
-			if (!empty($field[0]) && !empty($field[1]) && !in_array($field[0], ['identity_code', 'identity_id'])) {
-				$newIdentity[$field[0]] = $field[1];
+				// If not then create it.
+				if (!isset($field)) {
+					$field = new EnjinIdentityField();
+					$field->key = $key;
+					$field->save();
+				}
+
+				// Attach to the identity
+				$identity->fields()->attach($field, ['field_value' => $value[$key]]);
 			}
 		}
 
-		return $this->identities->update(['identity_code' => $identityCode], $newIdentity, true);
+		return response()->json($identity);
+	}
+
+	public function linkIdentity(Request $request) {
+
+	}
+
+	public function deleteIdentity(Request $request) {
+
+	}
+
+	public function updateIdentity(Request $request) {
+
 	}
 }

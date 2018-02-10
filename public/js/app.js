@@ -95,7 +95,7 @@
 	/******/
 	/******/ 	// Load entry module and return exports
 	/******/
-	return __webpack_require__(__webpack_require__.s = 9);
+	return __webpack_require__(__webpack_require__.s = 12);
 	/******/
 })
 /************************************************************************/
@@ -107,7 +107,7 @@
 
 
 		var bind = __webpack_require__(3);
-		var isBuffer = __webpack_require__(18);
+		var isBuffer = __webpack_require__(21);
 
 		/*global toString:true*/
 
@@ -448,7 +448,7 @@
 		(function (process) {
 
 			var utils = __webpack_require__(0);
-			var normalizeHeaderName = __webpack_require__(20);
+			var normalizeHeaderName = __webpack_require__(23);
 
 			var DEFAULT_CONTENT_TYPE = {
 				'Content-Type': 'application/x-www-form-urlencoded'
@@ -773,12 +773,12 @@
 
 
 		var utils = __webpack_require__(0);
-		var settle = __webpack_require__(21);
-		var buildURL = __webpack_require__(23);
-		var parseHeaders = __webpack_require__(24);
-		var isURLSameOrigin = __webpack_require__(25);
+		var settle = __webpack_require__(24);
+		var buildURL = __webpack_require__(26);
+		var parseHeaders = __webpack_require__(27);
+		var isURLSameOrigin = __webpack_require__(28);
 		var createError = __webpack_require__(6);
-		var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(26);
+		var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(29);
 
 		module.exports = function xhrAdapter(config) {
 			return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -877,7 +877,7 @@
 				// This is only done if running in a standard browser environment.
 				// Specifically not if we're in a web worker, or react-native.
 				if (utils.isStandardBrowserEnv()) {
-					var cookies = __webpack_require__(27);
+					var cookies = __webpack_require__(30);
 
 					// Add xsrf header
 					var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -962,7 +962,7 @@
 		"use strict";
 
 
-		var enhanceError = __webpack_require__(22);
+		var enhanceError = __webpack_require__(25);
 
 		/**
 		 * Create an Error with the specified message, config, error code, request and response.
@@ -1023,15 +1023,352 @@
 		/***/
 	}),
 	/* 9 */
-	/***/ (function (module, exports, __webpack_require__) {
+	/***/ (function (module, __webpack_exports__, __webpack_require__) {
 
-		__webpack_require__(10);
-		module.exports = __webpack_require__(42);
+		"use strict";
+		Object.defineProperty(__webpack_exports__, "__esModule", {value: true});
+		/* harmony import */
+		var __WEBPACK_IMPORTED_MODULE_0_xhr__ = __webpack_require__(10);
+		/* harmony import */
+		var __WEBPACK_IMPORTED_MODULE_0_xhr___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_xhr__);
+		var _createClass = function () {
+			function defineProperties(target, props) {
+				for (var i = 0; i < props.length; i++) {
+					var descriptor = props[i];
+					descriptor.enumerable = descriptor.enumerable || false;
+					descriptor.configurable = true;
+					if ("value" in descriptor) descriptor.writable = true;
+					Object.defineProperty(target, descriptor.key, descriptor);
+				}
+			}
 
+			return function (Constructor, protoProps, staticProps) {
+				if (protoProps) defineProperties(Constructor.prototype, protoProps);
+				if (staticProps) defineProperties(Constructor, staticProps);
+				return Constructor;
+			};
+		}();
+
+		function _classCallCheck(instance, Constructor) {
+			if (!(instance instanceof Constructor)) {
+				throw new TypeError("Cannot call a class as a function");
+			}
+		}
+
+
+		var Core = function () {
+			function Core() {
+				_classCallCheck(this, Core);
+			}
+
+			_createClass(Core, null, [{
+				key: 'getRandomNumber',
+				value: function getRandomNumber(min, max) {
+					return Math.floor(Math.random() * max) + min;
+				}
+			}, {
+				key: 'getRandomEthAddress',
+				value: function getRandomEthAddress() {
+					return '0x0000000000000000000000000000000' + Core.getRandomNumber(100000000, 999999999);
+				}
+			}]);
+
+			return Core;
+		}();
+
+		/* harmony default export */
+		__webpack_exports__["default"] = (Core);
 
 		/***/
 	}),
 	/* 10 */
+	/***/ (function (module, exports, __webpack_require__) {
+
+		"use strict";
+
+		var window = __webpack_require__(41)
+		var isFunction = __webpack_require__(11)
+		var parseHeaders = __webpack_require__(42)
+		var xtend = __webpack_require__(45)
+
+		module.exports = createXHR
+		createXHR.XMLHttpRequest = window.XMLHttpRequest || noop
+		createXHR.XDomainRequest = "withCredentials" in (new createXHR.XMLHttpRequest()) ? createXHR.XMLHttpRequest : window.XDomainRequest
+
+		forEachArray(["get", "put", "post", "patch", "head", "delete"], function (method) {
+			createXHR[method === "delete" ? "del" : method] = function (uri, options, callback) {
+				options = initParams(uri, options, callback)
+				options.method = method.toUpperCase()
+				return _createXHR(options)
+			}
+		})
+
+		function forEachArray(array, iterator) {
+			for (var i = 0; i < array.length; i++) {
+				iterator(array[i])
+			}
+		}
+
+		function isEmpty(obj) {
+			for (var i in obj) {
+				if (obj.hasOwnProperty(i)) return false
+			}
+			return true
+		}
+
+		function initParams(uri, options, callback) {
+			var params = uri
+
+			if (isFunction(options)) {
+				callback = options
+				if (typeof uri === "string") {
+					params = {uri: uri}
+				}
+			} else {
+				params = xtend(options, {uri: uri})
+			}
+
+			params.callback = callback
+			return params
+		}
+
+		function createXHR(uri, options, callback) {
+			options = initParams(uri, options, callback)
+			return _createXHR(options)
+		}
+
+		function _createXHR(options) {
+			if (typeof options.callback === "undefined") {
+				throw new Error("callback argument missing")
+			}
+
+			var called = false
+			var callback = function cbOnce(err, response, body) {
+				if (!called) {
+					called = true
+					options.callback(err, response, body)
+				}
+			}
+
+			function readystatechange() {
+				if (xhr.readyState === 4) {
+					setTimeout(loadFunc, 0)
+				}
+			}
+
+			function getBody() {
+				// Chrome with requestType=blob throws errors arround when even testing access to responseText
+				var body = undefined
+
+				if (xhr.response) {
+					body = xhr.response
+				} else {
+					body = xhr.responseText || getXml(xhr)
+				}
+
+				if (isJson) {
+					try {
+						body = JSON.parse(body)
+					} catch (e) {
+					}
+				}
+
+				return body
+			}
+
+			function errorFunc(evt) {
+				clearTimeout(timeoutTimer)
+				if (!(evt instanceof Error)) {
+					evt = new Error("" + (evt || "Unknown XMLHttpRequest Error"))
+				}
+				evt.statusCode = 0
+				return callback(evt, failureResponse)
+			}
+
+			// will load the data & process the response in a special response object
+			function loadFunc() {
+				if (aborted) return
+				var status
+				clearTimeout(timeoutTimer)
+				if (options.useXDR && xhr.status === undefined) {
+					//IE8 CORS GET successful response doesn't have a status field, but body is fine
+					status = 200
+				} else {
+					status = (xhr.status === 1223 ? 204 : xhr.status)
+				}
+				var response = failureResponse
+				var err = null
+
+				if (status !== 0) {
+					response = {
+						body: getBody(),
+						statusCode: status,
+						method: method,
+						headers: {},
+						url: uri,
+						rawRequest: xhr
+					}
+					if (xhr.getAllResponseHeaders) { //remember xhr can in fact be XDR for CORS in IE
+						response.headers = parseHeaders(xhr.getAllResponseHeaders())
+					}
+				} else {
+					err = new Error("Internal XMLHttpRequest Error")
+				}
+				return callback(err, response, response.body)
+			}
+
+			var xhr = options.xhr || null
+
+			if (!xhr) {
+				if (options.cors || options.useXDR) {
+					xhr = new createXHR.XDomainRequest()
+				} else {
+					xhr = new createXHR.XMLHttpRequest()
+				}
+			}
+
+			var key
+			var aborted
+			var uri = xhr.url = options.uri || options.url
+			var method = xhr.method = options.method || "GET"
+			var body = options.body || options.data
+			var headers = xhr.headers = options.headers || {}
+			var sync = !!options.sync
+			var isJson = false
+			var timeoutTimer
+			var failureResponse = {
+				body: undefined,
+				headers: {},
+				statusCode: 0,
+				method: method,
+				url: uri,
+				rawRequest: xhr
+			}
+
+			if ("json" in options && options.json !== false) {
+				isJson = true
+				headers["accept"] || headers["Accept"] || (headers["Accept"] = "application/json") //Don't override existing accept header declared by user
+				if (method !== "GET" && method !== "HEAD") {
+					headers["content-type"] || headers["Content-Type"] || (headers["Content-Type"] = "application/json") //Don't override existing accept header declared by user
+					body = JSON.stringify(options.json === true ? body : options.json)
+				}
+			}
+
+			xhr.onreadystatechange = readystatechange
+			xhr.onload = loadFunc
+			xhr.onerror = errorFunc
+			// IE9 must have onprogress be set to a unique function.
+			xhr.onprogress = function () {
+				// IE must die
+			}
+			xhr.onabort = function () {
+				aborted = true;
+			}
+			xhr.ontimeout = errorFunc
+			xhr.open(method, uri, !sync, options.username, options.password)
+			//has to be after open
+			if (!sync) {
+				xhr.withCredentials = !!options.withCredentials
+			}
+			// Cannot set timeout with sync request
+			// not setting timeout on the xhr object, because of old webkits etc. not handling that correctly
+			// both npm's request and jquery 1.x use this kind of timeout, so this is being consistent
+			if (!sync && options.timeout > 0) {
+				timeoutTimer = setTimeout(function () {
+					if (aborted) return
+					aborted = true//IE9 may still call readystatechange
+					xhr.abort("timeout")
+					var e = new Error("XMLHttpRequest timeout")
+					e.code = "ETIMEDOUT"
+					errorFunc(e)
+				}, options.timeout)
+			}
+
+			if (xhr.setRequestHeader) {
+				for (key in headers) {
+					if (headers.hasOwnProperty(key)) {
+						xhr.setRequestHeader(key, headers[key])
+					}
+				}
+			} else if (options.headers && !isEmpty(options.headers)) {
+				throw new Error("Headers cannot be set on an XDomainRequest object")
+			}
+
+			if ("responseType" in options) {
+				xhr.responseType = options.responseType
+			}
+
+			if ("beforeSend" in options &&
+				typeof options.beforeSend === "function"
+			) {
+				options.beforeSend(xhr)
+			}
+
+			// Microsoft Edge browser sends "undefined" when send is called with undefined value.
+			// XMLHttpRequest spec says to pass null as body to indicate no body
+			// See https://github.com/naugtur/xhr/issues/100.
+			xhr.send(body || null)
+
+			return xhr
+
+
+		}
+
+		function getXml(xhr) {
+			// xhr.responseXML will throw Exception "InvalidStateError" or "DOMException"
+			// See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseXML.
+			try {
+				if (xhr.responseType === "document") {
+					return xhr.responseXML
+				}
+				var firefoxBugTakenEffect = xhr.responseXML && xhr.responseXML.documentElement.nodeName === "parsererror"
+				if (xhr.responseType === "" && !firefoxBugTakenEffect) {
+					return xhr.responseXML
+				}
+			} catch (e) {
+			}
+
+			return null
+		}
+
+		function noop() {
+		}
+
+
+		/***/
+	}),
+	/* 11 */
+	/***/ (function (module, exports) {
+
+		module.exports = isFunction
+
+		var toString = Object.prototype.toString
+
+		function isFunction(fn) {
+			var string = toString.call(fn)
+			return string === '[object Function]' ||
+				(typeof fn === 'function' && string !== '[object RegExp]') ||
+				(typeof window !== 'undefined' &&
+					// IE8 and below
+					(fn === window.setTimeout ||
+						fn === window.alert ||
+						fn === window.confirm ||
+						fn === window.prompt))
+		};
+
+
+		/***/
+	}),
+	/* 12 */
+	/***/ (function (module, exports, __webpack_require__) {
+
+		__webpack_require__(13);
+		module.exports = __webpack_require__(47);
+
+
+		/***/
+	}),
+	/* 13 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 
@@ -1041,9 +1378,9 @@
 		 * building robust, powerful web applications using Vue and Laravel.
 		 */
 
-		__webpack_require__(11);
+		__webpack_require__(14);
 
-		window.Vue = __webpack_require__(35);
+		window.Vue = __webpack_require__(38);
 
 		/**
 		 * Next, we will create a fresh Vue application instance and attach it to
@@ -1051,8 +1388,8 @@
 		 * or customize the JavaScript scaffolding to fit your unique needs.
 		 */
 
-		__webpack_require__(55);
-		__webpack_require__(53);
+		__webpack_require__(9);
+		__webpack_require__(46);
 
 		var app = new Vue({
 			el: '#app'
@@ -1060,11 +1397,11 @@
 
 		/***/
 	}),
-	/* 11 */
+	/* 14 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 
-		window._ = __webpack_require__(12);
+		window._ = __webpack_require__(15);
 
 		/**
 		 * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -1073,9 +1410,9 @@
 		 */
 
 		try {
-			window.$ = window.jQuery = __webpack_require__(14);
+			window.$ = window.jQuery = __webpack_require__(17);
 
-			__webpack_require__(15);
+			__webpack_require__(18);
 		} catch (e) {
 		}
 
@@ -1085,7 +1422,7 @@
 		 * CSRF token as a header based on the value of the "XSRF" token cookie.
 		 */
 
-		window.axios = __webpack_require__(16);
+		window.axios = __webpack_require__(19);
 
 		window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -1122,7 +1459,7 @@
 
 		/***/
 	}),
-	/* 12 */
+	/* 15 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		/* WEBPACK VAR INJECTION */
@@ -18288,11 +18625,11 @@
 			}.call(this));
 
 			/* WEBPACK VAR INJECTION */
-		}.call(exports, __webpack_require__(1), __webpack_require__(13)(module)))
+		}.call(exports, __webpack_require__(1), __webpack_require__(16)(module)))
 
 		/***/
 	}),
-	/* 13 */
+	/* 16 */
 	/***/ (function (module, exports) {
 
 		module.exports = function (module) {
@@ -18322,7 +18659,7 @@
 
 		/***/
 	}),
-	/* 14 */
+	/* 17 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
@@ -28659,7 +28996,7 @@
 
 		/***/
 	}),
-	/* 15 */
+	/* 18 */
 	/***/ (function (module, exports) {
 
 		/*!
@@ -31073,14 +31410,14 @@
 
 		/***/
 	}),
-	/* 16 */
+	/* 19 */
 	/***/ (function (module, exports, __webpack_require__) {
 
-		module.exports = __webpack_require__(17);
+		module.exports = __webpack_require__(20);
 
 		/***/
 	}),
-	/* 17 */
+	/* 20 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31088,7 +31425,7 @@
 
 		var utils = __webpack_require__(0);
 		var bind = __webpack_require__(3);
-		var Axios = __webpack_require__(19);
+		var Axios = __webpack_require__(22);
 		var defaults = __webpack_require__(2);
 
 		/**
@@ -31123,14 +31460,14 @@
 
 		// Expose Cancel & CancelToken
 		axios.Cancel = __webpack_require__(8);
-		axios.CancelToken = __webpack_require__(33);
+		axios.CancelToken = __webpack_require__(36);
 		axios.isCancel = __webpack_require__(7);
 
 		// Expose all/spread
 		axios.all = function all(promises) {
 			return Promise.all(promises);
 		};
-		axios.spread = __webpack_require__(34);
+		axios.spread = __webpack_require__(37);
 
 		module.exports = axios;
 
@@ -31140,7 +31477,7 @@
 
 		/***/
 	}),
-	/* 18 */
+	/* 21 */
 	/***/ (function (module, exports) {
 
 		/*!
@@ -31168,7 +31505,7 @@
 
 		/***/
 	}),
-	/* 19 */
+	/* 22 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31176,8 +31513,8 @@
 
 		var defaults = __webpack_require__(2);
 		var utils = __webpack_require__(0);
-		var InterceptorManager = __webpack_require__(28);
-		var dispatchRequest = __webpack_require__(29);
+		var InterceptorManager = __webpack_require__(31);
+		var dispatchRequest = __webpack_require__(32);
 
 		/**
 		 * Create a new instance of Axios
@@ -31255,7 +31592,7 @@
 
 		/***/
 	}),
-	/* 20 */
+	/* 23 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31275,7 +31612,7 @@
 
 		/***/
 	}),
-	/* 21 */
+	/* 24 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31309,7 +31646,7 @@
 
 		/***/
 	}),
-	/* 22 */
+	/* 25 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31338,7 +31675,7 @@
 
 		/***/
 	}),
-	/* 23 */
+	/* 26 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31407,7 +31744,7 @@
 
 		/***/
 	}),
-	/* 24 */
+	/* 27 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31470,7 +31807,7 @@
 
 		/***/
 	}),
-	/* 25 */
+	/* 28 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31546,7 +31883,7 @@
 
 		/***/
 	}),
-	/* 26 */
+	/* 29 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31591,7 +31928,7 @@
 
 		/***/
 	}),
-	/* 27 */
+	/* 30 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31656,7 +31993,7 @@
 
 		/***/
 	}),
-	/* 28 */
+	/* 31 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31716,18 +32053,18 @@
 
 		/***/
 	}),
-	/* 29 */
+	/* 32 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
 
 
 		var utils = __webpack_require__(0);
-		var transformData = __webpack_require__(30);
+		var transformData = __webpack_require__(33);
 		var isCancel = __webpack_require__(7);
 		var defaults = __webpack_require__(2);
-		var isAbsoluteURL = __webpack_require__(31);
-		var combineURLs = __webpack_require__(32);
+		var isAbsoluteURL = __webpack_require__(34);
+		var combineURLs = __webpack_require__(35);
 
 		/**
 		 * Throws a `Cancel` if cancellation has been requested.
@@ -31810,7 +32147,7 @@
 
 		/***/
 	}),
-	/* 30 */
+	/* 33 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31838,7 +32175,7 @@
 
 		/***/
 	}),
-	/* 31 */
+	/* 34 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31860,7 +32197,7 @@
 
 		/***/
 	}),
-	/* 32 */
+	/* 35 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31882,7 +32219,7 @@
 
 		/***/
 	}),
-	/* 33 */
+	/* 36 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31947,7 +32284,7 @@
 
 		/***/
 	}),
-	/* 34 */
+	/* 37 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -31982,7 +32319,7 @@
 
 		/***/
 	}),
-	/* 35 */
+	/* 38 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		"use strict";
@@ -42922,11 +43259,11 @@
 			module.exports = Vue$3;
 
 			/* WEBPACK VAR INJECTION */
-		}.call(exports, __webpack_require__(1), __webpack_require__(36).setImmediate))
+		}.call(exports, __webpack_require__(1), __webpack_require__(39).setImmediate))
 
 		/***/
 	}),
-	/* 36 */
+	/* 39 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		/* WEBPACK VAR INJECTION */
@@ -42983,7 +43320,7 @@
 			};
 
 			// setimmediate attaches itself to the global object
-			__webpack_require__(37);
+			__webpack_require__(40);
 			// On some exotic environments, it's not clear which object `setimmeidate` was
 			// able to install onto.  Search each possibility in the same order as the
 			// `setimmediate` library.
@@ -42999,7 +43336,7 @@
 
 		/***/
 	}),
-	/* 37 */
+	/* 40 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		/* WEBPACK VAR INJECTION */
@@ -43198,514 +43535,7 @@
 
 		/***/
 	}),
-	/* 38 */,
-	/* 39 */,
-	/* 40 */,
-	/* 41 */,
-	/* 42 */
-	/***/ (function (module, exports) {
-
-		// removed by extract-text-webpack-plugin
-
-		/***/
-	}),
-	/* 43 */,
-	/* 44 */,
-	/* 45 */,
-	/* 46 */,
-	/* 47 */,
-	/* 48 */,
-	/* 49 */,
-	/* 50 */,
-	/* 51 */,
-	/* 52 */,
-	/* 53 */
-	/***/ (function (module, __webpack_exports__, __webpack_require__) {
-
-		"use strict";
-		Object.defineProperty(__webpack_exports__, "__esModule", {value: true});
-		/* harmony import */
-		var __WEBPACK_IMPORTED_MODULE_0__core__ = __webpack_require__(55);
-		/* harmony import */
-		var __WEBPACK_IMPORTED_MODULE_1_xhr__ = __webpack_require__(56);
-		/* harmony import */
-		var __WEBPACK_IMPORTED_MODULE_1_xhr___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_xhr__);
-
-
-		Vue.component('test-panel', {
-			data: function data() {
-				return {
-					sections: {
-						console: {
-							title: 'Console',
-							open: true,
-							value: '',
-							methods: {}
-						},
-						identities: {
-							title: 'Identities',
-							open: true,
-							methods: {
-								createIdentity: {
-									title: 'Create Identity',
-									open: false,
-									params: {
-										identity: {
-											label: 'Identity Fields',
-											type: 'text',
-											help: 'Format: player_name|Josh816, uuid|123456789, some_other_key|some_other_value',
-											value: ''
-										}
-									}
-								},
-								linkIdentity: {
-									title: 'Link Identity',
-									open: false,
-									params: {
-										identityCode: {
-											label: 'Identity Code',
-											type: 'text',
-											value: ''
-										},
-										ethereumAddress: {
-											label: 'Ethereum Address',
-											type: 'text',
-											value: __WEBPACK_IMPORTED_MODULE_0__core__["default"].getRandomEthAddress()
-										},
-										signature: {
-											label: 'Signature (optional)',
-											type: 'text',
-											value: ''
-										}
-									}
-								},
-								deleteIdentity: {
-									title: 'Delete Identity',
-									open: false,
-									params: {
-										identityCode: {
-											label: 'Identity Code',
-											type: 'text',
-											value: ''
-										}
-									}
-								},
-								updateIdentity: {
-									title: 'Update Identity',
-									open: false,
-									params: {
-										identityCode: {
-											label: 'Identity Code',
-											type: 'text',
-											value: ''
-										},
-										identity: {
-											label: 'New Identity Fields',
-											type: 'text',
-											help: 'Format: player_name|Josh816, uuid|123456789, some_other_key|some_other_value',
-											value: ''
-										}
-									}
-								}
-							}
-						},
-						tokens: {
-							title: 'Tokens',
-							open: true,
-							methods: {}
-						},
-						events: {
-							title: 'Events',
-							open: true,
-							methods: {}
-						}
-					}
-				};
-			},
-			methods: {
-				toggleSection: function toggleSection(section) {
-					if (section == 'console') {
-						return false;
-					}
-
-					this.sections[section].open = this.sections[section].open == false;
-				},
-
-				toggleMethod: function toggleMethod(section, method) {
-					this.sections[section].methods[method].open = this.sections[section].methods[method].open == false;
-				},
-
-				execute: function execute(section, method) {
-					var btn = event.target;
-					btn.innerText = 'Working..';
-
-					var params = {};
-					for (var paramKey in this.sections[section].methods[method].params) {
-						params[paramKey] = this.sections[section].methods[method].params[paramKey].value;
-					}
-
-					var that = this;
-					__WEBPACK_IMPORTED_MODULE_0__core__["default"].jsonrpc('TestPanel', method, params, function (resp) {
-						that.sections.console.value = JSON.stringify(resp);
-						btn.innerText = 'Execute';
-					});
-
-					__WEBPACK_IMPORTED_MODULE_1_xhr___default()({
-						method: "post",
-						body: someJSONString,
-						uri: "/api/v1/identities",
-						headers: {
-							"Content-Type": "application/json"
-						}
-					}, function (err, resp, body) {
-						// check resp.statusCode
-					});
-				}
-			},
-			mounted: function mounted() {
-			}
-		});
-
-		/***/
-	}),
-	/* 54 */
-	/***/ (function (module, exports) {
-
-		module.exports = isFunction
-
-		var toString = Object.prototype.toString
-
-		function isFunction(fn) {
-			var string = toString.call(fn)
-			return string === '[object Function]' ||
-				(typeof fn === 'function' && string !== '[object RegExp]') ||
-				(typeof window !== 'undefined' &&
-					// IE8 and below
-					(fn === window.setTimeout ||
-						fn === window.alert ||
-						fn === window.confirm ||
-						fn === window.prompt))
-		};
-
-
-		/***/
-	}),
-	/* 55 */
-	/***/ (function (module, __webpack_exports__, __webpack_require__) {
-
-		"use strict";
-		Object.defineProperty(__webpack_exports__, "__esModule", {value: true});
-		/* harmony import */
-		var __WEBPACK_IMPORTED_MODULE_0_xhr__ = __webpack_require__(56);
-		/* harmony import */
-		var __WEBPACK_IMPORTED_MODULE_0_xhr___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_xhr__);
-		var _createClass = function () {
-			function defineProperties(target, props) {
-				for (var i = 0; i < props.length; i++) {
-					var descriptor = props[i];
-					descriptor.enumerable = descriptor.enumerable || false;
-					descriptor.configurable = true;
-					if ("value" in descriptor) descriptor.writable = true;
-					Object.defineProperty(target, descriptor.key, descriptor);
-				}
-			}
-
-			return function (Constructor, protoProps, staticProps) {
-				if (protoProps) defineProperties(Constructor.prototype, protoProps);
-				if (staticProps) defineProperties(Constructor, staticProps);
-				return Constructor;
-			};
-		}();
-
-		function _classCallCheck(instance, Constructor) {
-			if (!(instance instanceof Constructor)) {
-				throw new TypeError("Cannot call a class as a function");
-			}
-		}
-
-
-		var Core = function () {
-			function Core() {
-				_classCallCheck(this, Core);
-			}
-
-			_createClass(Core, null, [{
-				key: 'getRandomNumber',
-				value: function getRandomNumber(min, max) {
-					return Math.floor(Math.random() * max) + min;
-				}
-			}, {
-				key: 'getRandomEthAddress',
-				value: function getRandomEthAddress() {
-					return '0x0000000000000000000000000000000' + Core.getRandomNumber(100000000, 999999999);
-				}
-			}]);
-
-			return Core;
-		}();
-
-		/* harmony default export */
-		__webpack_exports__["default"] = (Core);
-
-		/***/
-	}),
-	/* 56 */
-	/***/ (function (module, exports, __webpack_require__) {
-
-		"use strict";
-
-		var window = __webpack_require__(57)
-		var isFunction = __webpack_require__(54)
-		var parseHeaders = __webpack_require__(58)
-		var xtend = __webpack_require__(61)
-
-		module.exports = createXHR
-		createXHR.XMLHttpRequest = window.XMLHttpRequest || noop
-		createXHR.XDomainRequest = "withCredentials" in (new createXHR.XMLHttpRequest()) ? createXHR.XMLHttpRequest : window.XDomainRequest
-
-		forEachArray(["get", "put", "post", "patch", "head", "delete"], function (method) {
-			createXHR[method === "delete" ? "del" : method] = function (uri, options, callback) {
-				options = initParams(uri, options, callback)
-				options.method = method.toUpperCase()
-				return _createXHR(options)
-			}
-		})
-
-		function forEachArray(array, iterator) {
-			for (var i = 0; i < array.length; i++) {
-				iterator(array[i])
-			}
-		}
-
-		function isEmpty(obj) {
-			for (var i in obj) {
-				if (obj.hasOwnProperty(i)) return false
-			}
-			return true
-		}
-
-		function initParams(uri, options, callback) {
-			var params = uri
-
-			if (isFunction(options)) {
-				callback = options
-				if (typeof uri === "string") {
-					params = {uri: uri}
-				}
-			} else {
-				params = xtend(options, {uri: uri})
-			}
-
-			params.callback = callback
-			return params
-		}
-
-		function createXHR(uri, options, callback) {
-			options = initParams(uri, options, callback)
-			return _createXHR(options)
-		}
-
-		function _createXHR(options) {
-			if (typeof options.callback === "undefined") {
-				throw new Error("callback argument missing")
-			}
-
-			var called = false
-			var callback = function cbOnce(err, response, body) {
-				if (!called) {
-					called = true
-					options.callback(err, response, body)
-				}
-			}
-
-			function readystatechange() {
-				if (xhr.readyState === 4) {
-					setTimeout(loadFunc, 0)
-				}
-			}
-
-			function getBody() {
-				// Chrome with requestType=blob throws errors arround when even testing access to responseText
-				var body = undefined
-
-				if (xhr.response) {
-					body = xhr.response
-				} else {
-					body = xhr.responseText || getXml(xhr)
-				}
-
-				if (isJson) {
-					try {
-						body = JSON.parse(body)
-					} catch (e) {
-					}
-				}
-
-				return body
-			}
-
-			function errorFunc(evt) {
-				clearTimeout(timeoutTimer)
-				if (!(evt instanceof Error)) {
-					evt = new Error("" + (evt || "Unknown XMLHttpRequest Error"))
-				}
-				evt.statusCode = 0
-				return callback(evt, failureResponse)
-			}
-
-			// will load the data & process the response in a special response object
-			function loadFunc() {
-				if (aborted) return
-				var status
-				clearTimeout(timeoutTimer)
-				if (options.useXDR && xhr.status === undefined) {
-					//IE8 CORS GET successful response doesn't have a status field, but body is fine
-					status = 200
-				} else {
-					status = (xhr.status === 1223 ? 204 : xhr.status)
-				}
-				var response = failureResponse
-				var err = null
-
-				if (status !== 0) {
-					response = {
-						body: getBody(),
-						statusCode: status,
-						method: method,
-						headers: {},
-						url: uri,
-						rawRequest: xhr
-					}
-					if (xhr.getAllResponseHeaders) { //remember xhr can in fact be XDR for CORS in IE
-						response.headers = parseHeaders(xhr.getAllResponseHeaders())
-					}
-				} else {
-					err = new Error("Internal XMLHttpRequest Error")
-				}
-				return callback(err, response, response.body)
-			}
-
-			var xhr = options.xhr || null
-
-			if (!xhr) {
-				if (options.cors || options.useXDR) {
-					xhr = new createXHR.XDomainRequest()
-				} else {
-					xhr = new createXHR.XMLHttpRequest()
-				}
-			}
-
-			var key
-			var aborted
-			var uri = xhr.url = options.uri || options.url
-			var method = xhr.method = options.method || "GET"
-			var body = options.body || options.data
-			var headers = xhr.headers = options.headers || {}
-			var sync = !!options.sync
-			var isJson = false
-			var timeoutTimer
-			var failureResponse = {
-				body: undefined,
-				headers: {},
-				statusCode: 0,
-				method: method,
-				url: uri,
-				rawRequest: xhr
-			}
-
-			if ("json" in options && options.json !== false) {
-				isJson = true
-				headers["accept"] || headers["Accept"] || (headers["Accept"] = "application/json") //Don't override existing accept header declared by user
-				if (method !== "GET" && method !== "HEAD") {
-					headers["content-type"] || headers["Content-Type"] || (headers["Content-Type"] = "application/json") //Don't override existing accept header declared by user
-					body = JSON.stringify(options.json === true ? body : options.json)
-				}
-			}
-
-			xhr.onreadystatechange = readystatechange
-			xhr.onload = loadFunc
-			xhr.onerror = errorFunc
-			// IE9 must have onprogress be set to a unique function.
-			xhr.onprogress = function () {
-				// IE must die
-			}
-			xhr.onabort = function () {
-				aborted = true;
-			}
-			xhr.ontimeout = errorFunc
-			xhr.open(method, uri, !sync, options.username, options.password)
-			//has to be after open
-			if (!sync) {
-				xhr.withCredentials = !!options.withCredentials
-			}
-			// Cannot set timeout with sync request
-			// not setting timeout on the xhr object, because of old webkits etc. not handling that correctly
-			// both npm's request and jquery 1.x use this kind of timeout, so this is being consistent
-			if (!sync && options.timeout > 0) {
-				timeoutTimer = setTimeout(function () {
-					if (aborted) return
-					aborted = true//IE9 may still call readystatechange
-					xhr.abort("timeout")
-					var e = new Error("XMLHttpRequest timeout")
-					e.code = "ETIMEDOUT"
-					errorFunc(e)
-				}, options.timeout)
-			}
-
-			if (xhr.setRequestHeader) {
-				for (key in headers) {
-					if (headers.hasOwnProperty(key)) {
-						xhr.setRequestHeader(key, headers[key])
-					}
-				}
-			} else if (options.headers && !isEmpty(options.headers)) {
-				throw new Error("Headers cannot be set on an XDomainRequest object")
-			}
-
-			if ("responseType" in options) {
-				xhr.responseType = options.responseType
-			}
-
-			if ("beforeSend" in options &&
-				typeof options.beforeSend === "function"
-			) {
-				options.beforeSend(xhr)
-			}
-
-			// Microsoft Edge browser sends "undefined" when send is called with undefined value.
-			// XMLHttpRequest spec says to pass null as body to indicate no body
-			// See https://github.com/naugtur/xhr/issues/100.
-			xhr.send(body || null)
-
-			return xhr
-
-
-		}
-
-		function getXml(xhr) {
-			// xhr.responseXML will throw Exception "InvalidStateError" or "DOMException"
-			// See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseXML.
-			try {
-				if (xhr.responseType === "document") {
-					return xhr.responseXML
-				}
-				var firefoxBugTakenEffect = xhr.responseXML && xhr.responseXML.documentElement.nodeName === "parsererror"
-				if (xhr.responseType === "" && !firefoxBugTakenEffect) {
-					return xhr.responseXML
-				}
-			} catch (e) {
-			}
-
-			return null
-		}
-
-		function noop() {
-		}
-
-
-		/***/
-	}),
-	/* 57 */
+	/* 41 */
 	/***/ (function (module, exports, __webpack_require__) {
 
 		/* WEBPACK VAR INJECTION */
@@ -43729,11 +43559,11 @@
 
 		/***/
 	}),
-	/* 58 */
+	/* 42 */
 	/***/ (function (module, exports, __webpack_require__) {
 
-		var trim = __webpack_require__(59)
-			, forEach = __webpack_require__(60)
+		var trim = __webpack_require__(43)
+			, forEach = __webpack_require__(44)
 			, isArray = function (arg) {
 			return Object.prototype.toString.call(arg) === '[object Array]';
 		}
@@ -43766,7 +43596,7 @@
 
 		/***/
 	}),
-	/* 59 */
+	/* 43 */
 	/***/ (function (module, exports) {
 
 
@@ -43787,10 +43617,10 @@
 
 		/***/
 	}),
-	/* 60 */
+	/* 44 */
 	/***/ (function (module, exports, __webpack_require__) {
 
-		var isFunction = __webpack_require__(54)
+		var isFunction = __webpack_require__(11)
 
 		module.exports = forEach
 
@@ -43840,7 +43670,7 @@
 
 		/***/
 	}),
-	/* 61 */
+	/* 45 */
 	/***/ (function (module, exports) {
 
 		module.exports = extend
@@ -43863,6 +43693,161 @@
 			return target
 		}
 
+
+		/***/
+	}),
+	/* 46 */
+	/***/ (function (module, __webpack_exports__, __webpack_require__) {
+
+		"use strict";
+		Object.defineProperty(__webpack_exports__, "__esModule", {value: true});
+		/* harmony import */
+		var __WEBPACK_IMPORTED_MODULE_0__core__ = __webpack_require__(9);
+		/* harmony import */
+		var __WEBPACK_IMPORTED_MODULE_1_xhr__ = __webpack_require__(10);
+		/* harmony import */
+		var __WEBPACK_IMPORTED_MODULE_1_xhr___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_xhr__);
+
+
+		Vue.component('test-panel', {
+			data: function data() {
+				return {
+					sections: {
+						console: {
+							title: 'Console',
+							open: true,
+							value: '',
+							methods: {}
+						},
+						identities: {
+							title: 'Identities',
+							open: true,
+							methods: {
+								createIdentity: {
+									title: 'Create Identity',
+									type: 'post',
+									open: false,
+									params: {
+										identity: {
+											label: 'Identity Fields',
+											type: 'text',
+											help: 'Format: player_name|Josh816, uuid|123456789, some_other_key|some_other_value',
+											value: ''
+										}
+									}
+								},
+								linkIdentity: {
+									title: 'Link Identity',
+									type: 'post',
+									open: false,
+									params: {
+										identityCode: {
+											label: 'Identity Code',
+											type: 'text',
+											value: ''
+										},
+										ethereumAddress: {
+											label: 'Ethereum Address',
+											type: 'text',
+											value: __WEBPACK_IMPORTED_MODULE_0__core__["default"].getRandomEthAddress()
+										},
+										signature: {
+											label: 'Signature (optional)',
+											type: 'text',
+											value: ''
+										}
+									}
+								},
+								deleteIdentity: {
+									title: 'Delete Identity',
+									type: 'post',
+									open: false,
+									params: {
+										identityCode: {
+											label: 'Identity Code',
+											type: 'text',
+											value: ''
+										}
+									}
+								},
+								updateIdentity: {
+									title: 'Update Identity',
+									type: 'post',
+									open: false,
+									params: {
+										identityCode: {
+											label: 'Identity Code',
+											type: 'text',
+											value: ''
+										},
+										identity: {
+											label: 'New Identity Fields',
+											type: 'text',
+											help: 'Format: player_name|Josh816, uuid|123456789, some_other_key|some_other_value',
+											value: ''
+										}
+									}
+								}
+							}
+						},
+						tokens: {
+							title: 'Tokens',
+							open: true,
+							methods: {}
+						},
+						events: {
+							title: 'Events',
+							open: true,
+							methods: {}
+						}
+					}
+				};
+			},
+			methods: {
+				toggleSection: function toggleSection(section) {
+					if (section == 'console') {
+						return false;
+					}
+
+					this.sections[section].open = this.sections[section].open == false;
+				},
+
+				toggleMethod: function toggleMethod(section, method) {
+					this.sections[section].methods[method].open = this.sections[section].methods[method].open == false;
+				},
+
+				execute: function execute(section, method) {
+					var that = this;
+					var btn = event.target;
+					btn.innerText = 'Working..';
+
+					var params = {};
+					for (var paramKey in this.sections[section].methods[method].params) {
+						params[paramKey] = this.sections[section].methods[method].params[paramKey].value;
+					}
+
+					__WEBPACK_IMPORTED_MODULE_1_xhr___default()({
+						method: this.sections[section].methods[method].type,
+						body: JSON.stringify(params),
+						uri: "/api/v1/testPanel/" + method,
+						headers: {
+							"Content-Type": "application/json"
+						}
+					}, function (err, resp, body) {
+						that.sections.console.value = body;
+					});
+				}
+			},
+			mounted: function mounted() {
+			}
+		});
+
+		/***/
+	}),
+	/* 47 */
+	/***/ (function (module, exports) {
+
+		// removed by extract-text-webpack-plugin
 
 		/***/
 	})

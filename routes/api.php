@@ -31,3 +31,9 @@ Route::middleware('auth:api')->get('/v1/identity', function (Request $request) {
     $user->enjinWallet;
     return $user;
 });
+
+// Test Panel
+Route::post('/v1/testPanel/createIdentity', 'TestpanelController@createIdentity');
+Route::post('/v1/testPanel/linkIdentity', 'TestpanelController@linkIdentity');
+Route::post('/v1/testPanel/deleteIdentity', 'TestpanelController@deleteIdentity');
+Route::post('/v1/testPanel/updateIdentity', 'TestpanelController@updateIdentity');
