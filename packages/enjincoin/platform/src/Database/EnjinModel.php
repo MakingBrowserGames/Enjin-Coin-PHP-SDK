@@ -29,4 +29,13 @@ class EnjinModel extends Model
             throw $e;
         }
     }
+
+    /**
+     * Function to validate an address
+     * @param string $address
+     * @return bool
+     */
+    public static function validateAddress(string $address) {
+        return preg_match("/^(0x)?[0-9a-fA-F]{40}$/", $address) !== 0;
+    }
 }

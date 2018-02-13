@@ -10,7 +10,8 @@
         "laravel/framework": "5.5.*",
         "laravel/passport": "^4.0",
         "laravel/tinker": "~1.0",
-        "pusher/pusher-php-server": "~3.0"
+        "pusher/pusher-php-server": "~3.0",
+        "textalk/websocket": "^1.2"
     },
     "require-dev": {
         "filp/whoops": "~2.0",

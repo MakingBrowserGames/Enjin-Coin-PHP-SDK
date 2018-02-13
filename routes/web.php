@@ -17,3 +17,5 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/test-panel', 'TestpanelController@index');
+
+Route::get('/ethereum/protocol-version', 'EthereumController@protocolVersion');

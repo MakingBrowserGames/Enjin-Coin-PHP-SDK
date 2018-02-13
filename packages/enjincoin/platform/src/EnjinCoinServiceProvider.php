@@ -22,9 +22,11 @@ class EnjinCoinServiceProvider extends ServiceProvider
      * Register a new alias loader instance.
      *
      */
-    public static function register()
+    public function register()
     {
-
+        $this->mergeConfigFrom(
+            __DIR__ . '/config/main.php', 'enjincoin'
+        );
     }
 
 }
