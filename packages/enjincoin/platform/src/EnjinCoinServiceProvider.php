@@ -27,6 +27,8 @@ class EnjinCoinServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__ . '/config/main.php', 'enjincoin'
         );
+
+        $this->app->bind('ethereum', 'EnjinCoin\Ethereum' );
     }
 
 }
