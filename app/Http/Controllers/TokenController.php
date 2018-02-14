@@ -150,16 +150,16 @@ class TokenController extends Controller
         return Validator::make($data, [
             'token_id' => 'required|integer',
             'app_id' => 'required|integer',
-            'creator' => 'string',
-            'adapter' => 'string',
-            'name' => 'string',
-            'icon' => 'string',
-            'totalSupply' => 'string',
-            'exchangeRate' => 'string',
-            'decimals' => 'integer',
-            'maxMeltFee' => 'string',
-            'meltFee' => 'string',
-            'transferable' => 'integer'
+            'creator' => 'nullable|string',
+            'adapter' => 'nullable|string',
+            'name' => 'nullable|string',
+            'icon' => 'nullable|string',
+            'totalSupply' => 'nullable|string',
+            'exchangeRate' => 'nullable|string',
+            'decimals' => 'nullable|integer',
+            'maxMeltFee' => 'nullable|string',
+            'meltFee' => 'nullable|string',
+            'transferable' => 'nullable|integer'
         ]);
     }
 }
