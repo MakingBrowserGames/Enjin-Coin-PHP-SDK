@@ -58,6 +58,11 @@ class EnjinIdentity extends EnjinModel
         return $this->belongsToMany('EnjinCoin\EnjinIdentityField', 'enjin_identity_field', "identity_id", 'field_id'); //->as('fields')->withPivot('field_value');;
     }
 
+    public function transactions()
+    {
+        return $this->hasMany('EnjinCoin\EnjinTransaction', 'identity_id');
+    }
+
     /**
      * Generate a readable string using all upper case letters that are easy to recognize
      * @return string

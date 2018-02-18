@@ -24,7 +24,8 @@ Route::get('/ethereum/protocol-version', function() {
 });
 
 Route::get('/ethereum/{id}/get-balance', function($id){
-    return response()->json(\EnjinCoin\Facades\Ethereum::getBalances([$id]));
+    $result = \EnjinCoin\Facades\Ethereum::getBalances([$id]);
+    return response()->json(\EnjinCoin\Ethereum::hexToEth(reset($result)));
 });
 Route::get('/ethereum/{id}/transaction-count', function($id){
     return response()->json(\EnjinCoin\Facades\Ethereum::getTransactionCount($id));

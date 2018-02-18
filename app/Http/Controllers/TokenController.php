@@ -7,7 +7,6 @@ use EnjinCoin\EnjinToken;
 use EnjinCoin\Exceptions\BadRequestException;
 use EnjinCoin\Exceptions\DataConflictException;
 use EnjinCoin\Exceptions\NotYetImplementedException;
-use function foo\func;
 use Illuminate\Http\Request;
 
 class TokenController extends Controller

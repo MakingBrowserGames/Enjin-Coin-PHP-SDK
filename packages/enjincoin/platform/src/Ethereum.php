@@ -62,6 +62,29 @@ class Ethereum {
     }
 
     /**
+     * Convert an Ethereum Hex value into an Integer
+     * For balances this is the balance in Wei.
+     *
+     * @param $value
+     * @return float|int
+     */
+    public static function hexToInt($value)
+    {
+        return hexdec($value);
+    }
+
+    /**
+     * Convert an Ethereum Hex value into Ether
+     *
+     * @param $value
+     * @return float|int
+     */
+    public static function hexToEth($value)
+    {
+        return (Ethereum::hexToInt($value)/1000000000000000000);
+    }
+
+    /**
      * log function
      * @param $params
      */
@@ -160,5 +183,7 @@ class Ethereum {
     public function verifySig(string $address, string $hash, string $message) {
 
     }
+
+
 
 }
