@@ -124,7 +124,7 @@ class TokenController extends Controller
             return response()->json($token);
         }
 
-        throw (new BadRequestException())->setInfoMessage('Some data may be the wrong type (e.g. a String was given when an Integer was expected).');;
+        throw (new BadRequestException())->setInfoMessage('Some data may be the wrong type (e.g. a String was given when an Integer was expected).');
     }
 
     /**

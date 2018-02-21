@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use EnjinCoin\TransactionStatus;
 use Validator;
 use EnjinCoin\EnjinTransaction;
 use EnjinCoin\EnjinIdentity;
@@ -125,7 +126,37 @@ class TransactionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // Try to get the specified transaction or return a 404
+        $transaction = EnjinTransaction::findOrFail($id);
+
+        // Check if the transaction can be modified (i.e. it's still pending)
+        if($transaction->state == TransactionStatus::PENDING)
+        {
+            // Validate the supplied data is correct.
+            // We manually set the required identity_id, token_id and
+            // app_id fields from the existing data as they will fail
+            // validation if not present, and should not be changed.
+            $data = $request->all();
+            $data['identity_id'] = $transaction->identity_id;
+            $data['token_id'] = $transaction->token_id;
+            if(!$request->filled('app_id'))
+                $data['app_id'] = $transaction->app_id;
+
+            $validator = $this->validator($data);
+
+            // If the data passes validation then update the
+            // supplied fields.
+            if($validator->passes())
+            {
+                $transaction->fill($request->all());
+                $transaction->save();
+                return response()->json($transaction);
+            }
+
+            throw (new BadRequestException())->setInfoMessage('Some data may be the wrong type (e.g. a String was given when an Integer was expected).');
+        }
+
+        throw (new BadRequestException())->setInfoMessage('This transaction can no longer be modified');
     }
 
     /**
@@ -136,7 +167,7 @@ class TransactionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return response()->json(EnjinTransaction::findOrFail($id)->delete());
     }
 
     /**
@@ -157,5 +188,55 @@ class TransactionController extends Controller
             'icon' => 'nullable|string',
             'value' => 'string',
         ]);
+    }
+
+    // Action endpoints
+
+    /**
+     * Execute a transaction payload
+     *
+     * @param $request
+     * @return \Illuminate\Http\Reponse
+     */
+    public function execute(Request $request, $id)
+    {
+        $transaction = EnjinTransaction::findOrFail($id);
+        // Check if the transaction is still in a pending state so it can be broadcast.
+        if($transaction->state == TransactionStatus::PENDING)
+        {
+            // TODO Get data payload and send to blockchain for processing...
+
+            if(!$request->filled('data')){
+                throw (new BadRequestException())->setInfoMessage('No Data Set.');
+            }
+
+            // Set the transaction to broadcast.
+            $transaction->state = TransactionStatus::BROADCAST;
+            $transaction->save();
+            return response()->json('true');
+        }
+
+        throw (new BadRequestException())->setInfoMessage(($transaction->state == TransactionStatus::CANCELED_USER || $transaction->state == TransactionStatus::CANCELED_PLATFORM) ? 'This transaction has been cancelled.' : 'This transaction has already been broadcast.');
+    }
+
+    /**
+     * Cancel a transaction
+     *
+     * @param $request
+     * @return \Illuminate\Http\Reponse
+     */
+    public function cancel(Request $request, $id)
+    {
+        $transaction = EnjinTransaction::findOrFail($id);
+        // Check if the transaction is still pending, if so then it can be cancelled,
+        // otherwise the transaction has already been broadcast (or cancelled).
+        if($transaction->state == TransactionStatus::PENDING)
+        {
+            $transaction->state = TransactionStatus::CANCELED_USER;
+            $transaction->save();
+            return response()->json('true');
+        }
+
+        throw (new BadRequestException())->setInfoMessage('This transaction can no longer be cancelled.');
     }
 }

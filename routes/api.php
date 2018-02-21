@@ -26,6 +26,8 @@ Route::resource('/v1/identities', 'IdentityController');
 Route::resource('/v1/tokens', 'TokenController');
 
 Route::resource('/v1/transactions', 'TransactionController');
+Route::post('v1/transactions/{id}/execute', 'TransactionController@execute');
+Route::post('v1/transactions/{id}/cancel', 'TransactionController@cancel');
 
 // A singe GET end point to retrieve the current user from their Bearer Token.
 Route::middleware('auth:api')->get('/v1/identity', function (Request $request) {

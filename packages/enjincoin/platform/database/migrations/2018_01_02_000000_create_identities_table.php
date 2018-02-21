@@ -17,7 +17,7 @@ class CreateIdentitiesTable extends Migration
     {
         Schema::create('enjin_identities', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
+            $table->integer('user_id')->nullable();
             $table->string('ethereum_address')->nullable();
             $table->string('linking_code')->nullable();
             $table->integer('updated_at');
